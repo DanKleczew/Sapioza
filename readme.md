@@ -31,5 +31,5 @@ La liste des acteurs est :
 
 ## Exigences et Remarques : 
 
-> À voir
+> See SOLR & CAMEL:PDF
 
