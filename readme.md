@@ -1,4 +1,4 @@
-# Sapienzza
+# Sapioza
 
 ## Objectifs du système :
 
