@@ -1,2 +1,4 @@
-package fr.pantheonsorbonne.entity;public class User {
+package fr.pantheonsorbonne.entity;
+
+public class User {
 }
