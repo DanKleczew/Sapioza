@@ -1,0 +1,5 @@
+# application propeties files
+/notification-service/src/main/resources/application.properties
+/paper-service/src/main/resources/application.properties
+/storage-service/src/main/resources/application.properties
+/user-service/src/main/resources/application.properties
