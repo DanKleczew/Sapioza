@@ -12,6 +12,7 @@
         <module>paper-service</module>
         <module>notification-service</module>
         <module>storage-service</module>
+        <module>sapioza-commons</module>
     </modules>
     <dependencyManagement>
         <dependencies>

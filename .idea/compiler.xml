@@ -10,6 +10,7 @@
         <module name="user-service" />
         <module name="storage-service" />
         <module name="notification-service" />
+        <module name="sapioza-commons" />
       </profile>
     </annotationProcessing>
   </component>
@@ -17,6 +18,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="notification-service" options="-parameters" />
       <module name="paper-service" options="-parameters" />
+      <module name="sapioza-commons" options="-parameters" />
       <module name="storage-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>

@@ -1,7 +1,12 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dto.Filter;
-import fr.pantheonsorbonne.entity.Paper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import fr.pantheonsorbonne.dto.CompletePaperDTO;
+import fr.pantheonsorbonne.dto.FilterDTO;
+import fr.pantheonsorbonne.dto.PaperDTO;
+import fr.pantheonsorbonne.dto.PaperMetaDataDTO;
+import fr.pantheonsorbonne.exception.PaperNotCreatedException;
+import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.enums.ResearchField;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.service.PaperService;
@@ -21,24 +26,54 @@ public class PaperAPI {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response getPaperInfos(@PathParam("id") int id) {
+    public Response getPaperInfos(@PathParam("id") Long id) {
         try {
             return Response.ok(this.paperService.getPaperInfos(id)).build();
         } catch (PaperNotFoundException e) {
-           return Response.status(404, e.getMessage()).build();
+           return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/filter")
-    public List<Paper> getFilteredPapers(@QueryParam("title") String title,
-                                         @QueryParam("author") Long authorId,
-                                         @QueryParam("abstract") String abstract_,
-                                         @QueryParam("keywords") String keywords,
-                                         @QueryParam("revue") String revue,
-                                         @QueryParam("field") String field) {
-        return this.paperService.getFilteredPapers(new Filter(title, authorId ,abstract_, keywords, revue, ResearchField.valueOf(field)));
+    public List<PaperDTO> getFilteredPapers(@QueryParam("title") String title,
+                                            @QueryParam("author") Long authorId,
+                                            @QueryParam("abstract") String abstract_,
+                                            @QueryParam("keywords") String keywords,
+                                            @QueryParam("revue") String revue,
+                                            @QueryParam("field") String field) {
+        return this.paperService.getFilteredPapers(new FilterDTO(title,
+                authorId ,abstract_, keywords, revue, ResearchField.valueOf(field)));
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/submit")
+    public Response createPaper(CompletePaperDTO completePaperDTO) {
+        try {
+            PaperMetaDataDTO paperMetaDataDTO = this.paperService.createPaper(completePaperDTO);
+            return Response
+                    .status(Response.Status.CREATED)
+                    .entity(paperMetaDataDTO)
+                    .build();
+        } catch (BadRequestException e) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("Malformed JSON")
+                    .build();
+        } catch (PaperNotCreatedException e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Internal server error")
+                    .build();
+        }
     }
 
 }
