@@ -3,36 +3,32 @@ package fr.pantheonsorbonne.camel;
 import fr.pantheonsorbonne.camel.handler.PersistFailureHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class CamelRoute extends RouteBuilder {
-
-        @Inject
-        RoutingService routingService;
 
         @Override
         public void configure(){
 
                 // Publishing process for a new paper
-                from(routingService.getLocalRoute(Routes.NEW_TO_NOTIF))
-                        .to(routingService.getGlobalRoute(GlobalRoutes.NEW_PAPER_P2N));
+                from(Routes.NEW_TO_NOTIF.getRoute())
+                        .to(GlobalRoutes.NEW_PAPER_P2N.getRoute());
+ //                       .to(routingService.getGlobalRoute(GlobalRoutes.NEW_PAPER_P2N));
 
-                from(routingService.getLocalRoute(Routes.NEW_TO_STORAGE))
-                        .to(routingService.getGlobalRoute(GlobalRoutes.NEW_PAPER_P2S));
+                from(Routes.NEW_TO_STORAGE.getRoute())
+                        .to(GlobalRoutes.NEW_PAPER_P2S.getRoute());
 
                 // Fallback process for failed persistence in any of the two services
-                from(routingService.getGlobalRoute(GlobalRoutes.PERSIST_FAIL_N2P))
+                from(GlobalRoutes.PERSIST_FAIL_N2P.getRoute())
                         .bean(PersistFailureHandler.class, "handle(${id})");
 
-                from(routingService.getGlobalRoute(GlobalRoutes.PERSIST_FAIL_S2P))
+                from(GlobalRoutes.PERSIST_FAIL_S2P.getRoute())
                         .bean(PersistFailureHandler.class, "handle(${id})");
 
                 // Deleting process for a paper
-                from(routingService.getLocalRoute(Routes.DELETE_COMMAND_TO_STORAGE))
-                        .to(routingService.getGlobalRoute(GlobalRoutes.DELETE_PAPER_P2S));
+                from(Routes.DELETE_COMMAND_TO_STORAGE.getRoute())
+                        .to(GlobalRoutes.DELETE_PAPER_P2S.getRoute());
 
 
 
