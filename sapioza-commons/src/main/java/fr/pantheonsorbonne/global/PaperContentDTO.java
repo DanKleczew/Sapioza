@@ -1,6 +1,6 @@
-package fr.pantheonsorbonne.dto;
+package fr.pantheonsorbonne.global;
 
-public record PaperBodyDTO(
+public record PaperContentDTO(
         Long PaperId,
         String body
 ) {

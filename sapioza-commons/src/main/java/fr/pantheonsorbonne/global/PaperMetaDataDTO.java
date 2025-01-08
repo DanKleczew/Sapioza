@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.dto;
+package fr.pantheonsorbonne.global;
 
 import fr.pantheonsorbonne.enums.ResearchField;
 
@@ -9,7 +9,6 @@ public record PaperMetaDataDTO(
         Long PaperId,
         String title,
         Long authorId,
-        ResearchField field,
         Date publicationDate
 ){
     // Transaction DTO between the paper-service and the notification-service

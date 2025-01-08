@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.camel.handler;
 
-import fr.pantheonsorbonne.camel.gateway.NotificationGateway;
 import fr.pantheonsorbonne.service.PaperService;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;

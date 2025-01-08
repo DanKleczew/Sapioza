@@ -1,14 +1,18 @@
 package fr.pantheonsorbonne.service;
 
+import fr.pantheonsorbonne.global.PaperContentDTO;
 import fr.pantheonsorbonne.camel.gateway.NotificationGateway;
 import fr.pantheonsorbonne.camel.gateway.StorageGateway;
 import fr.pantheonsorbonne.dao.PaperDAO;
 import fr.pantheonsorbonne.dto.*;
+import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
+import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.mappers.PaperMapper;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -51,11 +55,22 @@ public class PaperService {
         }
 
         PaperMetaDataDTO paperMetaDataDTO = this.mapPaperToPaperMetaDataDTO(paper);
-        this.notificationGateway.sendToNotification(paperMetaDataDTO);
+        try {
+            // Send Paper Metadata to notification-service
+            this.notificationGateway.newPaper(paperMetaDataDTO);
+            PaperContentDTO paperContentDTO = new PaperContentDTO(paper.getId(), completePaperDTO.body());
 
-        PaperBodyDTO paperBodyDTO = new PaperBodyDTO(paper.getId(), completePaperDTO.body());
-        this.storageGateway.sendToStorage(paperBodyDTO);
-
+            // Send Paper Content to storage-service
+            this.storageGateway.newPaper(paperContentDTO);
+        } catch (InternalCommunicationException e) {
+            // Rollback
+            try {
+                this.deletePaper(paper.getId());
+            } catch (PaperNotFoundException ex) {
+                Log.warn("Paper not found while attempting to delete: " + paper.getId());
+            }
+            throw new PaperNotCreatedException();
+        }
         return paperMetaDataDTO;
     }
 
@@ -66,6 +81,12 @@ public class PaperService {
             throw new PaperNotFoundException(id);
         }
         paperDAO.deletePaper(paper);
+
+        try {
+            this.storageGateway.deletePaper(id);
+        } catch (InternalCommunicationException e) {
+            Log.error("Error while sending deletion order to storage-service");
+        }
     }
 
     private PaperMetaDataDTO mapPaperToPaperMetaDataDTO(Paper paper) {
@@ -73,7 +94,6 @@ public class PaperService {
             paper.getId(),
             paper.getTitle(),
             paper.getAuthorId(),
-            paper.getField(),
             paper.getPublicationDate()
         );
     }

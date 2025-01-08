@@ -1,30 +1,38 @@
 package fr.pantheonsorbonne.camel;
 
 import fr.pantheonsorbonne.camel.handler.PersistFailureHandler;
+import fr.pantheonsorbonne.global.GlobalRoutes;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class CamelRoute extends RouteBuilder {
 
+        @Inject
+        RoutingService routingService;
+
         @Override
-        public void configure() throws Exception {
+        public void configure(){
 
                 // Publishing process for a new paper
-                from("direct:toNotification")
-                        .to("jms:queue:newPaperMetaDonnees");
+                from(routingService.getLocalRoute(Routes.NEW_TO_NOTIF))
+                        .to(routingService.getGlobalRoute(GlobalRoutes.NEW_PAPER_P2N));
 
-                from("direct:toStorage")
-                        .to("jms:queue:newPaperBody");
+                from(routingService.getLocalRoute(Routes.NEW_TO_STORAGE))
+                        .to(routingService.getGlobalRoute(GlobalRoutes.NEW_PAPER_P2S));
 
                 // Fallback process for failed persistence in any of the two services
-                from("jms:queue:notificationPersistFailed")
+                from(routingService.getGlobalRoute(GlobalRoutes.PERSIST_FAIL_N2P))
                         .bean(PersistFailureHandler.class, "handle(${id})");
 
-                from("jms:queue:storagePersistFailed")
+                from(routingService.getGlobalRoute(GlobalRoutes.PERSIST_FAIL_S2P))
                         .bean(PersistFailureHandler.class, "handle(${id})");
 
-
+                // Deleting process for a paper
+                from(routingService.getLocalRoute(Routes.DELETE_COMMAND_TO_STORAGE))
+                        .to(routingService.getGlobalRoute(GlobalRoutes.DELETE_PAPER_P2S));
 
 
 

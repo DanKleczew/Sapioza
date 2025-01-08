@@ -1,13 +1,11 @@
 package fr.pantheonsorbonne.resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.pantheonsorbonne.dto.CompletePaperDTO;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.dto.PaperDTO;
-import fr.pantheonsorbonne.dto.PaperMetaDataDTO;
+import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
-import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.enums.ResearchField;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.service.PaperService;
