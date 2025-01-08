@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.dao;
 
 import fr.pantheonsorbonne.dto.FilterDTO;
+import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,13 +18,13 @@ public class PaperDAO {
     @PersistenceContext
     EntityManager em;
 
-    public Paper getPaper(long id){
+    public Paper getPaper(Long id) throws PaperDatabaseAccessException {
         Paper paper = null;
         try {
             paper = em.find(Paper.class, id);
 
         } catch (RuntimeException re) {
-            Log.error("getPaperInfos failed : ", re);
+            throw new PaperDatabaseAccessException();
         }
         return paper;
     }
@@ -64,12 +65,20 @@ public class PaperDAO {
         return papers;
     }
 
-    public Paper createPaper(Paper paper) {
+    public Paper createPaper(Paper paper) throws PaperDatabaseAccessException {
         try {
             em.persist(paper);
         } catch (RuntimeException re) {
-            Log.error("createPaper failed", re);
+            throw new PaperDatabaseAccessException();
         }
         return paper;
+    }
+
+    public void deletePaper(Paper paper) throws PaperDatabaseAccessException {
+        try {
+            em.remove(paper);
+        } catch (RuntimeException re) {
+            throw new PaperDatabaseAccessException();
+        }
     }
 }

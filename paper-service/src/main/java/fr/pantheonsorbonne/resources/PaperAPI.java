@@ -5,6 +5,7 @@ import fr.pantheonsorbonne.dto.CompletePaperDTO;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.dto.PaperDTO;
 import fr.pantheonsorbonne.dto.PaperMetaDataDTO;
+import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
 import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.enums.ResearchField;
@@ -28,9 +29,20 @@ public class PaperAPI {
     @Path("/{id}")
     public Response getPaperInfos(@PathParam("id") Long id) {
         try {
-            return Response.ok(this.paperService.getPaperInfos(id)).build();
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(this.paperService.getPaperInfos(id))
+                    .build();
         } catch (PaperNotFoundException e) {
-           return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                   .entity(e.getMessage())
+                    .build();
+        } catch (PaperDatabaseAccessException e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
         }
     }
 
@@ -68,10 +80,31 @@ public class PaperAPI {
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getMessage())
                     .build();
-        } catch (Exception e) {
+        } catch (PaperDatabaseAccessException e) {
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Internal server error")
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Path("/delete/{articleId}")
+    public Response deletePaper(@PathParam("articleId") Long id) {
+        try {
+            this.paperService.deletePaper(id);
+            return Response
+                    .status(Response.Status.NO_CONTENT)
+                    .build();
+        } catch (PaperNotFoundException e) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (PaperDatabaseAccessException e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
                     .build();
         }
     }

@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.camel.gateway.NotificationGateway;
 import fr.pantheonsorbonne.camel.gateway.StorageGateway;
 import fr.pantheonsorbonne.dao.PaperDAO;
 import fr.pantheonsorbonne.dto.*;
+import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
 import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
@@ -28,7 +29,7 @@ public class PaperService {
     @Inject
     StorageGateway storageGateway;
 
-    public PaperDTO getPaperInfos(Long id) throws PaperNotFoundException {
+    public PaperDTO getPaperInfos(Long id) throws PaperNotFoundException, PaperDatabaseAccessException {
         Paper paper = paperDAO.getPaper(id);
         if (paper == null) {
             throw new PaperNotFoundException(id);
@@ -40,7 +41,8 @@ public class PaperService {
         return paperDAO.filterPapers(filter).stream().map(paperMapper::mapEntityToDTO).toList();
     }
 
-    public PaperMetaDataDTO createPaper(CompletePaperDTO completePaperDTO) throws PaperNotCreatedException{
+    public PaperMetaDataDTO createPaper(CompletePaperDTO completePaperDTO) throws PaperNotCreatedException,
+                                                                                  PaperDatabaseAccessException {
         Paper paper = paperMapper.mapDTOToEntity(completePaperDTO.metaData());
 
         paper = paperDAO.createPaper(paper);
@@ -55,6 +57,15 @@ public class PaperService {
         this.storageGateway.sendToStorage(paperBodyDTO);
 
         return paperMetaDataDTO;
+    }
+
+    public void deletePaper(Long id) throws PaperNotFoundException,
+                                            PaperDatabaseAccessException {
+        Paper paper = paperDAO.getPaper(id);
+        if (paper == null) {
+            throw new PaperNotFoundException(id);
+        }
+        paperDAO.deletePaper(paper);
     }
 
     private PaperMetaDataDTO mapPaperToPaperMetaDataDTO(Paper paper) {
