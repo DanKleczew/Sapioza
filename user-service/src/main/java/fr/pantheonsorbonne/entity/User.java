@@ -1,10 +1,14 @@
 package fr.pantheonsorbonne.entity;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Transactional
 @Entity
 @Table(name = "User", indexes = @Index(name = "index_email", columnList = "email"))
 public class User {
@@ -17,6 +21,8 @@ public class User {
     private String firstName;
     private String email;
     private String password;
+    private Date creationDate = new Date();
+    private Date deletionDate;
 
     @ManyToMany(targetEntity = User.class)
     @JoinTable(name = "User_User",
@@ -26,9 +32,15 @@ public class User {
 
     public User() {
     }
-
     public User(Long id, String name, String firstName, String email, String password) {
         this.id = id;
+        this.name = name;
+        this.firstName = firstName;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(String name, String firstName, String email, String password) {
         this.name = name;
         this.firstName = firstName;
         this.email = email;
@@ -104,5 +116,17 @@ public class User {
 
     public boolean isFollowing(User user) {
         return this.Users.contains(user);
+    }
+
+    public void subscribeTo(User user) {
+        this.addFollower(user);
+    }
+
+    public void setDeletionDate() {
+        this.deletionDate = new Date();
+    }
+
+    public List<Long> getUsersIds() {
+        return this.Users.stream().map(User::getId).collect(Collectors.toList());
     }
 }
