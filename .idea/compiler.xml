@@ -14,8 +14,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="paper-service (1)" target="21" />
-      <module name="User-service3" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
