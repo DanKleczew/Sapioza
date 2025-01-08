@@ -1,44 +1,34 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.dto.Filter;
-import fr.pantheonsorbonne.entity.Paper;
-import fr.pantheonsorbonne.enums.ResearchField;
+import fr.pantheonsorbonne.dto.FilterDTO;
+import fr.pantheonsorbonne.model.Paper;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class PaperDAO {
 
-    @Inject
+    @PersistenceContext
     EntityManager em;
 
-    @Transactional
     public Paper getPaper(long id){
         Paper paper = null;
         try {
             paper = em.find(Paper.class, id);
-            Paper paper2 = new Paper();
-            paper2.setTitle("test");
-            paper2.setAuthorId(1);
-            paper2.setField(ResearchField.ART);
-
-            em.persist(paper2);
-            em.flush();
 
         } catch (RuntimeException re) {
-            Log.error("getPaperInfos failed", re);
+            Log.error("getPaperInfos failed : ", re);
         }
         return paper;
     }
 
-    public List<Paper> filter(Filter filter) {
+    public List<Paper> filterPapers(FilterDTO filter) {
         List<Paper> papers = null;
         String query = "SELECT p FROM Paper p WHERE ";
         if (filter.title() != null) {
@@ -72,5 +62,14 @@ public class PaperDAO {
             Log.error("getFilteredPapers failed", re);
         }
         return papers;
+    }
+
+    public Paper createPaper(Paper paper) {
+        try {
+            em.persist(paper);
+        } catch (RuntimeException re) {
+            Log.error("createPaper failed", re);
+        }
+        return paper;
     }
 }

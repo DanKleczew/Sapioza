@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.entity;
+package fr.pantheonsorbonne.model;
 
 import fr.pantheonsorbonne.enums.ResearchField;
 import jakarta.persistence.*;
@@ -8,14 +8,14 @@ import java.util.Date;
 @Entity
 public class Paper {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Basic
     private String title;
 
     @Basic
-    private long authorId;
+    private Long authorId;
 
     @Basic
     private ResearchField field;
@@ -28,6 +28,9 @@ public class Paper {
 
     @Basic
     private String keywords;
+
+    @Basic
+    private String abstract_;
 
     public void setId(Long id) {
         this.id = id;
@@ -43,7 +46,7 @@ public class Paper {
     public String getTitle() {
         return title;
     }
-    public void setAuthorId(long authorId) {
+    public void setAuthorId(Long authorId) {
         this.authorId = authorId;
     }
     public long getAuthorId() {
@@ -72,6 +75,13 @@ public class Paper {
     }
     public String getKeywords() {
         return keywords;
+    }
+
+    public void setAbstract_(String abstract_) {
+        this.abstract_ = abstract_;
+    }
+    public String getAbstract_() {
+        return abstract_;
     }
 
 }
