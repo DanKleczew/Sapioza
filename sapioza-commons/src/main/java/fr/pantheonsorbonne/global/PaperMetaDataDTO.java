@@ -1,7 +1,5 @@
 package fr.pantheonsorbonne.global;
 
-import fr.pantheonsorbonne.enums.ResearchField;
-
 import java.util.Date;
 import java.util.List;
 
