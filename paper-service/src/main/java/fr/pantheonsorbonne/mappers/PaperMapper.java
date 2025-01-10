@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.mappers;
 
 import fr.pantheonsorbonne.dto.PaperDTO;
+import fr.pantheonsorbonne.global.EntityDTOMapper;
+import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.model.Paper;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -30,5 +32,14 @@ public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
         paper.setKeywords(dto.keywords());
         paper.setAbstract_(dto.abstract_());
         return paper;
+    }
+
+    public PaperMetaDataDTO mapPaperToPaperMetaDataDTO(Paper paper) {
+        return new PaperMetaDataDTO(
+                paper.getId(),
+                paper.getTitle(),
+                paper.getAuthorId(),
+                paper.getPublicationDate()
+        );
     }
 }

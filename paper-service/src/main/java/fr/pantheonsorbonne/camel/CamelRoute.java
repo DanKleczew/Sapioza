@@ -19,10 +19,7 @@ public class CamelRoute extends RouteBuilder {
                 from(Routes.NEW_TO_STORAGE.getRoute())
                         .to(GlobalRoutes.NEW_PAPER_P2S.getRoute());
 
-                // Fallback process for failed persistence in any of the two services
-                from(GlobalRoutes.PERSIST_FAIL_N2P.getRoute())
-                        .bean(PersistFailureHandler.class, "handle(${id})");
-
+                // Fallback process for failed persistence storage-service
                 from(GlobalRoutes.PERSIST_FAIL_S2P.getRoute())
                         .bean(PersistFailureHandler.class, "handle(${id})");
 
