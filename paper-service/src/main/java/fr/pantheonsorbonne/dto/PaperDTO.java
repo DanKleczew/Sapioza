@@ -15,7 +15,8 @@ public record PaperDTO(
         String publishedIn,
         Date publicationDate,
         String keywords,
-        String abstract_
+        String abstract_,
+        String DOI
         ) {
         // DTO mirror of the Paper entity
 }

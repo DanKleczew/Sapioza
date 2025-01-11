@@ -11,14 +11,14 @@ public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
     @Override
     public PaperDTO mapEntityToDTO(Paper entity) {
         return new PaperDTO(
-            entity.getTitle(),
-            entity.getAuthorId(),
-            entity.getField(),
-            entity.getPublishedIn(),
-            entity.getPublicationDate(),
-            entity.getKeywords(),
-            entity.getAbstract_()
-        );
+                entity.getTitle(),
+                entity.getAuthorId(),
+                entity.getField(),
+                entity.getPublishedIn(),
+                entity.getPublicationDate(),
+                entity.getKeywords(),
+                entity.getAbstract_(),
+                entity.getDOI());
     }
 
     @Override
@@ -31,6 +31,7 @@ public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
         paper.setPublicationDate(dto.publicationDate());
         paper.setKeywords(dto.keywords());
         paper.setAbstract_(dto.abstract_());
+        paper.setDOI(dto.DOI());
         return paper;
     }
 

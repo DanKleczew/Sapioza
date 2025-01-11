@@ -14,7 +14,6 @@ public class CamelRoute extends RouteBuilder {
                 // Publishing process for a new paper
                 from(Routes.NEW_TO_NOTIF.getRoute())
                         .to(GlobalRoutes.NEW_PAPER_P2N.getRoute());
- //                       .to(routingService.getGlobalRoute(GlobalRoutes.NEW_PAPER_P2N));
 
                 from(Routes.NEW_TO_STORAGE.getRoute())
                         .to(GlobalRoutes.NEW_PAPER_P2S.getRoute());

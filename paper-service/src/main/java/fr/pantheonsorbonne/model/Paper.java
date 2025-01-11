@@ -32,6 +32,9 @@ public class Paper {
     @Basic
     private String abstract_;
 
+    @Basic
+    private String DOI;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -76,12 +79,13 @@ public class Paper {
     public String getKeywords() {
         return keywords;
     }
-
     public void setAbstract_(String abstract_) {
         this.abstract_ = abstract_;
     }
     public String getAbstract_() {
         return abstract_;
     }
+    public void setDOI(String DOI) { this.DOI = DOI; }
+    public String getDOI() { return DOI; }
 
 }
