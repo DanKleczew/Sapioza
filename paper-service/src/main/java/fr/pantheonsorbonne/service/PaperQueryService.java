@@ -30,6 +30,6 @@ public class PaperQueryService {
     }
 
     public List<PaperDTO> getFilteredPapers(FilterDTO filter) {
-        return paperQueryDAO.filterPapers(filter).stream().map(paperMapper::mapEntityToDTO).toList();
+        return paperQueryDAO.getFilteredPapers(filter).stream().map(paperMapper::mapEntityToDTO).toList();
     }
 }
