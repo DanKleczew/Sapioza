@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.dao;
 
+import fr.pantheonsorbonne.dao.interfaces.QueryDAOInterface;
 import fr.pantheonsorbonne.dto.FilterDTO;
+import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,23 +14,23 @@ import java.util.List;
 
 @ApplicationScoped
 @Transactional
-public class PaperDAO {
+public class PaperQueryDAO implements QueryDAOInterface {
 
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
-    public Paper getPaper(long id){
+    public Paper getPaper(Long id) throws PaperDatabaseAccessException {
         Paper paper = null;
         try {
             paper = em.find(Paper.class, id);
 
         } catch (RuntimeException re) {
-            Log.error("getPaperInfos failed : ", re);
+            throw new PaperDatabaseAccessException();
         }
         return paper;
     }
 
-    public List<Paper> filterPapers(FilterDTO filter) {
+    public List<Paper> getFilteredPapers(FilterDTO filter) {
         List<Paper> papers = null;
         String query = "SELECT p FROM Paper p WHERE ";
         if (filter.title() != null) {
@@ -64,12 +66,4 @@ public class PaperDAO {
         return papers;
     }
 
-    public Paper createPaper(Paper paper) {
-        try {
-            em.persist(paper);
-        } catch (RuntimeException re) {
-            Log.error("createPaper failed", re);
-        }
-        return paper;
-    }
 }
