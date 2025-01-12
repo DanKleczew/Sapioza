@@ -2,10 +2,7 @@ package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.ReviewDAO;
 import fr.pantheonsorbonne.dto.ReviewDTO;
-import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
-import fr.pantheonsorbonne.exception.PaperNotFoundException;
-import fr.pantheonsorbonne.exception.ReviewNotCreatedException;
-import fr.pantheonsorbonne.exception.ReviewNotFoundException;
+import fr.pantheonsorbonne.exception.*;
 import fr.pantheonsorbonne.mappers.ReviewMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,12 +19,8 @@ public class ReviewService {
     @Inject
     ReviewMapper reviewMapper;
 
-    public void addReview(ReviewDTO reviewDTO) throws ReviewNotCreatedException {
-        try {
-            this.reviewDAO.addReview(this.reviewMapper.mapDTOToEntity(reviewDTO));
-        } catch (PaperDatabaseAccessException e) {
-            throw new ReviewNotCreatedException();
-        }
+    public void addReview(ReviewDTO reviewDTO) throws ReviewAlreadyExistsException {
+        this.reviewDAO.addReview(this.reviewMapper.mapDTOToEntity(reviewDTO));
     }
 
     public List<ReviewDTO> getAllReviews(Long articleId) throws PaperNotFoundException {

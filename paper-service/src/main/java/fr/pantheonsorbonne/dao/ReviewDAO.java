@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.dao;
 
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
+import fr.pantheonsorbonne.exception.ReviewAlreadyExistsException;
 import fr.pantheonsorbonne.exception.ReviewNotFoundException;
 import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.model.Review;
@@ -24,9 +25,12 @@ public class ReviewDAO {
     @Inject
     PaperQueryDAO paperQueryDAO;
 
-    public void addReview(Review review) {
+    public void addReview(Review review) throws ReviewAlreadyExistsException {
         try {
-            // todo : Test if one review does not already exist for this paper and user
+            Long reviewId = this.getReviewId(review.getPaper().getId(), review.getCommentAuthorId());
+            if (reviewId != null) {
+                throw new ReviewAlreadyExistsException(review.getPaper().getId(), review.getCommentAuthorId());
+            }
             this.em.persist(review);
         } catch (RuntimeException e) {
             throw new PaperDatabaseAccessException();
@@ -48,10 +52,7 @@ public class ReviewDAO {
 
     public void removeReview(Long paperId, Long reviewerId) throws ReviewNotFoundException {
         try {
-            Long reviewId = null;
-            reviewId = (Long) this.em
-                    .createQuery("SELECT r.id FROM Review r WHERE r.paper.id = :paperId AND r.commentAuthorId = :reviewerId")
-                    .getSingleResult();
+            Long reviewId = this.getReviewId(paperId, reviewerId);
             if (reviewId == null) {
                 throw new ReviewNotFoundException(paperId, reviewerId);
             }
@@ -60,5 +61,15 @@ public class ReviewDAO {
         } catch (RuntimeException e){
             throw new PaperDatabaseAccessException();
         }
+    }
+
+    private Long getReviewId(Long paperId, Long reviewerId) {
+        Long reviewId = null;
+        reviewId = (Long) this.em
+                .createQuery("SELECT r.id FROM Review r WHERE r.paper.id = :paperId AND r.commentAuthorId = :reviewerId")
+                .setParameter("paperId", paperId)
+                .setParameter("reviewerId", reviewerId)
+                .getSingleResult();
+        return reviewId;
     }
 }

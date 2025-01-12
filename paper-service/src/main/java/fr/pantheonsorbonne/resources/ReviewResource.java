@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.resources;
 
 import fr.pantheonsorbonne.dto.ReviewDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
-import fr.pantheonsorbonne.exception.ReviewNotCreatedException;
+import fr.pantheonsorbonne.exception.ReviewAlreadyExistsException;
 import fr.pantheonsorbonne.exception.ReviewNotFoundException;
 import fr.pantheonsorbonne.resources.interfaces.ReviewResourceInterface;
 import fr.pantheonsorbonne.service.ReviewService;
@@ -32,7 +32,13 @@ public class ReviewResource implements ReviewResourceInterface {
                     .status(Response.Status.BAD_REQUEST)
                     .build();
         }
-        catch (ReviewNotCreatedException e) {
+        catch (ReviewAlreadyExistsException e) {
+            return Response
+                    .status(Response.Status.UNAUTHORIZED)
+                    .entity(e.getMessage())
+                    .build();
+        }
+        catch (RuntimeException e) {
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getMessage())
