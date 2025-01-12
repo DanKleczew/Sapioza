@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.dto.UserDTO;
-import fr.pantheonsorbonne.entity.User;
+import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import io.quarkus.logging.Log;
@@ -57,7 +56,7 @@ public class UserDAO {
         try {
             User user = this.getUserById(id);
             user.setName(name);
-            em.merge(user);
+            this.updateUser(user);
         } catch (RuntimeException re) {
             Log.error("updateUserName failed", re);
         }
@@ -67,7 +66,7 @@ public class UserDAO {
         try {
             User user = this.getUserById(id);
             user.setFirstName(firstName);
-            em.merge(user);
+            this.updateUser(user);
         } catch (RuntimeException re) {
             Log.error("updateUserFirstName failed", re);
         }
@@ -84,7 +83,7 @@ public class UserDAO {
             }
             user.addFollower(u);
         }
-        em.merge(user);
+        this.updateUser(user);
         return user.getUsers();
     }
 
@@ -100,27 +99,19 @@ public class UserDAO {
             }
             user.addFollower(follower);
         }
-        em.merge(user);
+        this.updateUser(user);
         return user.getUsers();
     }
 
-    public UserDTO deleteUserById(Long id){
+    public void deleteUserById(Long id){
         User user = em.find(User.class, id);
-        return this.deleteUser(user);
+        this.deleteUser(user);
     }
 
-    public UserDTO deleteUser(User user){
+
+    public void deleteUser(User user){
         user.setDeletionDate();
-        UserDTO userDTO = new UserDTO(
-                user.getId(),
-                user.getName(),
-                user.getFirstName(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getUsersIds()
-        );
-        em.merge(user);
-        return userDTO;
+        this.updateUser(user);
     }
 
     //will be deleted
@@ -131,4 +122,37 @@ public class UserDAO {
         this.deleteUser(user);
     }
 
+    public User connection(String email, String password) {
+        User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                .setParameter("email", email)
+                .getSingleResult();
+        if (user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
+
+
+    public User getUserByEmail(String email) {
+        User user = null;
+        try {
+            user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+        } catch (RuntimeException re) {
+            Log.error("getUserByEmail failed", re);
+        }
+        return user;
+    }
+
+    public List<User> getFollows(long id){
+        List<User> follow = null;
+        try {
+            follow = em.createQuery("SELECT u.id FROM User u LEFT JOIN User_User uu ON u.id = uu.User_id WHERE uu.Follower_id   = :id", User.class)
+                    .setParameter("id", id)
+                    .getResultList();
+        } catch (RuntimeException re) {
+            Log.error("getFollows failed", re);
+        }
+    }
 }

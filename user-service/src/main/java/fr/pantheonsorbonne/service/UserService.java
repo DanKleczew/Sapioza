@@ -3,7 +3,10 @@ package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.UserDAO;
 import fr.pantheonsorbonne.dto.UserDTO;
-import fr.pantheonsorbonne.entity.User;
+import fr.pantheonsorbonne.dto.UserRegistrationDTO;
+import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.mappers.UserMapper;
+import fr.pantheonsorbonne.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,6 +19,9 @@ public class UserService {
 
     @Inject
     UserDAO userDAO;
+
+    @Inject
+    UserMapper userMapper;
 
     @Transactional
     public User getUserInfos(long id) {
@@ -39,25 +45,34 @@ public class UserService {
         return userDAO.getUserById(id).getUsers();
     }
 
+    public List<User> getSubscribers(String email) {
+        return userDAO.getUserByEmail(email).getUsers();
+    }
+
     @Transactional
-    public void createAccount(
-            String name,
-            String firstName,
-            String email,
-            String password
-    ) {
-        User user = new User(name, firstName, email, password);
+    public void createAccount(UserRegistrationDTO userRegistrationDTO) {
+        UserDTO userDTO = userMapper.mapRegistrationToUserDTO(userRegistrationDTO);
+        User user = userMapper.mapDTOToEntity(userDTO);
         userDAO.updateUser(user);
     }
 
     @Transactional
-    public UserDTO deleteUser(Long id) {
-        return userDAO.deleteUserById(id);
+    public void deleteUser(Long id) {
+        userDAO.deleteUserById(id);
     }
 
     @Transactional
     public void createTestUser() {
         userDAO.createTestUser();
+    }
+
+    public Long connectionUser(String email, String password) throws ConnectionException {
+        User user = userDAO.connection(email, password);
+        UserDTO userDTO = userMapper.mapEntityToDTO(user);
+        if (userDTO == null) {
+            throw new ConnectionException(email, new Throwable());
+        }
+        return userDTO.id();
     }
 
 

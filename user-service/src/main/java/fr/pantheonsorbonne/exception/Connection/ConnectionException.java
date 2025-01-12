@@ -1,9 +1,9 @@
 package fr.pantheonsorbonne.exception.Connection;
 
 public class ConnectionException extends Exception {
-    private static final String connexionMessage = "Connection or register error";
+    private static final String connectionMessage = "Connection or register error";
     public ConnectionException(String message) {
-        super( connexionMessage+ " : \n" + message);
+        super( connectionMessage+ " : " + message);
     }
 
     public ConnectionException(String userMail, Throwable cause) {

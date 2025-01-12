@@ -1,11 +1,9 @@
-package fr.pantheonsorbonne.entity;
+package fr.pantheonsorbonne.model;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Transactional
