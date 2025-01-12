@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.service.UserService;
@@ -55,15 +56,25 @@ public class UserAPI {
         @Produces(MediaType.APPLICATION_JSON)
         @Path("/subscribers/{mail}")
         public Response getSubscribers(@PathParam("mail") String mail) {
-                List<User> users = userService.getSubscribers(id);
+                List<User> users = userService.getSubscribers(mail);
                 for (User user : users) {
                         System.out.println(user.toString() + " HERE \n" );
                 }
+                Log.debug("UserAPI.getSubscribers called with id=" + mail);
+                return Response.ok().build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/informations/{id}")
+        public Response findUsersFollowedByNative(@PathParam("id") long id) {
+                //List<Long> users = userService.findUserFollowersID(id);
+                List<UserDTO> users = userService.findUserFollowersDTO(id);
                 Log.debug("UserAPI.getSubscribers called with id=" + id);
                 return Response.ok().build();
         }
 
-
+        /*
         @POST
         @Consumes(MediaType.APPLICATION_JSON)
         @Produces(MediaType.APPLICATION_JSON)
@@ -74,5 +85,7 @@ public class UserAPI {
                 Log.debug("UserAPI.createAccount called with name=" + name + " firstName=" + firstName + " email=" + email + " password=" + password);
                 return Response.ok().build();
         }
+
+         */
 
 }

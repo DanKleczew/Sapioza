@@ -145,14 +145,10 @@ public class UserDAO {
         return user;
     }
 
-    public List<User> getFollows(long id){
-        List<User> follow = null;
-        try {
-            follow = em.createQuery("SELECT u.id FROM User u LEFT JOIN User_User uu ON u.id = uu.User_id WHERE uu.Follower_id   = :id", User.class)
-                    .setParameter("id", id)
-                    .getResultList();
-        } catch (RuntimeException re) {
-            Log.error("getFollows failed", re);
-        }
+    public List<User> findUserFollowers(Long followerId) {
+        return em.createNativeQuery("SELECT u.* FROM User u LEFT JOIN User_User uu ON u.id = uu.Follower_id WHERE uu.User_id = :id", User.class)
+                //.setParameter(followerId, "id")
+                .setParameter("id", followerId) // Correctly bind the parameter
+                .getResultList();
     }
 }

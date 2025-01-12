@@ -7,4 +7,18 @@ public record UserDTO(Long id,
                       String firstName,
                       String email,
                       String password,
-                      List<Long> UsersIds) {}
+                      List<Long> UsersIds) {
+
+    @Override
+    public String toString(){
+        return "UserDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", UsersIds=" + UsersIds.toString() +
+                '}';
+    }
+}
+

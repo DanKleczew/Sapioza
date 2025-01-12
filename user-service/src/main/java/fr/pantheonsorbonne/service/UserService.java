@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,6 +74,31 @@ public class UserService {
             throw new ConnectionException(email, new Throwable());
         }
         return userDTO.id();
+    }
+
+    public List<Long> findUserFollowersID(Long id) {
+        List<User> users = this.findUserFollowers(id);
+        List<Long> followersList = new ArrayList<>();
+        for (User user : users) {
+            followersList.add(user.getId());
+            System.out.println(user.toString() + " is a follow " + id );
+        }
+        return followersList;
+    }
+
+    public List<User> findUserFollowers(Long id){
+        return userDAO.findUserFollowers(id);
+    }
+
+    public List<UserDTO> findUserFollowersDTO(Long id){
+        List<User> users = this.findUserFollowers(id);
+        List<UserDTO> followersList = new ArrayList<>();
+        for (User user : users) {
+            followersList.add(userMapper.mapEntityToDTO(user));
+            System.out.println(userMapper.mapEntityToDTO(user) + " is a follow " + id );
+        }
+        //System.out.println(followersList);
+        return followersList;
     }
 
 

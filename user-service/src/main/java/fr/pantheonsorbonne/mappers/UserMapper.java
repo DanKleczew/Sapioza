@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.mappers;
 
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
+
 import fr.pantheonsorbonne.global.EntityDTOMapper;
 import fr.pantheonsorbonne.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -42,6 +43,4 @@ public class UserMapper implements EntityDTOMapper<UserDTO, User> {
                 dto.password(),
                 null);
     }
-
-
 }
