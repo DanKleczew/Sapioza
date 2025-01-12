@@ -3,6 +3,11 @@ package fr.pantheonsorbonne.mapper;
 import fr.pantheonsorbonne.dto.NotificationDTO;
 import fr.pantheonsorbonne.entity.NotificationEntity;
 
+
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+
 public class NotificationEntityDtoMapper {
 
     public NotificationDTO mapToDTO(NotificationEntity entity) {
