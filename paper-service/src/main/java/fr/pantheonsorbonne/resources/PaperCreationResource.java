@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dto.CompletePaperDTO;
+import fr.pantheonsorbonne.dto.SubmittedPaperDTO;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
@@ -20,9 +20,9 @@ public class PaperCreationResource implements CreationResourceInterface {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/submit")
-    public Response createPaper(CompletePaperDTO completePaperDTO) {
+    public Response createPaper(SubmittedPaperDTO submittedPaperDTO) {
         try {
-            PaperMetaDataDTO paperMetaDataDTO = this.paperCreationService.createPaper(completePaperDTO);
+            PaperMetaDataDTO paperMetaDataDTO = this.paperCreationService.createPaper(submittedPaperDTO);
             return Response
                     .status(Response.Status.CREATED)
                     .entity(paperMetaDataDTO)

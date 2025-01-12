@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.enums.ResearchField;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Paper {
@@ -11,10 +12,10 @@ public class Paper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Basic
+    @Basic(optional = false)
     private String title;
 
-    @Basic
+    @Basic(optional = false)
     private Long authorId;
 
     @Basic
@@ -29,11 +30,17 @@ public class Paper {
     @Basic
     private String keywords;
 
-    @Basic
+    @Basic(optional = false)
     private String abstract_;
 
     @Basic
     private String DOI;
+
+    @OneToMany
+    private List<Review> reviews;
+
+    @OneToMany
+    private List<Opinion> opinions;
 
     public void setId(Long id) {
         this.id = id;
@@ -87,5 +94,9 @@ public class Paper {
     }
     public void setDOI(String DOI) { this.DOI = DOI; }
     public String getDOI() { return DOI; }
+    public void setReviews(List<Review> reviews) { this.reviews = reviews; }
+    public List<Review> getReviews() { return reviews; }
+    public void setOpinions(List<Opinion> opinions) { this.opinions = opinions; }
+    public List<Opinion> getOpinions() { return opinions; }
 
 }

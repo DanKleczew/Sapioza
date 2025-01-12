@@ -1,9 +1,9 @@
 package fr.pantheonsorbonne.resources.interfaces;
 
-import fr.pantheonsorbonne.dto.CompletePaperDTO;
+import fr.pantheonsorbonne.dto.SubmittedPaperDTO;
 import jakarta.ws.rs.core.Response;
 
 public interface CreationResourceInterface {
 
-    Response createPaper(CompletePaperDTO cpd);
+    Response createPaper(SubmittedPaperDTO cpd);
 }

@@ -16,9 +16,11 @@ public record PaperDTO(
         Date publicationDate,
         String keywords,
         String abstract_,
-        String DOI
+        String DOI,
+        Integer likes,
+        List<String> comments
         ) {
-        // DTO mirror of the Paper entity
+        // Mirror DTO of the Paper entity
 }
 
 

@@ -3,7 +3,7 @@ package fr.pantheonsorbonne.service;
 import fr.pantheonsorbonne.camel.gateway.NotificationGateway;
 import fr.pantheonsorbonne.camel.gateway.StorageGateway;
 import fr.pantheonsorbonne.dao.PaperCreationDAO;
-import fr.pantheonsorbonne.dto.CompletePaperDTO;
+import fr.pantheonsorbonne.dto.SubmittedPaperDTO;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
@@ -34,12 +34,13 @@ public class PaperCreationService {
     @Inject
     PaperDeletionService paperDeletionService;
 
-    public PaperMetaDataDTO createPaper(CompletePaperDTO completePaperDTO) throws PaperNotCreatedException,
+    public PaperMetaDataDTO createPaper(SubmittedPaperDTO submittedPaperDTO) throws PaperNotCreatedException,
             PaperDatabaseAccessException {
-        Paper paper = paperMapper.mapDTOToEntity(completePaperDTO.metaData());
+        Paper paper = paperMapper.mapDTOToEntity(submittedPaperDTO.metaData());
 
-        paper = paperCreationDAO.createPaper(paper);
-        if (paper.getId() == null) {
+        try {
+            paper = paperCreationDAO.createPaper(paper);
+        } catch (PaperDatabaseAccessException e) {
             throw new PaperNotCreatedException();
         }
 
@@ -47,7 +48,7 @@ public class PaperCreationService {
         try {
             // Send Paper Metadata to notification-service
             this.notificationGateway.newPaper(paperMetaDataDTO);
-            PaperContentDTO paperContentDTO = new PaperContentDTO(paper.getId(), completePaperDTO.body());
+            PaperContentDTO paperContentDTO = new PaperContentDTO(paper.getId(), submittedPaperDTO.body());
 
             // Send Paper Content to storage-service
             this.storageGateway.newPaper(paperContentDTO);
