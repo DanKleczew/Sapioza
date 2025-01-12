@@ -4,6 +4,7 @@ public enum Routes {
     NEW_TO_NOTIF("direct:newPaperToNotification"),
     NEW_TO_STORAGE("direct:newPaperToStorage"),
     DELETE_COMMAND_TO_STORAGE("direct:deletePaperToStorage"),
+    GENERATE_PDF("direct:generatePDF"),
     ;
 
     private final String route;

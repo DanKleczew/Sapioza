@@ -4,7 +4,10 @@ import fr.pantheonsorbonne.dto.PaperDTO;
 import fr.pantheonsorbonne.global.EntityDTOMapper;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.model.Paper;
+import fr.pantheonsorbonne.model.Review;
 import jakarta.enterprise.context.ApplicationScoped;
+
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
@@ -18,7 +21,12 @@ public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
                 entity.getPublicationDate(),
                 entity.getKeywords(),
                 entity.getAbstract_(),
-                entity.getDOI());
+                entity.getDOI(),
+                entity.getOpinions().toArray().length,
+                entity.getReviews()
+                        .stream()
+                        .map(Review::getComment)
+                        .collect(Collectors.toList()));
     }
 
     @Override

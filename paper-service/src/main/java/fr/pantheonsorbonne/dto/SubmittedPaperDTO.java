@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.dto;
 
-public record CompletePaperDTO(
+public record SubmittedPaperDTO(
         PaperDTO metaData,
         String body
 ) {
