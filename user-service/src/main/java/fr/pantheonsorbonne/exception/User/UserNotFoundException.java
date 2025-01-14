@@ -5,5 +5,9 @@ public class UserNotFoundException extends UserException {
         super("User with id :" + id + " not found");
     }
 
+    public UserNotFoundException(String uuid) {
+        super("User with uuid :" + uuid + " not found");
+    }
+
 
 }

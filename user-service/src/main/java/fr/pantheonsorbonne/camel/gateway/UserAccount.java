@@ -4,11 +4,13 @@ import fr.pantheonsorbonne.camel.Routes;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 
+@ApplicationScoped
 public class UserAccount {
 
     @Inject

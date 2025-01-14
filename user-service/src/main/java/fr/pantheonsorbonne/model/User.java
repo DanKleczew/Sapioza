@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.model;
 import fr.pantheonsorbonne.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Date;
 import java.util.List;
@@ -23,8 +24,12 @@ public class User {
     private Date creationDate = new Date();
     private Date deletionDate;
 
+
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
+
+    @UuidGenerator
+    private String uuid;
 
     @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinTable(name = "User_User",

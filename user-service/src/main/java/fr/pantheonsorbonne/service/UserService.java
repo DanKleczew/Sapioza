@@ -195,6 +195,13 @@ public class UserService {
         }
     }
 
+    public Long getUserIdByUui(String uuid) throws UserNotFoundException {
+        UserDTO userDTO = this.userDAO.getUserByUuid(uuid);
+        if(userDTO == null) {
+            throw new UserNotFoundException(uuid);
+        }
+        return userDTO.id();
+    }
 
 
 

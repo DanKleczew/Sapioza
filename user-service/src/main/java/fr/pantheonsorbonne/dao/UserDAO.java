@@ -1,10 +1,13 @@
 package fr.pantheonsorbonne.dao;
 
+import fr.pantheonsorbonne.dto.UserDTO;
+import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -17,6 +20,9 @@ public class UserDAO {
 
     @PersistenceContext
     EntityManager em;
+
+    @Inject
+    UserMapper userMapper;
 
 
     public User getUserById(Long id) {
@@ -161,6 +167,18 @@ public class UserDAO {
                 //em.createQuery("SELECT u FROM User u LEFT JOIN User_User uu ON u.id = uu.User_id WHERE uu.Follower_id = :id", User.class)
                 .setParameter("id", followerId) // Correctly bind the parameter
                 .getResultList();
+    }
+
+    public UserDTO getUserByUuid(String uuid) {
+        User user = null;
+        try {
+            user = em.createQuery("SELECT u FROM User u WHERE u.uuid = :uuid", User.class)
+                    .setParameter("uuid", uuid)
+                    .getSingleResult();
+        } catch (RuntimeException re) {
+            Log.error("getUserByUuid failed", re);
+        }
+        return userMapper.mapEntityToDTO(user);
     }
     /*
     public List<User> findUserFollowersByMail(String email) {
