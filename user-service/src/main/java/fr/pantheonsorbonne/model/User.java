@@ -1,11 +1,9 @@
-package fr.pantheonsorbonne.entity;
+package fr.pantheonsorbonne.model;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -14,7 +12,7 @@ import java.util.stream.Collectors;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -128,5 +126,13 @@ public class User {
 
     public List<Long> getUsersIds() {
         return this.Users.stream().map(User::getId).collect(Collectors.toList());
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }

@@ -1,21 +1,18 @@
 package fr.pantheonsorbonne.resources;
 
-//import fr.pantheonsorbonne.exception.PaperNotFoundException;
-//import fr.pantheonsorbonne.service.PaperService;
-import fr.pantheonsorbonne.dao.UserDAO;
-import fr.pantheonsorbonne.entity.User;
+import fr.pantheonsorbonne.dto.UserDTO;
+import fr.pantheonsorbonne.dto.UserRegistrationDTO;
+import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.service.UserService;
 import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static org.bouncycastle.oer.its.ieee1609dot2.CertificateId.name;
 
 @Path("/User")
 public class UserAPI {
@@ -57,23 +54,38 @@ public class UserAPI {
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/subscribers/{id}")
-        public Response getSubscribers(@PathParam("id") long id) {
-                List<User> users = userService.getSubscribers(id);
+        @Path("/subscribers/{mail}")
+        public Response getSubscribers(@PathParam("mail") String mail) {
+                List<User> users = userService.getSubscribers(mail);
                 for (User user : users) {
                         System.out.println(user.toString() + " HERE \n" );
                 }
-                Log.debug("UserAPI.getSubscribers called with id=" + id);
+                Log.debug("UserAPI.getSubscribers called with id=" + mail);
                 return Response.ok().build();
         }
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/createAccount/{name}/{firstName}/{email}/{password}")
-        public Response createAccount(@PathParam("name") String name, @PathParam("firstName") String firstName, @PathParam("email") String email, @PathParam("password") String password) {
-                userService.createAccount(name, firstName, email, password);
+        @Path("/informations/{id}")
+        public Response findUsersFollowedByNative(@PathParam("id") long id) {
+                //List<Long> users = userService.findUserFollowersID(id);
+                List<UserDTO> users = userService.findUserFollowersDTO(id);
+                Log.debug("UserAPI.getSubscribers called with id=" + id);
+                return Response.ok().build();
+        }
+
+        /*
+        @POST
+        @Consumes(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/createAccount")
+        public Response createAccount(UserRegistrationDTO userRegistrationDTO) {
+
+                userService.createAccount(userRegistrationDTO);
                 Log.debug("UserAPI.createAccount called with name=" + name + " firstName=" + firstName + " email=" + email + " password=" + password);
                 return Response.ok().build();
         }
+
+         */
 
 }
