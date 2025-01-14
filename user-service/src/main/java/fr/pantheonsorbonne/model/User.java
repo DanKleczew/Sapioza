@@ -1,4 +1,5 @@
 package fr.pantheonsorbonne.model;
+import fr.pantheonsorbonne.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 
@@ -22,7 +23,10 @@ public class User {
     private Date creationDate = new Date();
     private Date deletionDate;
 
-    @ManyToMany(targetEntity = User.class)
+    @Enumerated(EnumType.STRING)
+    private Roles role = Roles.USER;
+
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinTable(name = "User_User",
             joinColumns = @JoinColumn(name = "User_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "Follower_id", referencedColumnName = "id"))
@@ -93,6 +97,9 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", creationDate=" + creationDate +
+                ", deletionDate=" + deletionDate +
+                //", Users=" + this.Users. +
                 '}';
     }
 
@@ -134,5 +141,13 @@ public class User {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Roles getRole() {
+        return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
     }
 }
