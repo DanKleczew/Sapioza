@@ -31,9 +31,9 @@ public enum GlobalRoutes {
     RESPONSE_USER_FOLLOWERS_N2U("sjms2:M1.SAPIOZA:responseUserFollowers"),
     // From user-service to notification-service in response to user followers requests. Message Body: List<Long> (UserIDs)
 
-    GET_USER_FOLLOWING_U2N("sjms2:M1.SAPIOZA:userFollowing"),
+    GET_USER_FOLLOWS_U2N("sjms2:M1.SAPIOZA:userFollowing"),
     // From user-service to get users followed by a user. Message Body: Long (UserID)
-    RESPONSE_USER_FOLLOWING_N2U("sjms2:M1.SAPIOZA:responseUserFollowing");
+    RESPONSE_USER_FOLLOWS_N2U("sjms2:M1.SAPIOZA:responseUserFollowing");
     // From user-service to notification-service in response to user following requests. Message Body: List<Long> (UserIDs)
 
     private final String route;
