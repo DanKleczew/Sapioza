@@ -1,10 +1,15 @@
 package fr.pantheonsorbonne.service;
 
 
+import fr.pantheonsorbonne.camel.gateway.UserAccount;
 import fr.pantheonsorbonne.dao.UserDAO;
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.exception.User.UserNotFoundException;
+import fr.pantheonsorbonne.global.UserFollowersDTO;
+import fr.pantheonsorbonne.global.UserFollowsDTO;
+import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,9 +29,14 @@ public class UserService {
     @Inject
     UserMapper userMapper;
 
+     @Inject
+    UserAccount userAccount;
+
     @Transactional
     public User getUserInfos(long id) {
         User user = userDAO.getUserById(id);
+        userDAO.getUsersListId(id);
+        System.out.println(user.toString());
         if (user == null) {
             System.out.println("User not found");
         }
@@ -101,6 +111,89 @@ public class UserService {
         return followersList;
     }
 
+    public UserInfoDTO getUserInfo(Long id) {
+        try {
+            User user = this.userDAO.getUserById(id);
+            if (user == null) {
+                throw new UserNotFoundException(id);
+            }
+            UserInfoDTO userInfoDTO = new UserInfoDTO(
+                    user.getId(),
+                    user.getName(),
+                    user.getFirstName(),
+                    user.getEmail());
+            this.userAccount.responseUserInformation(userInfoDTO);
+            return userInfoDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public UserFollowersDTO getUserFollowers(Long id) {
+        try {
+            List<UserDTO> followers = this.findUserFollowersDTO(id);
+            UserFollowersDTO userFollowersDTO = new UserFollowersDTO(id, this.listOfUserDTOToListOfLong(followers));
+            this.userAccount.getFollowers(userFollowersDTO);
+            return userFollowersDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Long> listOfUserDTOToListOfLong(List<UserDTO> userDTOList) {
+        List<Long> userIdList = new ArrayList<>();
+        for (UserDTO userDTO : userDTOList) {
+            userIdList.add(userDTO.id());
+        }
+        return userIdList;
+    }
+
+    public UserFollowsDTO getUserFollows(Long id) {
+        try {
+            User user = this.userDAO.getUserById(id);
+            List<User> follows = user.getUsers();
+            List<UserDTO> followsDTO = new ArrayList<>();
+            for (User follow : follows) {
+                followsDTO.add(this.userMapper.mapEntityToDTO(follow));
+            }
+            UserFollowsDTO userFollowsDTO = new UserFollowsDTO(id, this.listOfUserDTOToListOfLong(followsDTO));
+            this.userAccount.getFollows(userFollowsDTO);
+            return userFollowsDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    public UserInfoDTO getUserInformation(Long id){
+        try {
+            User user = this.userDAO.getUserById(id);
+            if (user == null) {
+                throw new UserNotFoundException(id);
+            }
+            UserInfoDTO userInfoDTO = new UserInfoDTO(
+                    user.getId(),
+                    user.getName(),
+                    user.getFirstName(),
+                    user.getEmail());
+            return userInfoDTO;
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void responseUserInformation(Long id){
+        try {
+            UserInfoDTO userInfoDTO = this.getUserInformation(id);
+            this.userAccount.responseUserInformation(userInfoDTO);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while responding user information");
+        }
+    }
 
 
 

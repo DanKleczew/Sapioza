@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.service.UserService;
@@ -24,6 +23,7 @@ public class UserAPI {
         @Produces(MediaType.APPLICATION_JSON)
         @Path("/{id}")
         public Response getUserInfo(@PathParam("id") long id) {
+                //System.out.println();
                 userService.getUserInfos(id);
                 Log.debug("UserAPI.getUserInfo called with id=" + id);
                 //System.out.println("qsdqsdsqd"+user.toString());
@@ -68,10 +68,9 @@ public class UserAPI {
         @Produces(MediaType.APPLICATION_JSON)
         @Path("/informations/{id}")
         public Response findUsersFollowedByNative(@PathParam("id") long id) {
-                //List<Long> users = userService.findUserFollowersID(id);
-                List<UserDTO> users = userService.findUserFollowersDTO(id);
+                List<Long> users = userService.findUserFollowersID(id);
                 Log.debug("UserAPI.getSubscribers called with id=" + id);
-                return Response.ok().build();
+                return Response.ok(users).build();
         }
 
         /*

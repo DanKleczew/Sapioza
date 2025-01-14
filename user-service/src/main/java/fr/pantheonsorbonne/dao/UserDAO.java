@@ -145,10 +145,29 @@ public class UserDAO {
         return user;
     }
 
+    public List<User> getUsersListId(Long id){
+        User user = this.getUserById(id);
+        for (User u : user.getUsers()) {
+            System.out.println(u.getId());
+        }
+        return user.getUsers();
+    }
+
     public List<User> findUserFollowers(Long followerId) {
-        return em.createNativeQuery("SELECT u.* FROM User u LEFT JOIN User_User uu ON u.id = uu.Follower_id WHERE uu.User_id = :id", User.class)
+        //return  //em.createQuery("SELECT uu FROM User u JOIN u.Users uu JOIN uu.Users uuu WHERE  uuu.id = :id", User.class)
+                //em.createNativeQuery("SELECT u.* FROM User u LEFT JOIN User_User uu ON u.id = uu.Follower_id WHERE uu.User_id = :id", User.class)
                 //.setParameter(followerId, "id")
+        return em.createQuery("SELECT u FROM User u JOIN u.Users uu WHERE uu.id = :id", User.class)
+                //em.createQuery("SELECT u FROM User u LEFT JOIN User_User uu ON u.id = uu.User_id WHERE uu.Follower_id = :id", User.class)
                 .setParameter("id", followerId) // Correctly bind the parameter
                 .getResultList();
     }
+    /*
+    public List<User> findUserFollowersByMail(String email) {
+        return  em.createQuery("SELECT uu FROM User u JOIN User_User uu JOIN uu.Users uuu WHERE  uuu.email = :email", User.class)
+                .setParameter("email", email) // Correctly bind the parameter
+                .getResultList();
+    }
+
+     */
 }
