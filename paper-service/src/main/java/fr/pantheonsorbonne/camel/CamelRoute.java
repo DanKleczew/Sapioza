@@ -25,15 +25,5 @@ public class CamelRoute extends RouteBuilder {
                 // Deleting process for a paper
                 from(Routes.DELETE_COMMAND_TO_STORAGE.getRoute())
                         .to(GlobalRoutes.DELETE_PAPER_P2S.getRoute());
-
-
-
-//            from("timer:foo?period=100000000000")
-//                    .log("Création d'un PDF...")
-//                    .setBody(constant("Bonjour, ceci est un exemple de PDF généré avec Apache Camel!"))
-//                    .to("pdf:create")
-//                    .to("file:output?fileName=example.pdf")
-//                    .log("PDF créé et enregistré dans le dossier 'output'.")
-//                    .bean(;
         }
 }

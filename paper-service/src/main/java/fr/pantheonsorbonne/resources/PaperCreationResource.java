@@ -32,15 +32,10 @@ public class PaperCreationResource implements CreationResourceInterface {
                     .status(Response.Status.BAD_REQUEST)
                     .entity("Malformed JSON")
                     .build();
-        } catch (PaperNotCreatedException e) {
+        } catch (PaperNotCreatedException | PaperDatabaseAccessException e) {
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getMessage())
-                    .build();
-        } catch (PaperDatabaseAccessException e) {
-            return Response
-                    .status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Internal server error")
                     .build();
         }
     }
