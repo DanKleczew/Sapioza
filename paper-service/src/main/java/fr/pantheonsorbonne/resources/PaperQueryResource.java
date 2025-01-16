@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.resources;
 
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.enums.ResearchField;
+import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.resources.interfaces.QueryResourceInterface;
@@ -34,7 +35,7 @@ public class PaperQueryResource implements QueryResourceInterface {
                     .status(Response.Status.NOT_FOUND)
                     .entity(e.getMessage())
                     .build();
-        } catch (PaperDatabaseAccessException e) {
+        } catch (PaperDatabaseAccessException | InternalCommunicationException e) {
             return Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getMessage())

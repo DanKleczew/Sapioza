@@ -1,9 +1,11 @@
 package fr.pantheonsorbonne.service;
 
-import fr.pantheonsorbonne.dao.PaperDeletionDAO;
+import fr.pantheonsorbonne.camel.gateway.UserGateway;
 import fr.pantheonsorbonne.dao.PaperQueryDAO;
 import fr.pantheonsorbonne.dto.*;
+import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
+import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.mappers.PaperMapper;
@@ -21,12 +23,16 @@ public class PaperQueryService {
     @Inject
     PaperQueryDAO paperQueryDAO;
 
-    public PaperDTO getPaperInfos(Long id) throws PaperNotFoundException, PaperDatabaseAccessException {
+    @Inject
+    UserGateway userGateway;
+
+    public QueriedPaperDTO getPaperInfos(Long id) throws PaperNotFoundException, PaperDatabaseAccessException, InternalCommunicationException {
         Paper paper = paperQueryDAO.getPaper(id);
         if (paper == null) {
             throw new PaperNotFoundException(id);
         }
-        return paperMapper.mapEntityToDTO(paper);
+        UserInfoDTO userInfosDTO = userGateway.getUserInfos(paper.getAuthorId());
+        return new QueriedPaperDTO(paperMapper.mapEntityToDTO(paper), userInfosDTO);
     }
 
     public List<PaperDTO> getFilteredPapers(FilterDTO filter) {
