@@ -44,7 +44,6 @@ public class Opinion {
     public void setPaper(Paper paper) {
         this.paper = paper;
     }
-
     public Paper getPaper() {
         return paper;
     }
