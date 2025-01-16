@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.model;
 
 import fr.pantheonsorbonne.enums.ResearchField;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,9 @@ public class Paper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @UuidGenerator
+    private String uuid;
 
     @Basic(optional = false)
     private String title;
@@ -98,5 +102,6 @@ public class Paper {
     public List<Review> getReviews() { return reviews; }
     public void setOpinions(List<Opinion> opinions) { this.opinions = opinions; }
     public List<Opinion> getOpinions() { return opinions; }
-
+    public void setUuid(String uuid) { this.uuid = uuid; }
+    public String getUuid() { return uuid; }
 }

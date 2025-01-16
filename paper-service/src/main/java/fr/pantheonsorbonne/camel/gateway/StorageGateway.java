@@ -26,7 +26,7 @@ public class StorageGateway {
             try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
                 producerTemplate.sendBody(Routes.DELETE_COMMAND_TO_STORAGE.getRoute(), id);
             } catch (Exception e) {
-                throw new InternalCommunicationException("Error while sending deleted paper to storage");
+                throw new InternalCommunicationException("Error while sending deleted paper command to storage");
             }
         }
 }

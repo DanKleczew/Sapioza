@@ -5,5 +5,9 @@ import jakarta.ws.rs.core.Response;
 
 public interface OpinionResourceInterface {
 
-    Response addOpinion(OpinionDTO opinionDTO);
+    Response changeOpinion(OpinionDTO opinionDTO);
+
+    Response getOpinion(Long paperId, Long userId);
+
+    Response getAllOpinions(Long paperId);
 }

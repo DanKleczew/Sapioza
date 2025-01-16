@@ -24,7 +24,7 @@ public class PaperDeletionService {
     StorageGateway storageGateway;
 
     public void deletePaper(Long id) throws PaperNotFoundException,
-            PaperDatabaseAccessException {
+                                            PaperDatabaseAccessException {
         Paper paper = paperQueryDAO.getPaper(id);
         if (paper == null) {
             throw new PaperNotFoundException(id);
