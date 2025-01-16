@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.dto.UserDTO;
+import fr.pantheonsorbonne.enums.Roles;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.exception.User.UserException;
@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -159,7 +160,7 @@ public class UserDAO {
         return user.getUsers();
     }
 
-    public List<User> findUserFollowers(Long followerId) {
+    public List<User> findUserFollows(Long followerId) {
         //return  //em.createQuery("SELECT uu FROM User u JOIN u.Users uu JOIN uu.Users uuu WHERE  uuu.id = :id", User.class)
                 //em.createNativeQuery("SELECT u.* FROM User u LEFT JOIN User_User uu ON u.id = uu.Follower_id WHERE uu.User_id = :id", User.class)
                 //.setParameter(followerId, "id")
@@ -169,16 +170,25 @@ public class UserDAO {
                 .getResultList();
     }
 
-    public UserDTO getUserByUuid(String uuid) {
+    public User getUserByUuid(String uuid) {
         User user = null;
         try {
-            user = em.createQuery("SELECT u FROM User u WHERE u.uuid = :uuid", User.class)
+            user = em.createQuery("SELECT u FROM User u WHERE u.uuid = :uuid ", User.class)
                     .setParameter("uuid", uuid)
                     .getSingleResult();
         } catch (RuntimeException re) {
             Log.error("getUserByUuid failed", re);
         }
-        return userMapper.mapEntityToDTO(user);
+        return user;
+    }
+
+    public void addDefaultValuesForUser(User user){
+        if(user.getCreationDate() == null){
+            user.setCreationDate(new Date());
+        }
+        if(user.getRole() == null){
+            user.setRole(Roles.USER);
+        }
     }
     /*
     public List<User> findUserFollowersByMail(String email) {

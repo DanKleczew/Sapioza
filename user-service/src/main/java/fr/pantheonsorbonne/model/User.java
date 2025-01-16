@@ -31,7 +31,7 @@ public class User {
     @UuidGenerator
     private String uuid;
 
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = User.class)
     @JoinTable(name = "User_User",
             joinColumns = @JoinColumn(name = "User_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "Follower_id", referencedColumnName = "id"))
@@ -136,6 +136,14 @@ public class User {
         this.deletionDate = new Date();
     }
 
+    public void setDeletionDate(Date deletionDate) {
+        this.deletionDate = deletionDate;
+    }
+
+    public Date getDeletionDate() {
+        return deletionDate;
+    }
+
     public List<Long> getUsersIds() {
         return this.Users.stream().map(User::getId).collect(Collectors.toList());
     }
@@ -154,5 +162,13 @@ public class User {
 
     public void setRole(Roles role) {
         this.role = role;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

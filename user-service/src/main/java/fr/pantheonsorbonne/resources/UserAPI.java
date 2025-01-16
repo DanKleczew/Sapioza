@@ -1,6 +1,9 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
+import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.service.UserService;
 import io.quarkus.logging.Log;
@@ -19,15 +22,45 @@ public class UserAPI {
         @Inject
         UserService userService;
 
+
         @GET
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/{id}")
+        @Path("/createAccount/{name}/{firstName}/{email}/{password}")
+        public Response createAccount(
+                @PathParam("name") String name,
+                @PathParam("firstName") String firstName,
+                @PathParam("email") String email,
+                @PathParam("password") String password
+        ) {
+                if(userService.getUserbyEmail(email) != null) {
+                        return Response.status(Response.Status.CONFLICT).build();
+                }
+                userService.createAccount(new UserRegistrationDTO(name, firstName, email, password));
+                UserDTO userDTO = userService.getUserbyEmail(email);
+                Log.debug("UserAPI.createAccount called with name=" + name + " firstName=" + firstName + " email=" + email + " password=" + password);
+                return Response.ok(userDTO).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/getInfo/{id}")
         public Response getUserInfo(@PathParam("id") long id) {
-                //System.out.println();
-                userService.getUserInfos(id);
+                UserDTO userDTO = userService.getUserDTOById(id);
                 Log.debug("UserAPI.getUserInfo called with id=" + id);
-                //System.out.println("qsdqsdsqd"+user.toString());
-                return Response.ok().build();
+                return Response.ok(userDTO).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/delete/{id}")
+        public Response deleteUser(@PathParam("id") long id) {
+                if(userService.getUserDTOById(id) == null){
+                        return Response.status(Response.Status.NOT_FOUND).build();
+                }
+                UserDTO userDTO = userService.getUserDTOById(id);
+                userService.deleteUser(id);
+                Log.debug("UserAPI.deleteUser called with id=" + id);
+                return Response.ok(userDTO).build();
         }
 
         @GET
@@ -38,10 +71,61 @@ public class UserAPI {
                 @PathParam("id2") long id2
         ) {
 
-                userService.subscribing(1, 2);
+                userService.subscribTo(id1, id2);
+                UserDTO userDTO = userService.getUserDTOById(id1);
                 Log.debug("UserAPI.createTestUser called");
-                return Response.ok().build();
+                return Response.ok(userDTO).build();
         }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("getSubscribers/{id}")
+        public Response getSubscribers(
+                @PathParam("id") long id
+        ) {
+                List<Long> usersId = userService.GetSubscribersId(id);
+                Log.debug("UserAPI.getSubscribers called with id=" + id);
+                return Response.ok(usersId).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("getSubscribes/{id}")
+        public Response getSubscribs(
+                @PathParam("id") long id
+        ) {
+                List<Long> usersId = userService.findUserFollowsID(id);
+                Log.debug("UserAPI.getSubscribs called with id=" + id);
+                return Response.ok(usersId).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/connection/{email}/{password}")
+        public Response connectionUser(
+                @PathParam("email") String email,
+                @PathParam("password") String password
+        ) throws ConnectionException {
+                UserDTO userDTO = userService.connectionUser(email, password);
+                Log.debug("UserAPI.connectionUser called with email=" + email + " password=" + password);
+                return Response.ok(userDTO).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/getUserByUUID/{uuid}")
+        public Response getUserByUUID(@PathParam("uuid") String uuid) throws UserNotFoundException {
+                UserDTO userDTO = userService.getUserByUuid(uuid);
+                Log.debug("UserAPI.getUserByUUID called with uuid=" + uuid);
+                return Response.ok(userDTO).build();
+        }
+
+
+
+
+
+
+
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
