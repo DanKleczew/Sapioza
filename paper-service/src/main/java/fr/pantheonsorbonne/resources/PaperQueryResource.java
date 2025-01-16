@@ -1,10 +1,12 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.CompletePaperDTO;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.enums.ResearchField;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
+import fr.pantheonsorbonne.pdf.PdfGenerator;
 import fr.pantheonsorbonne.resources.interfaces.QueryResourceInterface;
 import fr.pantheonsorbonne.service.PaperQueryService;
 import fr.pantheonsorbonne.service.ReviewService;
@@ -14,12 +16,16 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 
+@Path("/paper")
 public class PaperQueryResource implements QueryResourceInterface {
     @Inject
     PaperQueryService paperQueryService;
 
     @Inject
     ReviewService reviewService;
+
+    @Inject
+    PdfGenerator pdfGenerator;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,7 +64,7 @@ public class PaperQueryResource implements QueryResourceInterface {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/reviews")
+    @Path("/reviews/{id}")
     public Response getPaperReviews(@PathParam("id") Long id) {
         try {
             return Response
@@ -76,5 +82,32 @@ public class PaperQueryResource implements QueryResourceInterface {
                     .entity(e.getMessage())
                     .build();
         }
+    }
+
+    @GET
+    @Produces("application/pdf")
+    @Path("/pdf/{id}")
+    public Response getPaperPdf(@PathParam("id") Long id) {
+        try {
+            CompletePaperDTO completePaperDTO = this.paperQueryService.getCompletePaper(id);
+            byte[] bytes = this.pdfGenerator.generatePdf(completePaperDTO);
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(bytes)
+                    .header("Content-Disposition", "inline; " +
+                            "filename=\"" + completePaperDTO.paperDTO().title() + ".pdf\"")
+                    .build();
+        } catch (PaperNotFoundException e){
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (PaperDatabaseAccessException | InternalCommunicationException e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+        }
+
     }
 }
