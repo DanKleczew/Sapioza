@@ -7,13 +7,17 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+import io.quarkus.logging.Log;
+import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
 public class NotificationDAO {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
 
     public List<NotificationEntity> findNotificationsByAuthors(List<String> authors) {
         try {
@@ -25,6 +29,7 @@ public class NotificationDAO {
         }
     }
 
+    @Transactional
     public void create(NotificationEntity notification) {
         try {
             entityManager.persist(notification);
@@ -42,4 +47,22 @@ public class NotificationDAO {
             throw new NotificationDatabaseAccessException("Error fetching notifications for user ID: " + userId, e);
         }
     }
+
+    @Transactional
+    public void createTestNotification() {
+        NotificationEntity notification = new NotificationEntity();
+        try {
+            notification.setAuthorName("test_author");
+            notification.setPaperTitle("test_title");
+            notification.setUserId(1L); // ID utilisateur de test
+            notification.setNotificationTime(LocalDateTime.now());
+            notification.setViewed(false);
+
+            entityManager.persist(notification);
+            Log.info("Test notification created successfully");
+        } catch (RuntimeException re) {
+            Log.error("createTestNotification failed", re);
+        }
+    }
+
 }
