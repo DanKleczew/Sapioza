@@ -70,8 +70,7 @@ public class UserRequestHandler {
         }
     }
 
-    @Handler
-    public void superConnection()
+
 
 
 }
