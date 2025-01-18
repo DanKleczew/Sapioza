@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.dto.NotificationDTO;
-import fr.pantheonsorbonne.entity.NotificationEntity;
+import fr.pantheonsorbonne.model.Notification;
 import fr.pantheonsorbonne.mapper.NotificationEntityDtoMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,7 +26,7 @@ public class NotificationQueryService {
      * @return Une liste de NotificationDTO.
      */
     public List<NotificationDTO> getNotificationsForUser(Long userId) {
-        List<NotificationEntity> entities = notificationDAO.findByUserId(userId);
+        List<Notification> entities = notificationDAO.findByUserId(userId);
         return entities.stream()
                 .map(mapper::mapToDTO)
                 .collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class NotificationQueryService {
      * @param userId L'identifiant de l'utilisateur.
      * @return Une liste de NotificationEntity.
      */
-    public List<NotificationEntity> getNotificationsByUserId(Long userId) {
+    public List<Notification> getNotificationsByUserId(Long userId) {
         return notificationDAO.findByUserId(userId);
     }
 
