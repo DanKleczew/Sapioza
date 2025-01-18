@@ -36,12 +36,16 @@ public class NotificationRoute extends RouteBuilder {
 
         from(GlobalRoutes.USER_RESPONSE_U2N.getRoute())
                 .log("Réponse reçue avec les abonnés : ${body}")
-                .bean(notificationCreationService, "processUserFollowers(${body})");
+                .bean(notificationCreationService, "processUserFollowers(${body})")
+                .end();
+
 
 
         from(Routes.GET_USER_INFO.getRoute())
                 .setExchangePattern(ExchangePattern.InOut)
-                .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute())
+                .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute()+ "?requestTimeout=5000")
                 .end();
+
+
     }
 }

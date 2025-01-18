@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.ressource;
 
-import fr.pantheonsorbonne.camel.gateway.UserGateway;
+import fr.pantheonsorbonne.camel.gateway.UserNotificationGateway;
 import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.dto.NotificationDTO;
 import fr.pantheonsorbonne.service.NotificationCreationService;
@@ -15,8 +15,6 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/notifications")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class NotificationResource {
 
     @Inject
@@ -29,7 +27,7 @@ public class NotificationResource {
     NotificationDAO notificationDAO;
 
     @Inject
-    UserGateway userGateway;
+    UserNotificationGateway userNotificationGateway;
 
     /*
     @GET
@@ -102,7 +100,6 @@ public class NotificationResource {
 
     @POST
     @Transactional
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNotification(NotificationDTO dto) {
         try {
@@ -146,6 +143,8 @@ public class NotificationResource {
     @Path("/getUser/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserNotification(@PathParam("id") Long userId) throws Exception {
-        return Response.status(Response.Status.OK).entity(this.userGateway.getUserInfos(userId)).build();
+        return Response.status(Response.Status.OK).entity(this.userNotificationGateway.getUserInfo(userId)).build();
     }
+
+
 }

@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.camel;
 
 
 public enum Routes {
-    GET_USER_INFO("direct:getUserInfo");
+    GET_USER_INFO("direct:getUserNotificationInfo");
 
     private final String route;
 

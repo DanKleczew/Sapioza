@@ -89,5 +89,10 @@ public class NotificationCreationService {
         Log.info("Notifications successfully sent for paper ID: " + paperId + " by author ID: " + authorId);
     }
 
+    public void processUserFollowers(List<Long> followers) {
+        followers.forEach(followerId -> createNotification(followerId, 1L, "Author Name"));
+        Log.info("Notifications successfully sent for followers: " + followers);
+    }
+
 
 }
