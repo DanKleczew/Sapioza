@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.dto.PaperDTOs;
 
 import fr.pantheonsorbonne.enums.ResearchField;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public record PaperDTO(
