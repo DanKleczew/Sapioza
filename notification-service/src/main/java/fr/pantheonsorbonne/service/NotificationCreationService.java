@@ -88,4 +88,6 @@ public class NotificationCreationService {
         followers.forEach(followerId -> createNotification(followerId, paperId, authorName));
         Log.info("Notifications successfully sent for paper ID: " + paperId + " by author ID: " + authorId);
     }
+
+
 }

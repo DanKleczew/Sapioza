@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.ressource;
 
+import fr.pantheonsorbonne.camel.gateway.UserGateway;
 import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.dto.NotificationDTO;
 import fr.pantheonsorbonne.service.NotificationCreationService;
@@ -26,6 +27,9 @@ public class NotificationResource {
 
     @Inject
     NotificationDAO notificationDAO;
+
+    @Inject
+    UserGateway userGateway;
 
     /*
     @GET
@@ -135,5 +139,13 @@ public class NotificationResource {
                     .entity("Failed to create test notification: " + e.getMessage())
                     .build();
         }
+    }
+
+
+    @GET
+    @Path("/getUser/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserNotification(@PathParam("id") Long userId) throws Exception {
+        return Response.status(Response.Status.OK).entity(this.userGateway.getUserInfos(userId)).build();
     }
 }

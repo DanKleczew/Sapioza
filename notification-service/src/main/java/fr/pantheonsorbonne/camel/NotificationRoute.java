@@ -4,6 +4,8 @@ import fr.pantheonsorbonne.global.GlobalRoutes;
 import fr.pantheonsorbonne.service.NotificationCreationService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 
 @ApplicationScoped
@@ -31,5 +33,15 @@ public class NotificationRoute extends RouteBuilder {
        /* from(GlobalRoutes.USER_RESPONSE_U2N.getRoute())
                 .log("Réponse reçue avec les abonnés : ${body}")
                 .bean(notificationCreationService, "processUserFollowers(${body})");*/
+
+        from(GlobalRoutes.USER_RESPONSE_U2N.getRoute())
+                .log("Réponse reçue avec les abonnés : ${body}")
+                .bean(notificationCreationService, "processUserFollowers(${body})");
+
+
+        from(Routes.GET_USER_INFO.getRoute())
+                .setExchangePattern(ExchangePattern.InOut)
+                .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute())
+                .end();
     }
 }
