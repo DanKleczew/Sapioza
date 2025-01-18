@@ -184,7 +184,7 @@ public class UserDAO {
 
     public void addDefaultValuesForUser(User user){
         if(user.getCreationDate() == null){
-            user.setCreationDate(new Date());
+            user.setCreationDate(new java.sql.Date(new Date().getTime()));
         }
         if(user.getRole() == null){
             user.setRole(Roles.USER);

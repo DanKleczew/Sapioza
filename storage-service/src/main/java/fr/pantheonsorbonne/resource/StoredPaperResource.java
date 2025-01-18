@@ -29,8 +29,8 @@ public class StoredPaperResource {
     }
 
     @GET
-    @Path("/{id}")
-    public Response getStoredPaper(@PathParam("id") Long id) {
+    @Path("/{paperUuid}")
+    public Response getStoredPaper(@PathParam("paperUuid") String id) {
         try {
             StoredPaperOutputDTO outputDTO = storedPaperService.getStoredPaper(id);
             return Response.ok(outputDTO).build();

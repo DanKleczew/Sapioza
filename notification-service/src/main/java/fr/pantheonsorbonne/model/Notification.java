@@ -1,10 +1,10 @@
-package fr.pantheonsorbonne.entity;
+package fr.pantheonsorbonne.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class NotificationEntity {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,10 +18,10 @@ public class NotificationEntity {
     private String paperTitle;
 
 
-    public NotificationEntity() {
+    public Notification() {
     }
 
-    public NotificationEntity(boolean viewed, Long userId, Long paperId, LocalDateTime notificationTime,String authorName,String paperTitle) {
+    public Notification(boolean viewed, Long userId, Long paperId, LocalDateTime notificationTime, String authorName, String paperTitle) {
         this.viewed = viewed;
         this.userId = userId;
         this.paperId = paperId;

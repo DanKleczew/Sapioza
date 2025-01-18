@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.dto.NotificationDTO;
-import fr.pantheonsorbonne.entity.NotificationEntity;
+import fr.pantheonsorbonne.model.Notification;
 import fr.pantheonsorbonne.mapper.NotificationEntityDtoMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -37,7 +37,7 @@ public class NotificationCreationService {
 
     public void createNotification(NotificationDTO dto) {
         // Convertir le DTO en entité
-        NotificationEntity entity = mapper.mapToEntity(dto);
+        Notification entity = mapper.mapToEntity(dto);
 
         // Ajouter des champs spécifiques si nécessaire
         entity.setNotificationTime(LocalDateTime.now());
@@ -57,16 +57,16 @@ public class NotificationCreationService {
     /**
      * Récupère la liste des followers d'un auteur via une route Camel.
      *
-     * @param authorId l'ID de l'auteur
+     * @param userId l'ID de l'auteur
      * @return une liste d'IDs des followers
      */
 
-    private List<Long> getFollowers(Long authorId) {
+    private List<Long> getFollowers(Long userId) {
         try {
             // Appel à la route Camel
             List<?> rawList = producerTemplate.requestBody(
                     "direct:getFollowers",
-                    authorId,
+                    userId,
                     List.class
             );
 
@@ -76,7 +76,7 @@ public class NotificationCreationService {
                     .map(item -> (Long) item) // Caster en Long
                     .toList();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch followers for author ID: " + authorId, e);
+            throw new RuntimeException("Failed to fetch followers for author ID: " + userId, e);
         }
     }
 
@@ -89,8 +89,8 @@ public class NotificationCreationService {
             List<Long> followers = getFollowers(metaData.authorId());
 
             // Créer les notifications en lot
-            List<NotificationEntity> notifications = followers.stream().map(followerId -> {
-                NotificationEntity notification = new NotificationEntity();
+            List<Notification> notifications = followers.stream().map(followerId -> {
+                Notification notification = new Notification();
                 notification.setUserId(followerId);
                 notification.setAuthorName(metaData.authorId().toString());
                 notification.setPaperTitle(metaData.title());
@@ -101,7 +101,7 @@ public class NotificationCreationService {
             }).toList();
 
             // Persister les notifications
-            for (NotificationEntity notification : notifications) {
+            for (Notification notification : notifications) {
                 notificationDAO.create(notification);
             }
 

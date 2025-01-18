@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.entity.NotificationEntity;
+import fr.pantheonsorbonne.model.Notification;
 import fr.pantheonsorbonne.exception.NotificationDatabaseAccessException;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,9 +19,9 @@ public class NotificationDAO {
     @PersistenceContext
     EntityManager entityManager;
 
-    public List<NotificationEntity> findNotificationsByAuthors(List<String> authors) {
+    public List<Notification> findNotificationsByAuthors(List<String> authors) {
         try {
-            return entityManager.createQuery("SELECT n FROM NotificationEntity n WHERE n.authorName IN :authors", NotificationEntity.class)
+            return entityManager.createQuery("SELECT n FROM Notification n WHERE n.authorName IN :authors", Notification.class)
                     .setParameter("authors", authors)
                     .getResultList();
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class NotificationDAO {
     }
 
     @Transactional
-    public void create(NotificationEntity notification) {
+    public void create(Notification notification) {
         try {
             entityManager.persist(notification);
         } catch (Exception e) {
@@ -38,9 +38,9 @@ public class NotificationDAO {
         }
     }
 
-    public List<NotificationEntity> findByUserId(Long userId) {
+    public List<Notification> findByUserId(Long userId) {
         try {
-            return entityManager.createQuery("SELECT n FROM NotificationEntity n WHERE n.userId = :userId", NotificationEntity.class)
+            return entityManager.createQuery("SELECT n FROM Notification n WHERE n.userId = :userId", Notification.class)
                     .setParameter("userId", userId)
                     .getResultList();
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class NotificationDAO {
 
     @Transactional
     public void createTestNotification() {
-        NotificationEntity notification = new NotificationEntity();
+        Notification notification = new Notification();
         try {
             notification.setAuthorName("test_author");
             notification.setPaperTitle("test_title");

@@ -2,7 +2,6 @@ package fr.pantheonsorbonne.ressource;
 
 import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.dto.NotificationDTO;
-import fr.pantheonsorbonne.entity.NotificationEntity;
 import fr.pantheonsorbonne.service.NotificationCreationService;
 import fr.pantheonsorbonne.service.NotificationQueryService;
 
@@ -11,7 +10,6 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.apache.camel.Produce;
 
 import java.util.List;
 

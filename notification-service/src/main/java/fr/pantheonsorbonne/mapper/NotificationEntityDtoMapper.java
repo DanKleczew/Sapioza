@@ -1,7 +1,7 @@
 package fr.pantheonsorbonne.mapper;
 
 import fr.pantheonsorbonne.dto.NotificationDTO;
-import fr.pantheonsorbonne.entity.NotificationEntity;
+import fr.pantheonsorbonne.model.Notification;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -10,7 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 public class NotificationEntityDtoMapper {
 
-    public NotificationDTO mapToDTO(NotificationEntity entity) {
+    public NotificationDTO mapToDTO(Notification entity) {
         if (entity == null) {
             return null;
         }
@@ -22,11 +22,11 @@ public class NotificationEntityDtoMapper {
         return dto;
     }
 
-    public NotificationEntity mapToEntity(NotificationDTO dto) {
+    public Notification mapToEntity(NotificationDTO dto) {
         if (dto == null) {
             return null;
         }
-        NotificationEntity entity = new NotificationEntity();
+        Notification entity = new Notification();
         entity.setId(dto.getId());
         entity.setAuthorName(dto.getAuthorName());
         entity.setPaperTitle(dto.getPaperTitle());
