@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.NotificationDAO;
+import fr.pantheonsorbonne.global.PaperMetaDataDTO;
+import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.mapper.NotificationEntityDtoMapper;
 import fr.pantheonsorbonne.model.Notification;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -10,12 +12,14 @@ import io.quarkus.logging.Log;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class NotificationCreationService {
 
     @Inject
     NotificationDAO notificationDAO;
+
 
     @Inject
     ProducerTemplate producerTemplate;
@@ -71,14 +75,8 @@ public class NotificationCreationService {
         }
     }
 
-    /**
-     * Crée des notifications pour tous les followers d'un auteur donné pour un article.
-     *
-     * @param authorId ID de l'auteur.
-     * @param paperId  ID de l'article publié.
-     * @param authorName Nom de l'auteur.
-     */
-    public void notifyFollowers(Long authorId, Long paperId, String authorName) {
+
+    /*public void notifyFollowers(PaperMetaDataDTO authorId, Long paperId, String authorName) {
         List<Long> followers = getFollowers(authorId);
         if (followers.isEmpty()) {
             Log.info("No followers found for author ID: " + authorId);
@@ -87,12 +85,31 @@ public class NotificationCreationService {
 
         followers.forEach(followerId -> createNotification(followerId, paperId, authorName));
         Log.info("Notifications successfully sent for paper ID: " + paperId + " by author ID: " + authorId);
-    }
+    }*/
 
     public void processUserFollowers(List<Long> followers) {
         followers.forEach(followerId -> createNotification(followerId, 1L, "Author Name"));
         Log.info("Notifications successfully sent for followers: " + followers);
     }
 
+
+    public void persistNotifications(PaperMetaDataDTO paperMetaDataDTO, UserFollowersDTO userFollowersDTO) {
+        try {
+            List<Notification> notifications = userFollowersDTO.followersId().stream()
+                    .map(followerId -> new Notification(
+                            followerId,
+                            paperMetaDataDTO.PaperId(),
+                            paperMetaDataDTO.authorId().toString(),
+                            paperMetaDataDTO.title(),
+                            false,
+                            paperMetaDataDTO.publicationDate()
+                    ))
+                    .collect(Collectors.toList());
+            notificationDAO.persistAll(notifications);
+        } catch (Exception e) {
+            Log.error("Error persisting notifications for paper ID: " + paperMetaDataDTO.PaperId(), e);
+            throw e;
+        }
+    }
 
 }

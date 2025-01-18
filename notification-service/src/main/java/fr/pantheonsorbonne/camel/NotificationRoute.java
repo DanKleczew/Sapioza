@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.camel;
 
+import fr.pantheonsorbonne.camel.handler.NotificationHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
 import fr.pantheonsorbonne.service.NotificationCreationService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,7 +13,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class NotificationRoute extends RouteBuilder {
 
     @Inject
-    NotificationCreationService notificationCreationService;
+    NotificationHandler notificationHandler;
 
     @Override
     public void configure() {
@@ -21,31 +22,28 @@ public class NotificationRoute extends RouteBuilder {
                 .log("Erreur lors du traitement de la notification : ${exception.message}")
                 .handled(true);
 
-        from(GlobalRoutes.NEW_PAPER_P2N.getRoute())
+        from(GlobalRoutes.NEW_PAPER_P2N.getRoute()) //bon
+                .log("Message reçu pour notification d'un nouvel article : ${body}")
+                .bean(notificationHandler);
 
-                .log("Message reçu pour notification d'un nouvel article : ${body}");
-                //.bean(notificationCreationService, "notifyFollowers(${body.authorId}, ${body.paperId}, ${body.authorName})");
-
-        from(GlobalRoutes.USER_REQUEST_N2U.getRoute())
-                .log("Demande d'abonnés pour l'utilisateur : ${body}")
-                .to(GlobalRoutes.GET_USER_FOLLOWERS_U2N.getRoute());
-
-       /* from(GlobalRoutes.USER_RESPONSE_U2N.getRoute())
-                .log("Réponse reçue avec les abonnés : ${body}")
-                .bean(notificationCreationService, "processUserFollowers(${body})");*/
-
-        from(GlobalRoutes.USER_RESPONSE_U2N.getRoute())
-                .log("Réponse reçue avec les abonnés : ${body}")
-                .bean(notificationCreationService, "processUserFollowers(${body})")
-                .end();
-
-
-
-        from(Routes.GET_USER_INFO.getRoute())
+        from(Routes.GET_USER_INFO.getRoute()) //bon
                 .setExchangePattern(ExchangePattern.InOut)
                 .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute()+ "?requestTimeout=5000")
                 .end();
 
+        from(Routes.GET_USER_FOLLOWERS.getRoute())
+                .setExchangePattern(ExchangePattern.InOut)
+                .to(GlobalRoutes.GET_USER_FOLLOWERS.getRoute()+ "?requestTimeout=5000")
+                .end();
+
+
+        //méthode pour recup info dan et
+        //demande info raymon
+
+
+        //recupère objet dans le handler dont authorId et j'appelle ma 3e route pour avoir tableau avec followers
+
+        //appelle service pour tout écrire avec le dao dans bdd
 
     }
 }

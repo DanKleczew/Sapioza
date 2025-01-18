@@ -146,5 +146,11 @@ public class NotificationResource {
         return Response.status(Response.Status.OK).entity(this.userNotificationGateway.getUserInfo(userId)).build();
     }
 
+    @GET
+    @Path("/getUserFollowers/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserFollowers(@PathParam("id") Long userId) throws Exception {
+        return Response.status(Response.Status.OK).entity(this.userNotificationGateway.getUserFollowers(userId)).build();
+    }
 
 }

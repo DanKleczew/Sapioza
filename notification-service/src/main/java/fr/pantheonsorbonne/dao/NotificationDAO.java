@@ -46,4 +46,13 @@ public class NotificationDAO {
             throw new NotificationDatabaseAccessException("Error fetching notifications for user ID: " + userId, e);
         }
     }
+
+    @Transactional
+    public void persistAll(List<Notification> notifications) {
+        entityManager.getTransaction().begin();
+        for (Notification notification : notifications) {
+            entityManager.persist(notification);
+        }
+        entityManager.getTransaction().commit();
+    }
 }

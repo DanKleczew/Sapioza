@@ -1,9 +1,14 @@
 package fr.pantheonsorbonne.model;
 
+import fr.pantheonsorbonne.global.PaperMetaDataDTO;
+import fr.pantheonsorbonne.global.UserFollowersDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Notification {
@@ -31,12 +36,13 @@ public class Notification {
     private boolean viewed;
 
     @Basic(optional = false)
-    private LocalDateTime notificationTime;
+    private Date notificationTime;
 
     public Notification() {
     }
 
-    public Notification(Long userId, Long paperId, String authorName, String paperTitle, boolean viewed, LocalDateTime notificationTime) {
+    public Notification(Long userId, Long paperId, String authorName, String paperTitle,
+                        boolean viewed, Date notificationTime) {
         this.userId = userId;
         this.paperId = paperId;
         this.authorName = authorName;
@@ -44,6 +50,7 @@ public class Notification {
         this.viewed = viewed;
         this.notificationTime = notificationTime;
     }
+
 
     // Getters et setters
 
@@ -103,11 +110,11 @@ public class Notification {
         this.viewed = viewed;
     }
 
-    public LocalDateTime getNotificationTime() {
+    public Date getNotificationTime() {
         return notificationTime;
     }
 
-    public void setNotificationTime(LocalDateTime notificationTime) {
+    public void setNotificationTime(Date notificationTime) {
         this.notificationTime = notificationTime;
     }
 
@@ -120,10 +127,14 @@ public class Notification {
                 ", paperId=" + paperId +
                 ", authorName='" + authorName + '\'' +
                 ", paperTitle='" + paperTitle + '\'' +
-                ", viewed=" + viewed +
                 ", notificationTime=" + notificationTime +
                 '}';
     }
+
+
+    // faire la méthode persistNotifications
+
+
 }
 
 

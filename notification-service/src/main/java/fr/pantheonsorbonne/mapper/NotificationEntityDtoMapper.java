@@ -20,18 +20,4 @@ public class NotificationEntityDtoMapper {
         dto.setViewed(entity.isViewed());
         return dto;
     }
-
-    /*public Notification mapToEntity(NotificationDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        Notification entity = new Notification();
-        entity.setId(dto.getId());
-        entity.setUserId(dto.getUserId());
-        entity.setPaperId(dto.getPaperId());
-        entity.setAuthorName(dto.getAuthorName());
-        entity.setPaperTitle(dto.getPaperTitle());
-        entity.setViewed(dto.isViewed());
-        return entity;
-    }*/
 }
