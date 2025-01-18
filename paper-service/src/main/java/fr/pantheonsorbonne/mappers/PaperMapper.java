@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.mappers;
 
-import fr.pantheonsorbonne.dao.OpinionDAO;
-import fr.pantheonsorbonne.dto.PaperDTO;
+import fr.pantheonsorbonne.dto.PaperDTOs.PaperDTO;
 import fr.pantheonsorbonne.dto.PaperOpinionsDTO;
 import fr.pantheonsorbonne.dto.ReviewDTO;
 import fr.pantheonsorbonne.exception.OpinionNotFoundException;
@@ -9,12 +8,12 @@ import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.global.EntityDTOMapper;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.model.Paper;
-import fr.pantheonsorbonne.model.Review;
 import fr.pantheonsorbonne.service.OpinionService;
 import fr.pantheonsorbonne.service.ReviewService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +62,7 @@ public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
         paper.setAuthorId(dto.authorId());
         paper.setField(dto.field());
         paper.setPublishedIn(dto.publishedIn());
-        paper.setPublicationDate(dto.publicationDate());
+        paper.setPublicationDate(new Date(System.currentTimeMillis()));
         paper.setKeywords(dto.keywords());
         paper.setAbstract_(dto.abstract_());
         paper.setDOI(dto.DOI());

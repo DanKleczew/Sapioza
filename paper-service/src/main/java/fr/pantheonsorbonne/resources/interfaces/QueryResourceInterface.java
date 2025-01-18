@@ -1,9 +1,6 @@
 package fr.pantheonsorbonne.resources.interfaces;
 
-import fr.pantheonsorbonne.dto.PaperDTO;
 import jakarta.ws.rs.core.Response;
-
-import java.util.List;
 
 public interface QueryResourceInterface {
 

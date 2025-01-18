@@ -5,6 +5,7 @@ import fr.pantheonsorbonne.service.PaperDeletionService;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.apache.camel.Handler;
 
 @ApplicationScoped
 public class PersistFailureHandler implements HandlerInterface{
@@ -12,6 +13,7 @@ public class PersistFailureHandler implements HandlerInterface{
     @Inject
     PaperDeletionService paperDeletionService;
 
+    @Handler
     public void handle(Long id) {
         try {
             paperDeletionService.deletePaper(id);

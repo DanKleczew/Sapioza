@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.camel;
 import fr.pantheonsorbonne.camel.handler.PersistFailureHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -11,6 +12,9 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class CamelRoute extends RouteBuilder {
+
+        @Inject
+        PersistFailureHandler persistFailureHandler;
 
         @Override
         public void configure(){
@@ -23,7 +27,7 @@ public class CamelRoute extends RouteBuilder {
 
                 // Fallback process for failed persistence in storage-service
                 from(GlobalRoutes.PERSIST_FAIL_S2P.getRoute())
-                        .bean(PersistFailureHandler.class, "handle(${id})");
+                        .bean(persistFailureHandler);
 
                 // Deleting process for a paper
                 from(Routes.DELETE_COMMAND_TO_STORAGE.getRoute())
@@ -31,15 +35,9 @@ public class CamelRoute extends RouteBuilder {
 
                 //Fetching user basic info process
                 from(Routes.REQUEST_USER_INFO.getRoute())
-//                        .process(exchange -> {
-//                                String correlationId = UUID.randomUUID().toString();
-//                                exchange.getMessage().setHeader("JMSCorrelationID", correlationId);
-//                        })
-                        .log("Request body :  ${body}")
                         .setExchangePattern(ExchangePattern.InOut)
                         .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute()
                                 + "?requestTimeout=5000")
-                        .log("Response body :  ${body}")
                         .end();
 
                 //Fetching paper content process

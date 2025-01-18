@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne;
 
+import fr.pantheonsorbonne.dao.StoredPaperDAO;
 import fr.pantheonsorbonne.dto.StoredPaperInputDTO;
 import fr.pantheonsorbonne.dto.StoredPaperOutputDTO;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
@@ -7,6 +8,7 @@ import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.StoredPaper;
 import fr.pantheonsorbonne.service.StoredPaperService;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.inject.Inject;
@@ -17,77 +19,112 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StoredPaperServiceTest {
 
     @Inject
-    StoredPaperService storedPaperService;  // Injection du service
+    StoredPaperService storedPaperService;
 
-    @Test
-    void testSaveAndFindWithGeneratedId() throws PaperNotFoundException {
-        // Créer un DTO d'entrée avec le contenu
-        StoredPaperInputDTO inputDTO = new StoredPaperInputDTO();
-        inputDTO.setContent("Custom Content");
+    @Inject
+    StoredPaperDAO storedPaperDAO;
 
-        // Utiliser le service pour créer l'entité
-        StoredPaper createdPaper = storedPaperService.createStoredPaper(inputDTO);  // Utiliser le service pour enregistrer l'entité
+    private StoredPaperInputDTO inputDTO;
 
-        // Récupérer l'entité par ID en utilisant le service (l'ID est généré automatiquement)
-        StoredPaperOutputDTO foundPaper = storedPaperService.getStoredPaper(createdPaper.getId());  // Utiliser le service pour récupérer l'entité
-
-        // Vérifier que l'entité a été sauvegardée et correspond aux données
-        assertNotNull(foundPaper);  // Vérifier que l'entité existe
-        assertArrayEquals("Custom Content".getBytes(), foundPaper.getContent().getBytes());  // Vérifier que le contenu est correct
+    @BeforeEach
+    void setUp() {
+        inputDTO = new StoredPaperInputDTO("uuid123", "content123".getBytes());
     }
 
+    // Test de la création d'un papier
     @Test
-    void testUpdateStoredPaper() throws PaperNotFoundException, PaperDatabaseAccessException {
-        // Arrange : Créer un DTO avec un contenu initial
-        StoredPaperInputDTO inputDTO = new StoredPaperInputDTO();
-        inputDTO.setContent("Original Content");
+    void testCreateStoredPaper() throws PaperDatabaseAccessException {
+        // Act
+        StoredPaperOutputDTO result = storedPaperService.createStoredPaper(inputDTO);
 
-        // Act : Utiliser le service pour créer l'entité
-        StoredPaper createdPaper = storedPaperService.createStoredPaper(inputDTO); // Crée une entité avec un ID
+        // Assert
+        assertNotNull(result);
+        assertEquals("uuid123", result.getId());
+        assertArrayEquals("content123".getBytes(), result.getContent());
 
-        // Vérifier que l'entité a été correctement sauvegardée
-        assertNotNull(createdPaper);
-        assertNotNull(createdPaper.getId()); // Vérifier que l'ID a été généré
-        assertArrayEquals("Original Content".getBytes(), createdPaper.getBody());
+        // Vérifier que l'entité a bien été persistée dans la base de données
+        StoredPaper storedPaper = storedPaperDAO.findStoredPaperByUuid("uuid123");
+        assertNotNull(storedPaper);
+        assertArrayEquals("content123".getBytes(), storedPaper.getBody());
+    }
 
-        // Maintenant, on met à jour le contenu de l'entité
-        inputDTO.setContent("Updated Content");
-        StoredPaper updatedPaper = storedPaperService.updateStoredPaper(createdPaper.getId(), inputDTO); // Met à jour l'entité
+    // Test de la mise à jour d'un papier
+    @Test
+    void testUpdateStoredPaper() throws PaperNotFoundException {
+        // Arrange
+        StoredPaper createdPaper = new StoredPaper();
+        createdPaper.setPaperUuid("uuid123");
+        createdPaper.setBody("content123".getBytes());
+        storedPaperDAO.saveStoredPaper(createdPaper);
 
-        // Assert : Vérifier que le contenu a été mis à jour
+        StoredPaperInputDTO updatedDTO = new StoredPaperInputDTO("uuid123", "updatedContent".getBytes());
+
+        // Act
+        StoredPaperOutputDTO result = storedPaperService.updateStoredPaper("uuid123", updatedDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertArrayEquals("updatedContent".getBytes(), result.getContent());
+
+        // Vérifier que l'entité a bien été mise à jour dans la base de données
+        StoredPaper updatedPaper = storedPaperDAO.findStoredPaperByUuid("uuid123");
         assertNotNull(updatedPaper);
-        assertArrayEquals("Updated Content".getBytes(), updatedPaper.getBody());
+        assertArrayEquals("updatedContent".getBytes(), updatedPaper.getBody());
     }
 
+    // Test de la récupération d'un papier
     @Test
-    void testDeleteStoredPaper() throws PaperDatabaseAccessException, PaperNotFoundException {
-        // Arrange : Créer un DTO et sauvegarder l'article
-        StoredPaperInputDTO inputDTO = new StoredPaperInputDTO();
-        inputDTO.setContent("Content to be deleted");
-        StoredPaper createdPaper = storedPaperService.createStoredPaper(inputDTO); // Crée une entité avec un ID
+    void testGetStoredPaper() throws PaperNotFoundException {
+        // Arrange
+        StoredPaper createdPaper = new StoredPaper();
+        createdPaper.setPaperUuid("uuid123");
+        createdPaper.setBody("content123".getBytes());
+        storedPaperDAO.saveStoredPaper(createdPaper);
 
-        // Vérifier que l'entité a été correctement sauvegardée
-        assertNotNull(createdPaper);
-        assertNotNull(createdPaper.getId()); // Vérifier que l'ID a été généré
+        // Act
+        StoredPaperOutputDTO result = storedPaperService.getStoredPaper("uuid123");
 
-        // Act : Supprimer l'article
-        storedPaperService.deleteStoredPaper(createdPaper.getId()); // Effacer l'entité par son ID
-
-        // Assert : Vérifier que l'article a bien été supprimé
-        assertThrows(PaperNotFoundException.class, () -> storedPaperService.getStoredPaper(createdPaper.getId())); // Lancer une exception si l'article n'est pas trouvé
+        // Assert
+        assertNotNull(result);
+        assertEquals("uuid123", result.getId());
+        assertArrayEquals("content123".getBytes(), result.getContent());
     }
 
+    // Test de la suppression d'un papier
     @Test
-    void testDeleteStoredPaper1() throws PaperDatabaseAccessException, PaperNotFoundException {
+    void testDeleteStoredPaper() throws PaperNotFoundException {
+        // Arrange
+        StoredPaper createdPaper = new StoredPaper();
+        createdPaper.setPaperUuid("uuid123");
+        createdPaper.setBody("content".getBytes());
+        storedPaperDAO.saveStoredPaper(createdPaper);
 
-        // Act : Supprimer l'article
-        storedPaperService.deleteStoredPaper(9L); // Effacer l'entité par son ID
+        // Act
+        storedPaperService.deleteStoredPaper("uuid123");
 
-        // Assert : Vérifier que l'article a bien été supprimé
-        assertThrows(PaperNotFoundException.class, () -> storedPaperService.getStoredPaper(9L)); // Lancer une exception si l'article n'est pas trouvé
+        // Assert
+        assertThrows(PaperNotFoundException.class, () -> storedPaperService.getStoredPaper("uuid123"));
     }
 
+    // Test de la gestion de l'exception "PaperNotFoundException" pour la mise à jour
+    @Test
+    void testUpdateStoredPaper_PaperNotFound() {
+        // Act & Assert
+        assertThrows(PaperNotFoundException.class, () -> storedPaperService.updateStoredPaper("uuid123", inputDTO));
+    }
 
+    // Test de la gestion de l'exception "PaperNotFoundException" pour la récupération
+    @Test
+    void testGetStoredPaper_PaperNotFound() {
+        // Act & Assert
+        assertThrows(PaperNotFoundException.class, () -> storedPaperService.getStoredPaper("uuid123"));
+    }
+
+    // Test de la gestion de l'exception "PaperNotFoundException" pour la suppression
+    @Test
+    void testDeleteStoredPaper_PaperNotFound() {
+        // Act & Assert
+        assertThrows(PaperNotFoundException.class, () -> storedPaperService.deleteStoredPaper("uuid123"));
+    }
 }
-
 

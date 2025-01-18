@@ -1,23 +1,28 @@
 package fr.pantheonsorbonne.dto;
 
 public class StoredPaperInputDTO {
-    private Long id;
-    private String content; // Le contenu du String à stocker
+    private String paperUuid;
+    private byte[] content; // Le contenu du String à stocker
+
+    public StoredPaperInputDTO(String paperUuid, byte[] content) {
+        this.paperUuid = paperUuid;
+        this.content = content;
+    }
 
     // Getters et Setters
-    public Long getId() {
-        return id;
+    public String getId() {
+        return paperUuid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(String id) {
+        this.paperUuid = id;
     }
 
-    public String getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 }

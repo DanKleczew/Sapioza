@@ -5,5 +5,5 @@ public record OpinionDTO (
     int opinion,
     Long readerId
 
-    // Mirror DTO of Review entity
+    // Mirror DTO of Opinion entity
 ) {}
