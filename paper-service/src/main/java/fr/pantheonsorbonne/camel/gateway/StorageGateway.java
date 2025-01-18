@@ -29,4 +29,13 @@ public class StorageGateway {
                 throw new InternalCommunicationException("Error while sending deleted paper command to storage");
             }
         }
+
+    public String getPaperContent(String uuid) throws InternalCommunicationException {
+        try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
+            return producerTemplate.requestBody(Routes.GET_PAPER_CONTENT.getRoute(), uuid, String.class);
+
+        } catch (Exception e) {
+            throw new InternalCommunicationException("Error while getting paper content from storage");
+        }
+    }
 }

@@ -11,7 +11,9 @@ public enum GlobalRoutes {
     // If storage-service fails to persist content, to notification-service. Message Body: Long (PaperID)
     DELETE_PAPER_P2S("sjms2:M1.SAPIOZA:deletePaperContentCommand"),
     // At paper DELETE, paperID from paper-service to storage-service. Message Body: Long (PaperID)
-
+    USER_INFO_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:userInfoRequestReplyQueue"),
+    // Request/Reply queue for User Information. Message Body : UserInfoDTO
+    PAPER_CONTENT_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:getPaperContent"),
 
     //Notification
     USER_REQUEST_N2U("sjms2:M1.SAPIOZA:notificationToUserRequest"),

@@ -50,7 +50,7 @@ public class PaperCreationService {
             this.notificationGateway.newPaper(paperMetaDataDTO);
 
             PaperContentDTO paperContentDTO =
-                    new PaperContentDTO(paper.getId(), paper.getUuid(), submittedPaperDTO.body());
+                    new PaperContentDTO(paper.getUuid(), submittedPaperDTO.body());
             // Send Paper Content to storage-service
             this.storageGateway.newPaper(paperContentDTO);
         } catch (InternalCommunicationException e) {

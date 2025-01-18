@@ -7,9 +7,11 @@ import fr.pantheonsorbonne.exception.ReviewNotFoundException;
 import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.model.Review;
 import fr.pantheonsorbonne.service.PaperQueryService;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
@@ -37,17 +39,11 @@ public class ReviewDAO {
         }
     }
 
-    public List<Review> getReviews(Long articleId) throws PaperNotFoundException {
-        try {
-            Paper paper = this.paperQueryDAO.getPaper(articleId);
-            if (paper == null) {
-                throw new PaperNotFoundException(articleId);
-            }
-            return paper.getReviews();
+    public List<Review> getReviews(Long articleId)  {
+            return this.em.createQuery("SELECT r FROM Review r WHERE r.paper.id = :articleId", Review.class)
+                    .setParameter("articleId", articleId)
+                    .getResultList();
 
-        } catch (RuntimeException e) {
-            throw new PaperDatabaseAccessException();
-        }
     }
 
     public void removeReview(Long paperId, Long reviewerId) throws ReviewNotFoundException {
@@ -64,12 +60,14 @@ public class ReviewDAO {
     }
 
     private Long getReviewId(Long paperId, Long reviewerId) {
-        Long reviewId = null;
-        reviewId = (Long) this.em
+        try {
+        return (Long) this.em
                 .createQuery("SELECT r.id FROM Review r WHERE r.paper.id = :paperId AND r.commentAuthorId = :reviewerId")
                 .setParameter("paperId", paperId)
                 .setParameter("reviewerId", reviewerId)
                 .getSingleResult();
-        return reviewId;
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

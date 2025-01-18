@@ -6,10 +6,13 @@ import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
 import fr.pantheonsorbonne.resources.interfaces.CreationResourceInterface;
 import fr.pantheonsorbonne.service.PaperCreationService;
+import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.sql.Date;
 
 @Path("/papers")
 public class PaperCreationResource implements CreationResourceInterface {
@@ -30,7 +33,7 @@ public class PaperCreationResource implements CreationResourceInterface {
         } catch (BadRequestException e) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity("Malformed JSON")
+                    .entity(e.getMessage())
                     .build();
         } catch (PaperNotCreatedException | PaperDatabaseAccessException e) {
             return Response
@@ -39,5 +42,4 @@ public class PaperCreationResource implements CreationResourceInterface {
                     .build();
         }
     }
-
 }
