@@ -31,13 +31,17 @@ public class CamelRoute extends RouteBuilder {
 
                 //Fetching user basic info process
                 from(Routes.REQUEST_USER_INFO.getRoute())
-                        .process(exchange -> {
-                                String correlationId = UUID.randomUUID().toString();
-                                exchange.getMessage().setHeader("JMSCorrelationID", correlationId);
-                        })
+//                        .process(exchange -> {
+//                                String correlationId = UUID.randomUUID().toString();
+//                                exchange.getMessage().setHeader("JMSCorrelationID", correlationId);
+//                        })
+                        .log("Request body :  ${body}")
                         .setExchangePattern(ExchangePattern.InOut)
-                        .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute())
+                        .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute()
+                                + "?requestTimeout=5000")
+                        .log("Response body :  ${body}")
                         .end();
+
                 //Fetching paper content process
                 from(Routes.GET_PAPER_CONTENT.getRoute())
                         .setExchangePattern(ExchangePattern.InOut)

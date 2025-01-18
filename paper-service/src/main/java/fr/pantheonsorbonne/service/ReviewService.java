@@ -27,7 +27,7 @@ public class ReviewService {
         return this.reviewDAO.getReviews(articleId)
                 .stream()
                 .map(reviewMapper::mapEntityToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void removeReview(Long paperId, Long reviewerId ) throws ReviewNotFoundException {

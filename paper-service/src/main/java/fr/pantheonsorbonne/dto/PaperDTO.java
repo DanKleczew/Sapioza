@@ -18,6 +18,7 @@ public record PaperDTO(
         String abstract_,
         String DOI,
         Integer likes,
+        Integer dislikes,
         List<String> comments
         ) {
         // Mirror DTO of the Paper entity

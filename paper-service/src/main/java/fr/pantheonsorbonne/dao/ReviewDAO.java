@@ -39,17 +39,11 @@ public class ReviewDAO {
         }
     }
 
-    public List<Review> getReviews(Long articleId) throws PaperNotFoundException {
-        try {
-            Paper paper = this.paperQueryDAO.getPaper(articleId);
-            if (paper == null) {
-                throw new PaperNotFoundException(articleId);
-            }
-            return paper.getReviews();
+    public List<Review> getReviews(Long articleId)  {
+            return this.em.createQuery("SELECT r FROM Review r WHERE r.paper.id = :articleId", Review.class)
+                    .setParameter("articleId", articleId)
+                    .getResultList();
 
-        } catch (RuntimeException e) {
-            throw new PaperDatabaseAccessException();
-        }
     }
 
     public void removeReview(Long paperId, Long reviewerId) throws ReviewNotFoundException {
