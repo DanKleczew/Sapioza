@@ -12,12 +12,14 @@ import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @ApplicationScoped
@@ -33,26 +35,47 @@ public class UserService {
     UserAccount userAccount;
 
     @Transactional
-    public User getUserInfos(long id) {
+    public UserDTO getUserDTOById(Long id) {
         User user = userDAO.getUserById(id);
-        userDAO.getUsersListId(id);
-        System.out.println(user.toString());
         if (user == null) {
             System.out.println("User not found");
+            Log.debug("User not found");
+            return null;
         }
-        return user;
+        userDAO.getUsersListId(id);
+        System.out.println(user.toString());
+        return userMapper.mapEntityToDTO(user);
+    }
+
+    public UserDTO getUserbyEmail(String email) {
+        User user = userDAO.getUserByEmail(email);
+        if (user == null) {
+            return null;
+        }
+        return userMapper.mapEntityToDTO(user);
     }
 
     @Transactional
-    public void subscribing (long idUser1, long idUser2) {
+    public void subscribTo(long idUser1, long idUser2) {
         User user = userDAO.getUserById(idUser1);
         User user2 = userDAO.getUserById(idUser2);
+        if(this.isSubscribed(user, user2)){
+            return;
+        }
         user.subscribeTo(user2);
         userDAO.updateUser(user);
     }
 
+    public Boolean isSubscribed(User user1, User user2) {
+        if(user1 == null || user2 == null) {
+            return false;
+        }
+        List<Long> user1Followers = user1.getUsersIds();
+        return user1Followers.contains(user2.getId());
+    }
+
     @Transactional
-    public List<User> getSubscribers(long id) {
+    public List<User> getSubscribers(Long id) {
         return userDAO.getUserById(id).getUsers();
     }
 
@@ -60,10 +83,19 @@ public class UserService {
         return userDAO.getUserByEmail(email).getUsers();
     }
 
+    public List<Long> GetSubscribersId(Long id){
+        return userDAO.getUserById(id).getUsersIds();
+    }
+
+    public List<Long> GetSubscribersId(String email){
+        return userDAO.getUserByEmail(email).getUsersIds();
+    }
+
     @Transactional
     public void createAccount(UserRegistrationDTO userRegistrationDTO) {
         UserDTO userDTO = userMapper.mapRegistrationToUserDTO(userRegistrationDTO);
         User user = userMapper.mapDTOToEntity(userDTO);
+        userDAO.addDefaultValuesForUser(user);
         userDAO.updateUser(user);
     }
 
@@ -77,17 +109,17 @@ public class UserService {
         userDAO.createTestUser();
     }
 
-    public Long connectionUser(String email, String password) throws ConnectionException {
+    public UserDTO connectionUser(String email, String password) throws ConnectionException {
         User user = userDAO.connection(email, password);
         UserDTO userDTO = userMapper.mapEntityToDTO(user);
         if (userDTO == null) {
             throw new ConnectionException(email, new Throwable());
         }
-        return userDTO.id();
+        return userDTO;
     }
 
     public List<Long> findUserFollowersID(Long id) {
-        List<User> users = this.findUserFollowers(id);
+        List<User> users = this.findUserFollows(id);
         List<Long> followersList = new ArrayList<>();
         for (User user : users) {
             followersList.add(user.getId());
@@ -96,12 +128,25 @@ public class UserService {
         return followersList;
     }
 
-    public List<User> findUserFollowers(Long id){
-        return userDAO.findUserFollowers(id);
+    public List<User> findUserFollows(Long id){
+        return userDAO.findUserFollows(id);
+    }
+
+    public List<Long> findUserFollowsID(Long id) {
+        List<User> users = this.findUserFollows(id);
+        for (User user : users) {
+            Log.debug(user.toString() + " is a follow " + id );
+            System.out.println(user.toString() + " is a follow " + id );
+        }
+        return this.transformUserListToIdList(users);
+    }
+
+    public List<Long> transformUserListToIdList(List<User> users) {
+        return users.stream().map(User::getId).collect(Collectors.toList());
     }
 
     public List<UserDTO> findUserFollowersDTO(Long id){
-        List<User> users = this.findUserFollowers(id);
+        List<User> users = this.findUserFollows(id);
         List<UserDTO> followersList = new ArrayList<>();
         for (User user : users) {
             followersList.add(userMapper.mapEntityToDTO(user));
@@ -195,12 +240,17 @@ public class UserService {
         }
     }
 
-    public Long getUserIdByUui(String uuid) throws UserNotFoundException {
-        UserDTO userDTO = this.userDAO.getUserByUuid(uuid);
+    public UserDTO getUserByUuid(String uuid) throws UserNotFoundException {
+        User user = this.userDAO.getUserByUuid(uuid);
+        UserDTO userDTO = this.userMapper.mapEntityToDTO(user);
         if(userDTO == null) {
             throw new UserNotFoundException(uuid);
         }
-        return userDTO.id();
+        return userDTO;
+    }
+
+    public String getUserUuidById(Long id) {
+        return this.getUserDTOById(id).uuid();
     }
 
 

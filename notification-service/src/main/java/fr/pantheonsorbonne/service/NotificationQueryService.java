@@ -41,4 +41,6 @@ public class NotificationQueryService {
     public List<NotificationEntity> getNotificationsByUserId(Long userId) {
         return notificationDAO.findByUserId(userId);
     }
+
+
 }

@@ -1,7 +1,9 @@
 package fr.pantheonsorbonne.dto;
 
-public record OpinionDTO (Long paperId,
-                          int opinion,
-                          Long readerId){
+public class OpinionDTO {
+    Long paperId;
+    boolean paperLiked;
+    Long readerId;
+
     // Mirror DTO of Review entity
 }
