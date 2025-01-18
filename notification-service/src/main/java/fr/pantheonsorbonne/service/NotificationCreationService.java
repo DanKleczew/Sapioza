@@ -1,19 +1,15 @@
 package fr.pantheonsorbonne.service;
 
 import fr.pantheonsorbonne.dao.NotificationDAO;
-import fr.pantheonsorbonne.dto.NotificationDTO;
-import fr.pantheonsorbonne.model.Notification;
 import fr.pantheonsorbonne.mapper.NotificationEntityDtoMapper;
+import fr.pantheonsorbonne.model.Notification;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.ProducerTemplate;
+import io.quarkus.logging.Log;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
-
-
-import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 
 @ApplicationScoped
 public class NotificationCreationService {
@@ -24,101 +20,72 @@ public class NotificationCreationService {
     @Inject
     ProducerTemplate producerTemplate;
 
-    private static final String NOTIFICATION_QUEUE = "jms:queue:notificationQueue";
-
-    /**
-     * Crée une notification en base de données et la place dans une queue pour traitement ultérieur.
-     *
-     * @param authorName Le nom de l'auteur.
-     * @param paperTitle Le titre du papier.
-     */
     @Inject
     NotificationEntityDtoMapper mapper;
 
-    public void createNotification(NotificationDTO dto) {
-        // Convertir le DTO en entité
-        Notification entity = mapper.mapToEntity(dto);
+    private static final String GET_FOLLOWERS_ROUTE = "direct:getFollowers";
 
-        // Ajouter des champs spécifiques si nécessaire
-        entity.setNotificationTime(LocalDateTime.now());
+    /**
+     * Crée une notification pour un utilisateur et un article donnés.
+     *
+     * @param userId  ID de l'utilisateur à notifier.
+     * @param paperId ID de l'article lié à la notification.
+     * @param authorName Nom de l'auteur de l'article.
+     */
+    public void createNotification(Long userId, Long paperId, String authorName) {
+        try {
+            Notification notification = new Notification();
+            notification.setUserId(userId);
+            notification.setPaperId(paperId);
+            notification.setAuthorName(authorName);
+            notification.setNotificationTime(LocalDateTime.now());
+            notification.setViewed(false);
 
-        // Sauvegarder l'entité
-        notificationDAO.create(entity);
-
-        // Envoi de la notification dans une queue JMS
-        producerTemplate.sendBodyAndHeader(
-                NOTIFICATION_QUEUE,
-                entity,
-                "notificationType",
-                "NEW_PAPER"
-        );
+            notificationDAO.create(notification);
+            Log.info("Notification created for user ID: " + userId);
+        } catch (Exception e) {
+            Log.error("Failed to create notification for user ID: " + userId, e);
+        }
     }
 
     /**
-     * Récupère la liste des followers d'un auteur via une route Camel.
+     * Récupère les followers d'un auteur à partir du User Service.
      *
-     * @param authorId l'ID de l'auteur
-     * @return une liste d'IDs des followers
+     * @param authorId ID de l'auteur.
+     * @return Liste des IDs des followers.
      */
-
-    private List<Long> getFollowers(Long authorId) {
+    public List<Long> getFollowers(Long authorId) {
         try {
-            // Appel à la route Camel
             List<?> rawList = producerTemplate.requestBody(
-                    "direct:getFollowers",
+                    GET_FOLLOWERS_ROUTE,
                     authorId,
                     List.class
             );
 
-            // Vérifier et convertir les éléments en Long
             return rawList.stream()
-                    .filter(item -> item instanceof Long) // Filtrer uniquement les Long
-                    .map(item -> (Long) item) // Caster en Long
+                    .filter(item -> item instanceof Long)
+                    .map(item -> (Long) item)
                     .toList();
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch followers for author ID: " + authorId, e);
         }
     }
 
-
-    //pour récupérer les followers sans forcément faire de gateway :
-
-    public void processNotification(PaperMetaDataDTO metaData) {
-        try {
-            // Récupérer les followers de l'auteur
-            List<Long> followers = getFollowers(metaData.authorId());
-
-            // Créer les notifications en lot
-            List<Notification> notifications = followers.stream().map(followerId -> {
-                Notification notification = new Notification();
-                notification.setUserId(followerId);
-                notification.setAuthorName(metaData.authorId().toString());
-                notification.setPaperTitle(metaData.title());
-                notification.setNotificationTime(metaData.publicationDate().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime());
-                return notification;
-            }).toList();
-
-            // Persister les notifications
-            for (Notification notification : notifications) {
-                notificationDAO.create(notification);
-            }
-
-            // Log du succès
-            System.out.println("Successfully processed notifications for PaperMetaDataDTO: " + metaData);
-
-        } catch (Exception e) {
-            // Log de l'erreur
-            throw new RuntimeException("Failed to process notifications for PaperMetaDataDTO: " + metaData, e);
+    /**
+     * Crée des notifications pour tous les followers d'un auteur donné pour un article.
+     *
+     * @param authorId ID de l'auteur.
+     * @param paperId  ID de l'article publié.
+     * @param authorName Nom de l'auteur.
+     */
+    public void notifyFollowers(Long authorId, Long paperId, String authorName) {
+        List<Long> followers = getFollowers(authorId);
+        if (followers.isEmpty()) {
+            Log.info("No followers found for author ID: " + authorId);
+            return;
         }
+
+        followers.forEach(followerId -> createNotification(followerId, paperId, authorName));
+        Log.info("Notifications successfully sent for paper ID: " + paperId + " by author ID: " + authorId);
     }
-
-
-
-
 }
-
-
-
-
