@@ -1,9 +1,6 @@
-package fr.pantheonsorbonne.dto;
+package fr.pantheonsorbonne.dto.PaperDTOs;
 
 import fr.pantheonsorbonne.enums.ResearchField;
-import jakarta.persistence.Basic;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 import java.util.Date;
 import java.util.List;

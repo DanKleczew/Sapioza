@@ -1,18 +1,15 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dto.SubmittedPaperDTO;
+import fr.pantheonsorbonne.dto.PaperDTOs.SubmittedPaperDTO;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotCreatedException;
 import fr.pantheonsorbonne.resources.interfaces.CreationResourceInterface;
 import fr.pantheonsorbonne.service.PaperCreationService;
-import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import java.sql.Date;
 
 @Path("/papers")
 public class PaperCreationResource implements CreationResourceInterface {

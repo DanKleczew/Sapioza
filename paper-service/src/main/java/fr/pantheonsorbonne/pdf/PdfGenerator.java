@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.pdf;
 
-import fr.pantheonsorbonne.dto.CompletePaperDTO;
-import fr.pantheonsorbonne.dto.SubmittedPaperDTO;
+import fr.pantheonsorbonne.dto.PaperDTOs.CompletePaperDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

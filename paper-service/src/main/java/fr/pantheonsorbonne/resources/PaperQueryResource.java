@@ -1,13 +1,11 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dto.CompletePaperDTO;
 import fr.pantheonsorbonne.dto.FilterDTO;
-import fr.pantheonsorbonne.dto.QueriedPDF;
+import fr.pantheonsorbonne.dto.PaperDTOs.QueriedPDF;
 import fr.pantheonsorbonne.enums.ResearchField;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
-import fr.pantheonsorbonne.pdf.PdfGenerator;
 import fr.pantheonsorbonne.resources.interfaces.QueryResourceInterface;
 import fr.pantheonsorbonne.service.PaperQueryService;
 import fr.pantheonsorbonne.service.ReviewService;
@@ -92,7 +90,7 @@ public class PaperQueryResource implements QueryResourceInterface {
                     .status(Response.Status.OK)
                     .entity(queriedPDF.pdf())
                     .header("Content-Disposition", "inline; " +
-                            "filename=\"" + id + ".pdf\"")
+                            "filename=\"" + queriedPDF.title() + ".pdf\"")
                     .build();
         } catch (PaperNotFoundException e){
             return Response

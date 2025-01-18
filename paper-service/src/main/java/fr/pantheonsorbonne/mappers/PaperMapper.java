@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.mappers;
 
-import fr.pantheonsorbonne.dao.OpinionDAO;
-import fr.pantheonsorbonne.dto.PaperDTO;
+import fr.pantheonsorbonne.dto.PaperDTOs.PaperDTO;
 import fr.pantheonsorbonne.dto.PaperOpinionsDTO;
 import fr.pantheonsorbonne.dto.ReviewDTO;
 import fr.pantheonsorbonne.exception.OpinionNotFoundException;
@@ -9,7 +8,6 @@ import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.global.EntityDTOMapper;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.model.Paper;
-import fr.pantheonsorbonne.model.Review;
 import fr.pantheonsorbonne.service.OpinionService;
 import fr.pantheonsorbonne.service.ReviewService;
 import jakarta.enterprise.context.ApplicationScoped;
