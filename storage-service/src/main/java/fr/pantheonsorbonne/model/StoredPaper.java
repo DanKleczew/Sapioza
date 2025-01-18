@@ -9,6 +9,9 @@ public class StoredPaper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String paperUuid; // Identifiant transmis
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] body; // Stocke le contenu PDF en tant que tableau d'octets
@@ -18,8 +21,13 @@ public class StoredPaper {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getter et Setter pour paperUuid
+    public String getPaperUuid() {
+        return paperUuid;
+    }
+
+    public void setPaperUuid(String paperUuid) {
+        this.paperUuid = paperUuid;
     }
 
     // Getter et Setter pour body

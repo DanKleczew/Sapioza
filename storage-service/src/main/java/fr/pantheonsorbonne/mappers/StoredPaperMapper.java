@@ -12,14 +12,14 @@ public class StoredPaperMapper {
 
     public StoredPaper mapInputDTOToEntity(StoredPaperInputDTO dto) {
         StoredPaper storedPaper = new StoredPaper();
-        storedPaper.setId(dto.getId());
-        storedPaper.setBody(dto.getContent().getBytes(StandardCharsets.UTF_8)); // String vers byte[]
+        storedPaper.setPaperUuid(dto.getId());
+        storedPaper.setBody(dto.getContent());
         return storedPaper;
     }
 
     public StoredPaperOutputDTO mapEntityToOutputDTO(StoredPaper entity) {
-        String content = new String(entity.getBody(), StandardCharsets.UTF_8); // byte[] vers String
-        return new StoredPaperOutputDTO(entity.getId(), content);
+        byte[] content = entity.getBody();
+        return new StoredPaperOutputDTO(entity.getPaperUuid(), content);
     }
 }
 

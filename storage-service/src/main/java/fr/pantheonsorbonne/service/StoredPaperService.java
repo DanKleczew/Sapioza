@@ -3,10 +3,10 @@ package fr.pantheonsorbonne.service;
 import fr.pantheonsorbonne.dao.StoredPaperDAO;
 import fr.pantheonsorbonne.dto.StoredPaperInputDTO;
 import fr.pantheonsorbonne.dto.StoredPaperOutputDTO;
-import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
-import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.mappers.StoredPaperMapper;
 import fr.pantheonsorbonne.model.StoredPaper;
+import fr.pantheonsorbonne.exception.PaperNotFoundException;
+import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,50 +21,54 @@ public class StoredPaperService {
     StoredPaperMapper storedPaperMapper;
 
     @Transactional
-    public StoredPaper createStoredPaper(StoredPaperInputDTO dto) throws PaperDatabaseAccessException {
+    public StoredPaperOutputDTO createStoredPaper(StoredPaperInputDTO dto) throws PaperDatabaseAccessException {
         try {
-            // Mapper le DTO en entité
+            // Mapper the DTO to entity
             StoredPaper storedPaper = storedPaperMapper.mapInputDTOToEntity(dto);
-            // Sauvegarder l'entité via le DAO et renvoyer l'entité persistée
-            return storedPaperDAO.saveStoredPaper(storedPaper);
+            // Save the entity using the DAO
+            StoredPaper savedPaper = storedPaperDAO.saveStoredPaper(storedPaper);
+            // Return the saved paper as a DTO
+            return storedPaperMapper.mapEntityToOutputDTO(savedPaper);
         } catch (Exception e) {
             throw new PaperDatabaseAccessException("Failed to save StoredPaper", e);
         }
     }
 
     @Transactional
-    public StoredPaper updateStoredPaper(Long id, StoredPaperInputDTO dto) throws PaperNotFoundException {
-        // Vérifier si l'entité existe
-        StoredPaper existingPaper = storedPaperDAO.findStoredPaperById(id);
+    public StoredPaperOutputDTO updateStoredPaper(String paperUuid, StoredPaperInputDTO dto) throws PaperNotFoundException {
+        // Find the existing paper by paperUuid
+        StoredPaper existingPaper = storedPaperDAO.findStoredPaperByUuid(paperUuid);
         if (existingPaper == null) {
-            throw new PaperNotFoundException("StoredPaper with ID " + id + " not found");
+            throw new PaperNotFoundException("StoredPaper with paperUuid " + paperUuid + " not found");
         }
 
-        // Mettre à jour le contenu
-        existingPaper.setBody(dto.getContent().getBytes());
-        // Sauvegarder l'entité mise à jour
-        return storedPaperDAO.saveStoredPaper(existingPaper);
+        // Update the paper's body with the new content
+        existingPaper.setBody(dto.getContent());
+        // Save the updated paper
+        StoredPaper updatedPaper = storedPaperDAO.saveStoredPaper(existingPaper);
+        // Return the updated paper as a DTO
+        return storedPaperMapper.mapEntityToOutputDTO(updatedPaper);
     }
 
-    public StoredPaperOutputDTO getStoredPaper(Long id) throws PaperNotFoundException {
-        StoredPaper storedPaper = storedPaperDAO.findStoredPaperById(id);
+    public StoredPaperOutputDTO getStoredPaper(String paperUuid) throws PaperNotFoundException {
+        // Find the paper by its paperUuid
+        StoredPaper storedPaper = storedPaperDAO.findStoredPaperByUuid(paperUuid);
         if (storedPaper == null) {
-            throw new PaperNotFoundException("StoredPaper with ID " + id + " not found");
+            throw new PaperNotFoundException("StoredPaper with paperUuid " + paperUuid + " not found");
         }
+        // Return the paper as a DTO
         return storedPaperMapper.mapEntityToOutputDTO(storedPaper);
     }
 
     @Transactional
-    public void deleteStoredPaper(Long id) throws PaperNotFoundException {
-        // Vérifier si l'article avec cet ID existe
-        StoredPaper existingPaper = storedPaperDAO.findStoredPaperById(id);
+    public void deleteStoredPaper(String paperUuid) throws PaperNotFoundException {
+        // Find the paper by its paperUuid
+        StoredPaper existingPaper = storedPaperDAO.findStoredPaperByUuid(paperUuid);
         if (existingPaper == null) {
-            throw new PaperNotFoundException("StoredPaper with ID " + id + " not found");
+            throw new PaperNotFoundException("StoredPaper with paperUuid " + paperUuid + " not found");
         }
 
-        // Si l'article existe, procéder à la suppression
+        // Delete the paper
         storedPaperDAO.deleteStoredPaper(existingPaper);
     }
-
 }
-
