@@ -110,7 +110,7 @@ public class NotificationResource {
             }
 
             // Appeler le service pour la logique métier
-            notificationCreationService.createNotification(dto);
+            //notificationCreationService.createNotification(dto);
 
             return Response.status(Response.Status.CREATED)
                     .entity("Notification created successfully.")
@@ -128,7 +128,7 @@ public class NotificationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTestNotification() {
         try {
-            notificationDAO.createTestNotification();
+            //notificationDAO.create();
             return Response.ok("Test notification created successfully.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

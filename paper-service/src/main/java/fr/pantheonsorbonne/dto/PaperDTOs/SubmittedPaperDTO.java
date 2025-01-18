@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.dto;
+package fr.pantheonsorbonne.dto.PaperDTOs;
 
 public record SubmittedPaperDTO(
         PaperDTO metaData,
