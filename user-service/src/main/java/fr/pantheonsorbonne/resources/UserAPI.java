@@ -32,11 +32,11 @@ public class UserAPI {
                 @PathParam("email") String email,
                 @PathParam("password") String password
         ) {
-                if(userService.getUserbyEmail(email) != null) {
+                if(userService.getUser(email) != null) {
                         return Response.status(Response.Status.CONFLICT).build();
                 }
-                userService.createAccount(new UserRegistrationDTO(name, firstName, email, password));
-                UserDTO userDTO = userService.getUserbyEmail(email);
+                userService.createUser(new UserRegistrationDTO(name, firstName, email, password));
+                UserDTO userDTO = userService.getUser(email);
                 Log.debug("UserAPI.createAccount called with name=" + name + " firstName=" + firstName + " email=" + email + " password=" + password);
                 return Response.ok(userDTO).build();
         }
@@ -45,20 +45,20 @@ public class UserAPI {
         @Produces(MediaType.APPLICATION_JSON)
         @Path("/getInfo/{id}")
         public Response getUserInfo(@PathParam("id") long id) {
-                UserDTO userDTO = userService.getUserDTOById(id);
+                UserDTO userDTO = userService.getUser(id);
                 Log.debug("UserAPI.getUserInfo called with id=" + id);
                 return Response.ok(userDTO).build();
         }
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/delete/{id}")
-        public Response deleteUser(@PathParam("id") long id) {
-                if(userService.getUserDTOById(id) == null){
+        @Path("/delete/{id},{password}")
+        public Response deleteUser(@PathParam("id") long id, @PathParam("password") String password) {
+                if(userService.getUser(id) == null){
                         return Response.status(Response.Status.NOT_FOUND).build();
                 }
-                UserDTO userDTO = userService.getUserDTOById(id);
-                userService.deleteUser(id);
+                UserDTO userDTO = userService.getUser(id);
+                userService.deleteUser(id, password);
                 Log.debug("UserAPI.deleteUser called with id=" + id);
                 return Response.ok(userDTO).build();
         }
@@ -72,7 +72,7 @@ public class UserAPI {
         ) {
 
                 userService.subscribTo(id1, id2);
-                UserDTO userDTO = userService.getUserDTOById(id1);
+                UserDTO userDTO = userService.getUser(id1);
                 Log.debug("UserAPI.createTestUser called");
                 return Response.ok(userDTO).build();
         }
@@ -83,7 +83,7 @@ public class UserAPI {
         public Response getSubscribers(
                 @PathParam("id") long id
         ) {
-                List<Long> usersId = userService.GetSubscribersId(id);
+                List<Long> usersId = userService.getSubscribersId(id);
                 Log.debug("UserAPI.getSubscribers called with id=" + id);
                 return Response.ok(usersId).build();
         }

@@ -5,12 +5,21 @@ import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.global.EntityDTOMapper;
+import fr.pantheonsorbonne.global.UserFollowersDTO;
+import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.model.User;
+import fr.pantheonsorbonne.service.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
+import java.util.List;
 
 @ApplicationScoped
 public class UserMapper implements EntityDTOMapper<UserDTO, User> {
+
+    @Inject
+    UserService userService;
 
     @Override
     public UserDTO mapEntityToDTO(User entity) /*throws UserException*/ {
@@ -71,6 +80,21 @@ public class UserMapper implements EntityDTOMapper<UserDTO, User> {
                 userDTO.firstName(),
                 userDTO.name(),
                 userDTO.email()
+        );
+    }
+
+    public UserFollowersDTO mapUserToUserFollowersDTO(UserDTO userDTO) {
+        return new UserFollowersDTO(
+                userDTO.id(),
+                userDTO.UsersIds()
+        );
+    }
+
+    public UserFollowsDTO mapUserToUserFollowsDTO(UserDTO userDTO) {
+        List<Long> usersIds = userService.findUserFollowsID(userDTO.id());
+        return new UserFollowsDTO(
+                userDTO.id(),
+                usersIds
         );
     }
 }

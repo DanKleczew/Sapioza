@@ -51,7 +51,7 @@ public class UserAccount {
 
     public UserInfoDTO getUserInformation(Long id){
         try {
-            UserDTO userDTO = userService.getUserDTOById(id);
+            UserDTO userDTO = userService.getUser(id);
             UserInfoDTO userInfoDTO = userMapper.mapUserDTOToUserInfoDTO(userDTO);
             return userInfoDTO;
         } catch (Exception e) {

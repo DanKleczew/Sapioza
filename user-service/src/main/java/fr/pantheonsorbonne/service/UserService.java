@@ -12,6 +12,7 @@ import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
+import fr.pantheonsorbonne.service.interfaces.UserServiceInterface;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 
 @ApplicationScoped
-public class UserService {
+public class UserService implements UserServiceInterface {
 
     @Inject
     UserDAO userDAO;
@@ -35,7 +36,7 @@ public class UserService {
     UserAccount userAccount;
 
     @Transactional
-    public UserDTO getUserDTOById(Long id) {
+    public UserDTO getUser(Long id) {
         User user = userDAO.getUserById(id);
         if (user == null) {
             System.out.println("User not found");
@@ -47,7 +48,7 @@ public class UserService {
         return userMapper.mapEntityToDTO(user);
     }
 
-    public UserDTO getUserbyEmail(String email) {
+    public UserDTO getUser(String email) {
         User user = userDAO.getUserByEmail(email);
         if (user == null) {
             return null;
@@ -56,7 +57,7 @@ public class UserService {
     }
 
     @Transactional
-    public void subscribTo(long idUser1, long idUser2) {
+    public void subscribTo(Long idUser1, Long idUser2) {
         User user = userDAO.getUserById(idUser1);
         User user2 = userDAO.getUserById(idUser2);
         if(this.isSubscribed(user, user2)){
@@ -83,16 +84,16 @@ public class UserService {
         return userDAO.getUserByEmail(email).getUsers();
     }
 
-    public List<Long> GetSubscribersId(Long id){
+    public List<Long> getSubscribersId(Long id){
         return userDAO.getUserById(id).getUsersIds();
     }
 
-    public List<Long> GetSubscribersId(String email){
+    public List<Long> getSubscribersId(String email){
         return userDAO.getUserByEmail(email).getUsersIds();
     }
 
     @Transactional
-    public void createAccount(UserRegistrationDTO userRegistrationDTO) {
+    public void createUser(UserRegistrationDTO userRegistrationDTO) {
         UserDTO userDTO = userMapper.mapRegistrationToUserDTO(userRegistrationDTO);
         User user = userMapper.mapDTOToEntity(userDTO);
         userDAO.addDefaultValuesForUser(user);
@@ -100,8 +101,29 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public Boolean deleteUser(Long id, String password) {
+        UserDTO userDTO = this.getUser(id);
+        if (userDTO == null) {
+            return false;
+        }
+        if (!userDTO.password().equals(password)) {
+            return false;
+        }
         userDAO.deleteUserById(id);
+        return true;
+    }
+
+    @Transactional
+    public Boolean deleteUser(String email, String password) {
+        UserDTO userDTO = this.getUser(email);
+        if (userDTO == null) {
+            return false;
+        }
+        if (!userDTO.password().equals(password)) {
+            return false;
+        }
+        userDAO.deleteUserById(userDTO.id());
+        return true;
     }
 
     @Transactional
@@ -249,8 +271,8 @@ public class UserService {
         return userDTO;
     }
 
-    public String getUserUuidById(Long id) {
-        return this.getUserDTOById(id).uuid();
+    public String getUserUuid(Long id) {
+        return this.getUser(id).uuid();
     }
 
 

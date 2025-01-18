@@ -4,6 +4,8 @@ package fr.pantheonsorbonne.camel;
 import fr.pantheonsorbonne.camel.gateway.UserAccount;
 import fr.pantheonsorbonne.camel.handler.UserRequestHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
+import fr.pantheonsorbonne.global.UserFollowersDTO;
+import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,25 +24,28 @@ public class CamelRoute extends RouteBuilder {
         @Override
         public void configure(){
 
-                from(GlobalRoutes.GET_USER_INFORMATION_U2N.getRoute())
-                        .to(Routes.GET_USER_INFORMATION.getRoute());
-
-                from(Routes.RESPONSE_USER_INFORMATION.getRoute())
-                        .to(GlobalRoutes.RESPONSE_USER_INFORMATION_N2U.getRoute());
-
-                from(GlobalRoutes.GET_USER_FOLLOWERS_U2N.getRoute())
-                        .to(Routes.GET_USER_FOLLOWERS.getRoute());
-
-                from(GlobalRoutes.GET_USER_FOLLOWS_U2N.getRoute())
-                        .to(Routes.GET_USER_FOLLOWS.getRoute());
-
                 from(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute())
                         .log("Received message on user info request reply queue")
-                        .bean(userRequestHandler)
+                        .bean(userRequestHandler, "getUserInformation")
                         .log("Sending response to user info request reply queue")
                         .log("body :  ${body}")
                         .outputType(UserInfoDTO.class)
-                        //.log("")
+                        .end();
+
+                from(GlobalRoutes.GET_USER_FOLLOWERS.getRoute())
+                        .log("Received message on user followers request from")
+                        .bean(userRequestHandler, "getUserFollowers")
+                        .log("Sending response to user followers request")
+                        .log("body :  ${body}")
+                        .outputType(UserFollowersDTO.class)
+                        .end();
+
+                from(GlobalRoutes.GET_USER_FOLLOWS.getRoute())
+                        .log("Received message on user follows request from")
+                        .bean(userRequestHandler, "getUserFollows")
+                        .log("Sending response to user follows request")
+                        .log("body :  ${body}")
+                        .outputType(UserFollowsDTO.class)
                         .end();
 
         }
