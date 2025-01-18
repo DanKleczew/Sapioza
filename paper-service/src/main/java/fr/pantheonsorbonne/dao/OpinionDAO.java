@@ -4,15 +4,18 @@ import fr.pantheonsorbonne.exception.OpinionNotFoundException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Opinion;
 import fr.pantheonsorbonne.model.Paper;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class OpinionDAO {
 
     @PersistenceContext
@@ -31,11 +34,13 @@ public class OpinionDAO {
         }
     }
 
-    public void changeOpinion(Opinion opinion) throws OpinionNotFoundException {
+    public void changeOpinion(Opinion opinion) {
         try {
             Opinion foundOp = this.findOpinion(opinion);
             foundOp.setOpinion(opinion.getOpinion());
             em.merge(foundOp);
+        } catch (OpinionNotFoundException e) {
+            em.persist(opinion);
         } catch (NonUniqueResultException e) {
             this.removeAllOpinions(opinion);
             em.persist(opinion);

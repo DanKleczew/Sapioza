@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 public class Opinion {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Basic(optional = false)

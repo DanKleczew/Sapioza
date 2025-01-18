@@ -8,6 +8,7 @@ import fr.pantheonsorbonne.exception.OpinionNotFoundException;
 import fr.pantheonsorbonne.mappers.OpinionMapper;
 import fr.pantheonsorbonne.model.Opinion;
 import fr.pantheonsorbonne.model.Paper;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
