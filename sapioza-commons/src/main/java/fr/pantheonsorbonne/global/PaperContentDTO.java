@@ -1,8 +1,10 @@
 package fr.pantheonsorbonne.global;
 
+import java.io.Serializable;
+
 public record PaperContentDTO(
         String paperUuid,
-        String body
-) {
+        Byte[] pdf
+) implements Serializable {
     // Transaction DTO between the paper-service and the storage-service
 }

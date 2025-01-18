@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.resources;
 
 import fr.pantheonsorbonne.dto.CompletePaperDTO;
 import fr.pantheonsorbonne.dto.FilterDTO;
+import fr.pantheonsorbonne.dto.QueriedPDF;
 import fr.pantheonsorbonne.enums.ResearchField;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
@@ -23,9 +24,6 @@ public class PaperQueryResource implements QueryResourceInterface {
 
     @Inject
     ReviewService reviewService;
-
-    @Inject
-    PdfGenerator pdfGenerator;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,13 +87,12 @@ public class PaperQueryResource implements QueryResourceInterface {
     @Path("/pdf/{id}")
     public Response getPaperPdf(@PathParam("id") Long id) {
         try {
-            CompletePaperDTO completePaperDTO = this.paperQueryService.getCompletePaper(id);
-            byte[] bytes = this.pdfGenerator.generatePdf(completePaperDTO);
+            QueriedPDF queriedPDF = this.paperQueryService.getPDF(id);
             return Response
                     .status(Response.Status.OK)
-                    .entity(bytes)
+                    .entity(queriedPDF.pdf())
                     .header("Content-Disposition", "inline; " +
-                            "filename=\"" + completePaperDTO.paperDTO().title() + ".pdf\"")
+                            "filename=\"" + id + ".pdf\"")
                     .build();
         } catch (PaperNotFoundException e){
             return Response

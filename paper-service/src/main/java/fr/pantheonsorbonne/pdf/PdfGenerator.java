@@ -7,9 +7,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class PdfGenerator {
 
-        public byte[] generatePdf(CompletePaperDTO completePaperDTO) {
+        public Byte[] generatePdf(CompletePaperDTO completePaperDTO) {
             // Generate PDF
 
-            return new byte[0];
+            return new Byte[0];
         }
 }

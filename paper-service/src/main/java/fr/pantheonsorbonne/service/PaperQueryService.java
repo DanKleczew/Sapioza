@@ -29,6 +29,7 @@ public class PaperQueryService {
     @Inject
     StorageGateway storageGateway;
 
+
     public QueriedPaperInfosDTO getPaperInfos(Long id) throws PaperNotFoundException, InternalCommunicationException {
         Paper paper = paperQueryDAO.getPaper(id);
         if (paper == null) {
@@ -42,11 +43,12 @@ public class PaperQueryService {
         return paperQueryDAO.getFilteredPapers(filter).stream().map(paperMapper::mapEntityToDTO).toList();
     }
 
-    public CompletePaperDTO getCompletePaper(Long id) throws PaperNotFoundException, InternalCommunicationException {
-        QueriedPaperInfosDTO queriedPaperInfosDTO = this.getPaperInfos(id);
-        String uuid = this.paperQueryDAO.getPaper(id).getUuid();
-        String body = this.storageGateway.getPaperContent(uuid);
-        return new CompletePaperDTO(queriedPaperInfosDTO.paperDTO(),
-                queriedPaperInfosDTO.userInfoDTO(), body);
+    public QueriedPDF getPDF(Long id) throws PaperNotFoundException, InternalCommunicationException {
+        Paper paper = paperQueryDAO.getPaper(id);
+        return new QueriedPDF(
+                paper.getTitle(),
+                this.storageGateway.getPDF(paper.getUuid()
+                )
+        );
     }
 }
