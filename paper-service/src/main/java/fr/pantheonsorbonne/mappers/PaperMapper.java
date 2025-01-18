@@ -13,6 +13,7 @@ import fr.pantheonsorbonne.service.ReviewService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,7 @@ public class PaperMapper implements EntityDTOMapper<PaperDTO, Paper> {
         paper.setAuthorId(dto.authorId());
         paper.setField(dto.field());
         paper.setPublishedIn(dto.publishedIn());
-        paper.setPublicationDate(dto.publicationDate());
+        paper.setPublicationDate(new Date(System.currentTimeMillis()));
         paper.setKeywords(dto.keywords());
         paper.setAbstract_(dto.abstract_());
         paper.setDOI(dto.DOI());

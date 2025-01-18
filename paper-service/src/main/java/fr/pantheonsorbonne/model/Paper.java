@@ -4,7 +4,7 @@ import fr.pantheonsorbonne.enums.ResearchField;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
