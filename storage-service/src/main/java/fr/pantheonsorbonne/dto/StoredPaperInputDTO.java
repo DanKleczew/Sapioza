@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.dto;
 
 public class StoredPaperInputDTO {
     private String paperUuid;
-    private byte[] content; // Le contenu du String à stocker
+    private byte[] content;
 
     public StoredPaperInputDTO(String paperUuid, byte[] content) {
         this.paperUuid = paperUuid;

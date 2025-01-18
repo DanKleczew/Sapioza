@@ -5,8 +5,6 @@ import fr.pantheonsorbonne.dto.StoredPaperOutputDTO;
 import fr.pantheonsorbonne.model.StoredPaper;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.nio.charset.StandardCharsets;
-
 @ApplicationScoped
 public class StoredPaperMapper {
 

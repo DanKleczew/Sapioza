@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.service;
 import fr.pantheonsorbonne.dao.StoredPaperDAO;
 import fr.pantheonsorbonne.dto.StoredPaperInputDTO;
 import fr.pantheonsorbonne.dto.StoredPaperOutputDTO;
+import fr.pantheonsorbonne.global.PaperContentDTO;
 import fr.pantheonsorbonne.mappers.StoredPaperMapper;
 import fr.pantheonsorbonne.model.StoredPaper;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
@@ -30,7 +31,7 @@ public class StoredPaperService {
             // Return the saved paper as a DTO
             return storedPaperMapper.mapEntityToOutputDTO(savedPaper);
         } catch (Exception e) {
-            throw new PaperDatabaseAccessException("Failed to save StoredPaper", e);
+            throw new PaperDatabaseAccessException("Failed to save StoredPaper");
         }
     }
 
@@ -70,5 +71,37 @@ public class StoredPaperService {
 
         // Delete the paper
         storedPaperDAO.deleteStoredPaper(existingPaper);
+    }
+
+    @Transactional
+    public StoredPaperOutputDTO createStoredPaperFromDTO(PaperContentDTO dto) throws PaperDatabaseAccessException {
+        try {
+            StoredPaper storedPaper = new StoredPaper();
+            storedPaper.setPaperUuid(dto.paperUuid());
+            storedPaper.setBody(dto.body().getBytes());
+            storedPaperDAO.saveStoredPaper(storedPaper);
+            return storedPaperMapper.mapEntityToOutputDTO(storedPaper);
+        } catch (Exception e) {
+            throw new PaperDatabaseAccessException("Failed to save StoredPaper from DTO");
+        }
+    }
+
+    public void savePaper(PaperContentDTO paperContentDTO) throws PaperDatabaseAccessException {
+        try {
+            StoredPaper storedPaper = new StoredPaper();
+            storedPaper.setPaperUuid(paperContentDTO.paperUuid());
+            storedPaper.setBody(paperContentDTO.body().getBytes());
+            storedPaperDAO.saveStoredPaper(storedPaper);
+        } catch (Exception e) {
+            throw new PaperDatabaseAccessException("Failed to save paper in database");
+        }
+    }
+
+    public String getPaperContent(String paperUuid) throws PaperDatabaseAccessException {
+        StoredPaper storedPaper = storedPaperDAO.findStoredPaperByUuid(paperUuid);
+        if (storedPaper == null) {
+            throw new PaperDatabaseAccessException("No paper found for uuid " + paperUuid);
+        }
+        return new String(storedPaper.getBody());
     }
 }

@@ -127,4 +127,3 @@ public class StoredPaperServiceTest {
         assertThrows(PaperNotFoundException.class, () -> storedPaperService.deleteStoredPaper("uuid123"));
     }
 }
-
