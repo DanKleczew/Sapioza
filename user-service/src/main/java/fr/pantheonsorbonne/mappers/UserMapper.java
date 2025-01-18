@@ -5,6 +5,7 @@ import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.global.EntityDTOMapper;
+import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -61,6 +62,15 @@ public class UserMapper implements EntityDTOMapper<UserDTO, User> {
                 null,
                 null,
                 null
+        );
+    }
+
+    public UserInfoDTO mapUserDTOToUserInfoDTO(UserDTO userDTO) {
+        return new UserInfoDTO(
+                userDTO.id(),
+                userDTO.firstName(),
+                userDTO.name(),
+                userDTO.email()
         );
     }
 }

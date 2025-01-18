@@ -1,9 +1,12 @@
 package fr.pantheonsorbonne.camel.gateway;
 
 import fr.pantheonsorbonne.camel.Routes;
+import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
+import fr.pantheonsorbonne.mappers.UserMapper;
+import fr.pantheonsorbonne.service.UserService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.CamelContext;
@@ -15,6 +18,12 @@ public class UserAccount {
 
     @Inject
     CamelContext camelContext;
+
+    @Inject
+    UserService userService;
+
+    @Inject
+    UserMapper userMapper;
 
     public void createAccount(Object user) {
         try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
@@ -40,9 +49,11 @@ public class UserAccount {
         }
     }
 
-    public void getUserInformation(Long id){
-        try (ConsumerTemplate consumerTemplate = camelContext.createConsumerTemplate()) {
-            consumerTemplate.receiveBody(Routes.GET_USER_INFORMATION.getRoute(), id);
+    public UserInfoDTO getUserInformation(Long id){
+        try {
+            UserDTO userDTO = userService.getUserDTOById(id);
+            UserInfoDTO userInfoDTO = userMapper.mapUserDTOToUserInfoDTO(userDTO);
+            return userInfoDTO;
         } catch (Exception e) {
             throw new RuntimeException("Error while getting user information");
         }

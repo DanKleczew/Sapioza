@@ -57,16 +57,16 @@ public class NotificationCreationService {
     /**
      * Récupère la liste des followers d'un auteur via une route Camel.
      *
-     * @param authorId l'ID de l'auteur
+     * @param userId l'ID de l'auteur
      * @return une liste d'IDs des followers
      */
 
-    private List<Long> getFollowers(Long authorId) {
+    private List<Long> getFollowers(Long userId) {
         try {
             // Appel à la route Camel
             List<?> rawList = producerTemplate.requestBody(
                     "direct:getFollowers",
-                    authorId,
+                    userId,
                     List.class
             );
 
@@ -76,7 +76,7 @@ public class NotificationCreationService {
                     .map(item -> (Long) item) // Caster en Long
                     .toList();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch followers for author ID: " + authorId, e);
+            throw new RuntimeException("Failed to fetch followers for author ID: " + userId, e);
         }
     }
 

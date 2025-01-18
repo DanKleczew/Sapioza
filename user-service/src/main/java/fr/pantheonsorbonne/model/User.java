@@ -21,7 +21,7 @@ public class User {
     private String firstName;
     private String email;
     private String password;
-    private Date creationDate = new Date();
+    private Date creationDate = new java.sql.Date(new Date().getTime());
     private Date deletionDate;
 
 
