@@ -13,7 +13,10 @@ public enum GlobalRoutes {
     // At paper DELETE or PATCH, from paper-service to storage-service. Message Body: Long (PaperID) OR PaperContentDTO
     USER_INFO_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:userInfoRequestReplyQueue"),
     // Request/Reply queue for User Information. Message Body : UserInfoDTO
+    USER_STRONG_ID_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:userStrongIdRequestReplyQueue"),
+    // Request/Reply queue for User Strong Identification. Message Body : UserIdentificationDTO => Boolean <=
     PAPER_CONTENT_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:getPaperContent"),
+    // Request/Reply queue for Paper Content. Message Body : PaperContentDTO
 
     //Notification
     USER_REQUEST_N2U("sjms2:M1.SAPIOZA:notificationToUserRequest"),

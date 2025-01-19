@@ -16,7 +16,7 @@ public class PersistFailureHandler implements HandlerInterface{
     @Handler
     public void handle(Long id) {
         try {
-            paperDeletionService.deletePaper(id);
+            paperDeletionService.deletePaperNoCheck(id);
         } catch (PaperNotFoundException e) {
             Log.warn("Error while deleting paper", e);
         }

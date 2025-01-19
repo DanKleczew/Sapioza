@@ -51,4 +51,12 @@ public class PaperDeletionService {
             Log.error("Error while sending deletion order to storage-service");
         }
     }
+
+    public void deletePaperNoCheck(Long id) throws PaperNotFoundException {
+        Paper paper = paperQueryDAO.getPaper(id);
+        if (paper == null) {
+            throw new PaperNotFoundException(id);
+        }
+        paperDeletionDAO.deletePaper(paper);
+    }
 }
