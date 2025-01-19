@@ -16,16 +16,38 @@ public class CamelRoute extends RouteBuilder {
     @Inject
     StoredPaperProcessor paperProcessor;
 
+    @Inject
+    PaperQueryProcessor paperQueryProcessor;
+
+    @Inject
+    UpdateProcessor updateProcessor;
+
+    @Inject
+    DeleteProcessor deleteProcessor;
+
     @Override
     public void configure() {
         // Route pour sauvegarder un papier
         from(GlobalRoutes.NEW_PAPER_P2S.getRoute())
                 .log("Received new paper: ${body}")
                 .process(paperProcessor);
-//                .bean(storageService, "savePaper")
-//                .onException(Exception.class)
-//                .handled(true)
-//                .log("Error while saving paper: ${exception.message}");
+
+        from(GlobalRoutes.ALTER_PAPER_P2S.getRoute())
+                .log("Received alter command: ${header.command}")
+                .choice()
+                .when(header("command").isEqualTo("update"))
+                    .log("Processing update for paper")
+                    .process(updateProcessor)
+                .when(header("command").isEqualTo("delete"))
+                    .log("Processing delete for paper")
+                    .process(deleteProcessor)
+                .otherwise()
+                    .log("Unknown command received: ${header.command}")
+                    .stop();
+
+        from(GlobalRoutes.PAPER_CONTENT_REQUEST_REPLY_QUEUE.getRoute())
+                .log("Received paper query for ${body}")
+                .process(paperQueryProcessor);
 
         // Route pour récupérer le contenu d'un papier
         from(Routes.SEND_PAPER_CONTENT.getRoute())
