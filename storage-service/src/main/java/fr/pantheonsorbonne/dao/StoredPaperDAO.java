@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 
 @ApplicationScoped
 public class StoredPaperDAO {
@@ -41,6 +42,15 @@ public class StoredPaperDAO {
         }
     }
 
+    @Transactional
+    public Byte[] findBodyByUuid(String paperUuid) {
+        return this.entityManager
+                .createQuery("SELECT sp.body FROM StoredPaper sp WHERE sp.paperUuid = :paperUuid",Byte[].class)
+                .setParameter("paperUuid", paperUuid)
+                .getSingleResult();
+    }
+
+    @Transactional
     public StoredPaper findStoredPaperByUuid(String paperUuid) {
         return entityManager
                 .createQuery("SELECT sp FROM StoredPaper sp WHERE sp.paperUuid = :paperUuid", StoredPaper.class)

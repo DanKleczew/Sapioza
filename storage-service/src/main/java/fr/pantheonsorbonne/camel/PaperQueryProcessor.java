@@ -16,7 +16,7 @@ public class PaperQueryProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws PaperNotFoundException {
-        String message = exchange.getMessage().getBody(String.class);
-        exchange.getIn().setBody(storedPaperService.getPaperContent(message).pdf());
+        String paperUuid = exchange.getMessage().getBody(String.class);
+        exchange.getMessage().setBody(storedPaperService.getPaperContent(paperUuid));
     }
 }

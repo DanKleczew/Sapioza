@@ -56,11 +56,11 @@ public class StoredPaperService {
         }
     }
 
-    public PaperContentDTO getPaperContent(String paperUuid) throws PaperDatabaseAccessException {
-        StoredPaper storedPaper = storedPaperDAO.findStoredPaperByUuid(paperUuid);
+    public Byte[] getPaperContent(String paperUuid) throws PaperDatabaseAccessException {
+        Byte[] storedPaper = storedPaperDAO.findBodyByUuid(paperUuid);
         if (storedPaper == null) {
             throw new PaperDatabaseAccessException("No paper found for uuid " + paperUuid);
         }
-        return new PaperContentDTO(paperUuid, storedPaper.getBody());
+        return storedPaper;
     }
 }
