@@ -8,6 +8,8 @@ import jakarta.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 
+import java.io.IOException;
+
 @ApplicationScoped
 public class StorageGateway {
 
@@ -16,8 +18,15 @@ public class StorageGateway {
 
         public void newPaper(PaperContentDTO paperContentDTO) throws InternalCommunicationException {
             try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-                producerTemplate.sendBody(Routes.NEW_TO_STORAGE.getRoute(), paperContentDTO);
-            } catch (Exception e) {
+                byte[] pdf = "aaaa afjioskd fiqsdjipd jsd diçsqdjqsdqs usdoiqsdoisqghd zhaydgzayldg sqd".getBytes();
+                Byte[] pdfByte = new Byte[pdf.length];
+                for (int i = 0; i < pdf.length; i++) {
+                    pdfByte[i] = pdf[i];
+                }
+                PaperContentDTO paperContentDTO1 = new PaperContentDTO(paperContentDTO.paperUuid(), pdfByte);
+
+                producerTemplate.sendBody(Routes.NEW_TO_STORAGE.getRoute(), paperContentDTO1);
+            } catch (IOException e) {
                 throw new InternalCommunicationException("Error while sending new paper to storage");
             }
         }

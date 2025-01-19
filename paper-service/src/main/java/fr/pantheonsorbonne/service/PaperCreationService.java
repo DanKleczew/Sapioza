@@ -41,13 +41,13 @@ public class PaperCreationService {
     @Inject
     PdfGenerationService pdfGenerationService;
 
-    public PaperMetaDataDTO createPaper(SubmittedPaperDTO submittedPaperDTO) throws PaperNotCreatedException,
-            PaperDatabaseAccessException {
+    public PaperMetaDataDTO createPaper(SubmittedPaperDTO submittedPaperDTO) throws PaperNotCreatedException {
         // Transform SubmittedPaperDTO to Paper
         Paper paper = paperMapper.mapDTOToEntity(submittedPaperDTO.metaData());
+        Log.error(paper);
         // Persist Paper
         paper = this.persistPaper(paper);
-
+        Log.error(paper);
         try {
             // Map to PaperMetaDataDTO
             PaperMetaDataDTO paperMetaDataDTO = paperMapper.mapPaperToPaperMetaDataDTO(paper);
@@ -66,7 +66,7 @@ public class PaperCreationService {
         } catch (InternalCommunicationException e) {
             // Rollback if an error occurs while sending the pdf
             try {
-                paperDeletionService.deletePaper(paper.getId());
+                paperDeletionService.deletePaperNoCheck(paper.getId());
             } catch (PaperNotFoundException ex) {
                 Log.warn("Paper not found while attempting to delete: " + paper.getId());
             }

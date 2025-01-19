@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.resources.interfaces;
 
-import fr.pantheonsorbonne.dto.UserIdentificationDTO;
+import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import jakarta.ws.rs.core.Response;
 
 public interface DeletionResourceInterface {

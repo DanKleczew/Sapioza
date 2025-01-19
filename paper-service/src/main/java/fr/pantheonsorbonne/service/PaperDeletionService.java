@@ -4,7 +4,7 @@ import fr.pantheonsorbonne.camel.gateway.StorageGateway;
 import fr.pantheonsorbonne.camel.gateway.UserGateway;
 import fr.pantheonsorbonne.dao.PaperDeletionDAO;
 import fr.pantheonsorbonne.dao.PaperQueryDAO;
-import fr.pantheonsorbonne.dto.UserIdentificationDTO;
+import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;

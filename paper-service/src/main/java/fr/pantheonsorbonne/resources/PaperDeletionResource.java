@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
-import fr.pantheonsorbonne.dto.UserIdentificationDTO;
+import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.exception.PaperOwnershipDeniedException;

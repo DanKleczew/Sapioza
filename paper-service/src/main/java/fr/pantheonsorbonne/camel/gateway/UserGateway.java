@@ -1,7 +1,7 @@
 package fr.pantheonsorbonne.camel.gateway;
 
 import fr.pantheonsorbonne.camel.Routes;
-import fr.pantheonsorbonne.dto.UserIdentificationDTO;
+import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import jakarta.enterprise.context.ApplicationScoped;
