@@ -9,8 +9,8 @@ public enum GlobalRoutes {
     // If storage-service fails to persist content, to paper-service. Message Body: Long (PaperID)
     PERSIST_FAIL_S2N("sjms2:M1.SAPIOZA:storagePersistFailedToNotification"),
     // If storage-service fails to persist content, to notification-service. Message Body: Long (PaperID)
-    DELETE_PAPER_P2S("sjms2:M1.SAPIOZA:deletePaperContentCommand"),
-    // At paper DELETE, paperID from paper-service to storage-service. Message Body: Long (PaperID)
+    ALTER_PAPER_P2S("sjms2:M1.SAPIOZA:alterPaper"),
+    // At paper DELETE or PATCH, from paper-service to storage-service. Message Body: Long (PaperID) OR PaperContentDTO
     USER_INFO_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:userInfoRequestReplyQueue"),
     // Request/Reply queue for User Information. Message Body : UserInfoDTO
     PAPER_CONTENT_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:getPaperContent"),

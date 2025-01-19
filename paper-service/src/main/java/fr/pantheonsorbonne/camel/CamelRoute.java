@@ -29,7 +29,13 @@ public class CamelRoute extends RouteBuilder {
 
                 // Deleting process for a paper
                 from(Routes.DELETE_COMMAND_TO_STORAGE.getRoute())
-                        .to(GlobalRoutes.DELETE_PAPER_P2S.getRoute());
+                        .setHeader("command", constant("delete"))
+                        .to(GlobalRoutes.ALTER_PAPER_P2S.getRoute());
+
+                // Updating process for a paper
+                from(Routes.UPDATE_TO_STORAGE.getRoute())
+                        .setHeader("command", constant("update"))
+                        .to(GlobalRoutes.ALTER_PAPER_P2S.getRoute());
 
                 //Fetching user basic info process
                 from(Routes.REQUEST_USER_INFO.getRoute())

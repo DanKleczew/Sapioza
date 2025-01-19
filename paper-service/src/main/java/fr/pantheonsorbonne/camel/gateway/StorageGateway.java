@@ -22,11 +22,19 @@ public class StorageGateway {
             }
         }
 
-        public void deletePaper(Long id) throws InternalCommunicationException {
+        public void deletePaper(String uuid) throws InternalCommunicationException {
             try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-                producerTemplate.sendBody(Routes.DELETE_COMMAND_TO_STORAGE.getRoute(), id);
+                producerTemplate.sendBody(Routes.DELETE_COMMAND_TO_STORAGE.getRoute(), uuid);
             } catch (Exception e) {
                 throw new InternalCommunicationException("Error while sending deleted paper command to storage");
+            }
+        }
+
+        public void updatePaper(PaperContentDTO paperContentDTO) throws InternalCommunicationException {
+            try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
+                producerTemplate.sendBody(Routes.UPDATE_TO_STORAGE.getRoute(), paperContentDTO);
+            } catch (Exception e) {
+                throw new InternalCommunicationException("Error while sending updated paper to storage");
             }
         }
 
@@ -37,4 +45,6 @@ public class StorageGateway {
             throw new InternalCommunicationException("Error while getting paper content from storage");
         }
     }
+
+
 }

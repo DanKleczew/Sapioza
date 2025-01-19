@@ -39,10 +39,7 @@ public class PaperCreationService {
     PaperDeletionService paperDeletionService;
 
     @Inject
-    PdfGenerator pdfGenerator;
-
-    @Inject
-    UserGateway userGateway;
+    PdfGenerationService pdfGenerationService;
 
     public PaperMetaDataDTO createPaper(SubmittedPaperDTO submittedPaperDTO) throws PaperNotCreatedException,
             PaperDatabaseAccessException {
@@ -58,8 +55,7 @@ public class PaperCreationService {
             this.notificationGateway.newPaper(paperMetaDataDTO);
 
             // Generate PDF
-            CompletePaperDTO completePaperDTO = this.getCompletePaper(submittedPaperDTO);
-            Byte[] pdf = this.pdfGenerator.generatePdf(completePaperDTO);
+            Byte[] pdf = pdfGenerationService.generatePdf(submittedPaperDTO);
 
             // Send generated pdf to storage-service
             this.storageGateway.newPaper(new PaperContentDTO(paper.getUuid(), pdf));
@@ -86,10 +82,5 @@ public class PaperCreationService {
         }
     }
 
-    private CompletePaperDTO getCompletePaper(SubmittedPaperDTO submittedPaperDTO)
-            throws InternalCommunicationException {
-        UserInfoDTO userInfoDTO = this.userGateway.getUserInfos(submittedPaperDTO.metaData().authorId());
-        return new CompletePaperDTO(submittedPaperDTO.metaData(),
-                userInfoDTO, submittedPaperDTO.body());
-    }
+
 }

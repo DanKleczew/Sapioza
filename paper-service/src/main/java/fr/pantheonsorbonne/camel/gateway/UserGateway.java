@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.camel.gateway;
 
 import fr.pantheonsorbonne.camel.Routes;
+import fr.pantheonsorbonne.dto.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,6 +20,15 @@ public class UserGateway {
     public UserInfoDTO getUserInfos(Long authorId) throws InternalCommunicationException {
         try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()){
             return producerTemplate.requestBody(Routes.REQUEST_USER_INFO.getRoute(), authorId, UserInfoDTO.class);
+        } catch (IOException e) {
+            throw new InternalCommunicationException("Error fetching author info from user service");
+        }
+    }
+
+    public boolean isUserAllowed(UserIdentificationDTO userIdentificationDTO) throws InternalCommunicationException {
+        try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()){
+            return producerTemplate.requestBody(Routes.REQUEST_USER_STRONG_IDENTIFICATION.getRoute(),
+                    userIdentificationDTO, Boolean.class);
         } catch (IOException e) {
             throw new InternalCommunicationException("Error fetching author info from user service");
         }

@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 
-@Path("/paper")
+@Path("/papers")
 public class PaperQueryResource implements QueryResourceInterface {
     @Inject
     PaperQueryService paperQueryService;

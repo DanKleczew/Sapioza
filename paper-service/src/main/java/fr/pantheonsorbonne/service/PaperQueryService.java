@@ -33,7 +33,7 @@ public class PaperQueryService {
     StorageGateway storageGateway;
 
 
-    public QueriedPaperInfosDTO getPaperInfos(Long id) throws PaperNotFoundException, InternalCommunicationException {
+    public QueriedPaperInfosDTO getPaperInfos(Long id) throws PaperNotFoundException {
         Paper paper = paperQueryDAO.getPaper(id);
         if (paper == null) {
             throw new PaperNotFoundException(id);

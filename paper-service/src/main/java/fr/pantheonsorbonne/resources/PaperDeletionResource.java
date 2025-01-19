@@ -1,24 +1,29 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.resources.interfaces.DeletionResourceInterface;
 import fr.pantheonsorbonne.service.PaperDeletionService;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+@Path("/papers")
 public class PaperDeletionResource implements DeletionResourceInterface {
     @Inject
     PaperDeletionService paperDeletionService;
 
     @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/delete/{articleId}")
-    public Response deletePaper(@PathParam("articleId") Long id) {
+    public Response deletePaper(@PathParam("articleId") Long id, UserIdentificationDTO userIdentificationDTO) {
         try {
-            this.paperDeletionService.deletePaper(id);
+            this.paperDeletionService.deletePaper(id, userIdentificationDTO);
             return Response
                     .status(Response.Status.NO_CONTENT)
                     .build();
