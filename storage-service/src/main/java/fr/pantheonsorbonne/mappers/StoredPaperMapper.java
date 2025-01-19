@@ -1,23 +1,25 @@
 package fr.pantheonsorbonne.mappers;
 
-import fr.pantheonsorbonne.dto.StoredPaperInputDTO;
-import fr.pantheonsorbonne.dto.StoredPaperOutputDTO;
+import fr.pantheonsorbonne.global.EntityDTOMapper;
+import fr.pantheonsorbonne.global.PaperContentDTO;
 import fr.pantheonsorbonne.model.StoredPaper;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class StoredPaperMapper {
+public class StoredPaperMapper implements EntityDTOMapper<PaperContentDTO, StoredPaper> {
 
-    public StoredPaper mapInputDTOToEntity(StoredPaperInputDTO dto) {
-        StoredPaper storedPaper = new StoredPaper();
-        storedPaper.setPaperUuid(dto.getId());
-        storedPaper.setBody(dto.getContent());
-        return storedPaper;
+
+    @Override
+    public PaperContentDTO mapEntityToDTO(StoredPaper entity) {
+        return new PaperContentDTO(entity.getPaperUuid(), entity.getBody());
     }
 
-    public StoredPaperOutputDTO mapEntityToOutputDTO(StoredPaper entity) {
-        byte[] content = entity.getBody();
-        return new StoredPaperOutputDTO(entity.getPaperUuid(), content);
+    @Override
+    public StoredPaper mapDTOToEntity(PaperContentDTO dto) {
+        StoredPaper storedPaper = new StoredPaper();
+        storedPaper.setPaperUuid(dto.paperUuid());
+        storedPaper.setBody(dto.pdf());
+        return storedPaper;
     }
 }
 

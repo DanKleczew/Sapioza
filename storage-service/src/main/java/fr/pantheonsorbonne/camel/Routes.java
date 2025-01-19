@@ -2,9 +2,9 @@ package fr.pantheonsorbonne.camel;
 
 public enum Routes {
 
-    NEW_TO_STORAGE("direct:newPaperToStorage"),
-    DELETE_COMMAND_TO_STORAGE("direct:deletePaperToStorage"),
-    GET_PAPER_CONTENT("direct:getPaperContent");
+    NEW_FROM_PAPER("direct:newPaperToStorage"),
+    ALTER_COMMAND_FROM_PAPER("direct:deletePaperToStorage"),
+    SEND_PAPER_CONTENT("direct:getPaperContent");
 
     private final String route;
 
