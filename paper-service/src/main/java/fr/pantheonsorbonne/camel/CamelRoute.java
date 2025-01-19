@@ -44,6 +44,13 @@ public class CamelRoute extends RouteBuilder {
                                 + "?requestTimeout=5000")
                         .end();
 
+                // Requesting check for user strong identification process
+                from(Routes.REQUEST_USER_STRONG_IDENTIFICATION.getRoute())
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .to(GlobalRoutes.USER_STRONG_ID_REQUEST_REPLY_QUEUE.getRoute()
+                                + "?requestTimeout=5000")
+                        .end();
+
                 //Fetching paper content process
                 from(Routes.GET_PAPER_CONTENT.getRoute())
                         .setExchangePattern(ExchangePattern.InOut)

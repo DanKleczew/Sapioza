@@ -30,7 +30,7 @@ public class UserGateway {
             return producerTemplate.requestBody(Routes.REQUEST_USER_STRONG_IDENTIFICATION.getRoute(),
                     userIdentificationDTO, Boolean.class);
         } catch (IOException e) {
-            throw new InternalCommunicationException("Error fetching author info from user service");
+            throw new InternalCommunicationException("Error fetching strong user identification from user service");
         }
     }
 }
