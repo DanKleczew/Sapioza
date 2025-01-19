@@ -50,18 +50,27 @@ public class PaperQueryDAO implements QueryDAOInterface {
             if (filter.keywords() != null) {
                 predicates.add(cb.like(root.get("keywords"), "%" + filter.keywords().toLowerCase() + "%"));
             }
-            if (filter.AscDate() != null) {
+            if (filter.AscDate() != null && filter.AscDate()) {
                 query.orderBy(cb.asc(root.get("date")));
             }
-            if (filter.DescDate() != null) {
+            if (filter.DescDate() != null && filter.DescDate()) {
                 query.orderBy(cb.desc(root.get("date")));
             }
-
+            if (filter.DOI() != null) {
+                predicates.add(cb.equal(root.get("DOI"), filter.DOI()));
+            }
+            if (filter.field() != null) {
+                predicates.add(cb.equal(root.get("field"), filter.field()));
+            }
+            if (filter.revue() != null) {
+                predicates.add(cb.equal(root.get("revue"), filter.revue()));
+            }
+            query.select(root).where(predicates.toArray(new Predicate[]{}));
+            return em.createQuery(query).getResultList();
             //this.em.createQuery()
         } catch (RuntimeException re) {
             throw new PaperDatabaseAccessException();
         }
-        return null;
     }
 
 }
