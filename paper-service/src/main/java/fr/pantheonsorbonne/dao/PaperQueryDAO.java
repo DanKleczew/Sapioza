@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.dao.interfaces.QueryDAOInterface;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -50,11 +51,14 @@ public class PaperQueryDAO implements QueryDAOInterface {
             if (filter.keywords() != null) {
                 predicates.add(cb.like(root.get("keywords"), "%" + filter.keywords().toLowerCase() + "%"));
             }
+            if (filter.abstract_() != null) {
+                predicates.add(cb.like(root.get("abstract_"), "%" + filter.abstract_().toLowerCase() + "%"));
+            }
             if (filter.AscDate() != null && filter.AscDate()) {
-                query.orderBy(cb.asc(root.get("date")));
+                query.orderBy(cb.asc(root.get("publicationDate")));
             }
             if (filter.DescDate() != null && filter.DescDate()) {
-                query.orderBy(cb.desc(root.get("date")));
+                query.orderBy(cb.desc(root.get("publicationDate")));
             }
             if (filter.DOI() != null) {
                 predicates.add(cb.equal(root.get("DOI"), filter.DOI()));
@@ -63,12 +67,13 @@ public class PaperQueryDAO implements QueryDAOInterface {
                 predicates.add(cb.equal(root.get("field"), filter.field()));
             }
             if (filter.revue() != null) {
-                predicates.add(cb.equal(root.get("revue"), filter.revue()));
+                predicates.add(cb.equal(root.get("publishedIn"), filter.revue()));
             }
             query.select(root).where(predicates.toArray(new Predicate[]{}));
             return em.createQuery(query).getResultList();
             //this.em.createQuery()
         } catch (RuntimeException re) {
+            Log.error("Error while filtering papers", re);
             throw new PaperDatabaseAccessException();
         }
     }

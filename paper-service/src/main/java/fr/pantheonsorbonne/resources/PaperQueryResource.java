@@ -61,7 +61,7 @@ public class PaperQueryResource implements QueryResourceInterface {
             return Response
                     .status(Response.Status.OK)
                     .entity(this.paperQueryService.getFilteredPapers(new FilterDTO(title,
-                            authorId, abstract_, keywords, revue, ResearchField.valueOf(field),
+                            authorId, abstract_, keywords, revue, field == null ? null : ResearchField.valueOf(field),
                             AscDate, DescDate, DOI)))
                     .build();
         } catch (Exception e) {
@@ -70,8 +70,6 @@ public class PaperQueryResource implements QueryResourceInterface {
                     .entity(e.getMessage())
                     .build();
         }
-
-
     }
 
     @GET
