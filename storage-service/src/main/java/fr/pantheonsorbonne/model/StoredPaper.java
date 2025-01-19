@@ -10,18 +10,20 @@ public class StoredPaper {
     private Long id;
 
     @Column(nullable = false)
-    private String paperUuid; // Identifiant transmis
+    private String paperUuid;
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private byte[] body; // Stocke le contenu PDF en tant que tableau d'octets
+    private Byte[] body;
 
-    // Getter et Setter pour id
     public Long getId() {
         return id;
     }
 
-    // Getter et Setter pour paperUuid
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getPaperUuid() {
         return paperUuid;
     }
@@ -30,12 +32,11 @@ public class StoredPaper {
         this.paperUuid = paperUuid;
     }
 
-    // Getter et Setter pour body
-    public byte[] getBody() {
+    public Byte[] getBody() {
         return body;
     }
 
-    public void setBody(byte[] body) {
+    public void setBody(Byte[] body) {
         this.body = body;
     }
 }

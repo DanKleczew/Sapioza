@@ -16,7 +16,7 @@ public class StorageGateway {
 
     public void savePaper(PaperContentDTO paperContentDTO) throws InternalCommunicationException {
         try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-            producerTemplate.sendBody(Routes.NEW_TO_STORAGE.getRoute(), paperContentDTO);
+            producerTemplate.sendBody(Routes.NEW_FROM_PAPER.getRoute(), paperContentDTO);
         } catch (Exception e) {
             throw new InternalCommunicationException("Failed to send new paper to storage");
         }
@@ -24,7 +24,7 @@ public class StorageGateway {
 
     public String fetchPaperContent(String paperUuid) throws InternalCommunicationException {
         try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-            return producerTemplate.requestBody(Routes.GET_PAPER_CONTENT.getRoute(), paperUuid, String.class);
+            return producerTemplate.requestBody(Routes.SEND_PAPER_CONTENT.getRoute(), paperUuid, String.class);
         } catch (Exception e) {
             throw new InternalCommunicationException("Failed to fetch paper content from storage");
         }
