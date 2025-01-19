@@ -53,9 +53,25 @@ public class PaperQueryResource implements QueryResourceInterface {
                                       @QueryParam("abstract") String abstract_,
                                       @QueryParam("keywords") String keywords,
                                       @QueryParam("revue") String revue,
-                                      @QueryParam("field") String field) {
-        return Response.ok().entity(this.paperQueryService.getFilteredPapers(new FilterDTO(title,
-                authorId, abstract_, keywords, revue, ResearchField.valueOf(field)))).build();
+                                      @QueryParam("field") String field,
+                                      @QueryParam("AscDate") boolean AscDate,
+                                      @QueryParam("DescDate") boolean DescDate,
+                                      @QueryParam("DOI") String DOI){
+        try {
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(this.paperQueryService.getFilteredPapers(new FilterDTO(title,
+                            authorId, abstract_, keywords, revue, ResearchField.valueOf(field),
+                            AscDate, DescDate, DOI)))
+                    .build();
+        } catch (Exception e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+        }
+
+
     }
 
     @GET

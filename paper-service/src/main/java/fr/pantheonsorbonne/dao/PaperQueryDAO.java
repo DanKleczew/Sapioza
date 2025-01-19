@@ -4,11 +4,9 @@ import fr.pantheonsorbonne.dao.interfaces.QueryDAOInterface;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -32,39 +30,13 @@ public class PaperQueryDAO implements QueryDAOInterface {
     }
 
     public List<Paper> getFilteredPapers(FilterDTO filter) {
-        List<Paper> papers = null;
-        String query = "SELECT p FROM Paper p WHERE ";
-        if (filter.title() != null) {
-            query += "p.title = '" + filter.title() + "' AND ";
-        }
-        if (filter.authorId() != null) {
-            query += "p.author = '" + filter.authorId() + "' AND ";
-        }
-        if (filter.abstract_() != null) {
-            query += "p.abstract = '" + filter.abstract_() + "' AND ";
-        }
-        if (filter.keywords() != null) {
-            query += "p.keywords = '" + filter.keywords() + "' AND ";
-        }
-        if (filter.revue() != null) {
-            query += "p.revue = '" + filter.revue() + "' AND ";
-        }
-        if (filter.field() != null) {
-            query += "p.field = '" + filter.field() + "' AND ";
-        }
-
-        if (query.endsWith("AND ")) {
-            query = query.substring(0, query.length() - 5);
-        } else {
-            query = query.substring(0, query.length() - 7);
-        }
-
         try {
-            papers = em.createQuery(query, Paper.class).getResultList();
+
+            //this.em.createQuery()
         } catch (RuntimeException re) {
-            Log.error("getFilteredPapers failed", re);
+            throw new PaperDatabaseAccessException();
         }
-        return papers;
+        return null;
     }
 
 }

@@ -7,5 +7,9 @@ public record FilterDTO(String title,
                         String abstract_,
                         String keywords,
                         String revue,
-                        ResearchField field) {
+                        ResearchField field,
+                        Boolean AscDate,
+                        Boolean DescDate,
+                        String DOI) {
+    // Filter for paper search
 }

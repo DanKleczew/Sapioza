@@ -7,9 +7,12 @@ public interface QueryResourceInterface {
     Response getPaperInfos(Long id);
 
     Response getFilteredPapers(String title,
-                                     Long authorId,
-                                     String abstract_,
-                                     String keywords,
-                                     String revue,
-                                     String field);
+                               Long authorId,
+                               String abstract_,
+                               String keywords,
+                               String revue,
+                               String field,
+                               boolean AscDate,
+                               boolean DescDate,
+                               String DOI);
 }
