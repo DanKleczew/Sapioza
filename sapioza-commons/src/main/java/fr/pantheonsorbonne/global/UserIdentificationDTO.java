@@ -1,5 +1,5 @@
-package fr.pantheonsorbonne.dto;
+package fr.pantheonsorbonne.global;
 
-public record UserIdentificationDTO(Long userId, Long userUUID) {
+public record UserIdentificationDTO(Long userId, String userUUID) {
     // User identification for paper deletion
 }
