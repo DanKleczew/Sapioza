@@ -14,9 +14,9 @@ public class StorageGateway {
         @Inject
         CamelContext camelContext;
 
-        public void newPaper(PaperContentDTO paperBodyDTO) throws InternalCommunicationException {
+        public void newPaper(PaperContentDTO paperContentDTO) throws InternalCommunicationException {
             try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-                producerTemplate.sendBody(Routes.NEW_TO_STORAGE.getRoute(), paperBodyDTO);
+                producerTemplate.sendBody(Routes.NEW_TO_STORAGE.getRoute(), paperContentDTO);
             } catch (Exception e) {
                 throw new InternalCommunicationException("Error while sending new paper to storage");
             }

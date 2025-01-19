@@ -4,11 +4,9 @@ import fr.pantheonsorbonne.camel.handler.PersistFailureHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 
-import java.util.UUID;
 
 @ApplicationScoped
 public class CamelRoute extends RouteBuilder {
