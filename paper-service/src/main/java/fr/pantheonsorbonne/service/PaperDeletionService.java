@@ -29,8 +29,8 @@ public class PaperDeletionService {
     @Inject
     UserGateway userGateway;
 
-    public void deletePaper(Long id, UserIdentificationDTO userIdentificationDto) throws PaperNotFoundException,
-                                            PaperDatabaseAccessException, PaperOwnershipDeniedException {
+    public void deletePaper(Long id, UserIdentificationDTO userIdentificationDto)
+            throws PaperNotFoundException, PaperOwnershipDeniedException {
         Paper paper = paperQueryDAO.getPaper(id);
         if (paper == null) {
             throw new PaperNotFoundException(id);
@@ -42,9 +42,7 @@ public class PaperDeletionService {
         if (paper.getAuthorId() != userIdentificationDto.userId() || !isUserAllowed ) {
             throw new PaperOwnershipDeniedException(2);
         }
-
         paperDeletionDAO.deletePaper(paper);
-
         try {
             this.storageGateway.deletePaper(paper.getUuid());
         } catch (InternalCommunicationException e) {
