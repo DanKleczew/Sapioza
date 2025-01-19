@@ -7,8 +7,13 @@ import fr.pantheonsorbonne.model.Paper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -31,6 +36,26 @@ public class PaperQueryDAO implements QueryDAOInterface {
 
     public List<Paper> getFilteredPapers(FilterDTO filter) {
         try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Paper> query = cb.createQuery(Paper.class);
+            Root<Paper> root = query.from(Paper.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            if (filter.title() != null) {
+                predicates.add(cb.like(root.get("title"), "%" + filter.title().toLowerCase() + "%"));
+            }
+            if (filter.authorId() != null) {
+                predicates.add(cb.equal(root.get("authorId"), filter.authorId()));
+            }
+            if (filter.keywords() != null) {
+                predicates.add(cb.like(root.get("keywords"), "%" + filter.keywords().toLowerCase() + "%"));
+            }
+            if (filter.AscDate() != null) {
+                query.orderBy(cb.asc(root.get("date")));
+            }
+            if (filter.DescDate() != null) {
+                query.orderBy(cb.desc(root.get("date")));
+            }
 
             //this.em.createQuery()
         } catch (RuntimeException re) {
