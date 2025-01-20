@@ -14,7 +14,7 @@ public class StoredPaper {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private Byte[] body;
+    private byte[] body;
 
     public Long getId() {
         return id;
@@ -32,11 +32,11 @@ public class StoredPaper {
         this.paperUuid = paperUuid;
     }
 
-    public Byte[] getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    public void setBody(Byte[] body) {
+    public void setBody(byte[] body) {
         this.body = body;
     }
 }

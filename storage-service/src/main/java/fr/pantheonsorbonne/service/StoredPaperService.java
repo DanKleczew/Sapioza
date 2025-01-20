@@ -56,8 +56,8 @@ public class StoredPaperService {
         }
     }
 
-    public Byte[] getPaperContent(String paperUuid) throws PaperDatabaseAccessException {
-        Byte[] storedPaper = storedPaperDAO.findBodyByUuid(paperUuid);
+    public byte[] getPaperContent(String paperUuid) throws PaperDatabaseAccessException {
+        byte[] storedPaper = storedPaperDAO.findBodyByUuid(paperUuid);
         if (storedPaper == null) {
             throw new PaperDatabaseAccessException("No paper found for uuid " + paperUuid);
         }

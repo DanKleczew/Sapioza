@@ -43,9 +43,9 @@ public class StoredPaperDAO {
     }
 
     @Transactional
-    public Byte[] findBodyByUuid(String paperUuid) {
+    public byte[] findBodyByUuid(String paperUuid) {
         return this.entityManager
-                .createQuery("SELECT sp.body FROM StoredPaper sp WHERE sp.paperUuid = :paperUuid",Byte[].class)
+                .createQuery("SELECT sp.body FROM StoredPaper sp WHERE sp.paperUuid = :paperUuid",byte[].class)
                 .setParameter("paperUuid", paperUuid)
                 .getSingleResult();
     }
