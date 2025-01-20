@@ -39,8 +39,9 @@ public class NotificationDAO {
         }
         try {
             return entityManager.createQuery(
-                            "SELECT n FROM Notification n WHERE n.userId = :userId", Notification.class)
+                            "SELECT n FROM Notification n WHERE n.notifiedUserId = :userId ORDER BY n.notificationTime desc", Notification.class)
                     .setParameter("userId", userId)
+                    .setMaxResults(10)
                     .getResultList();
         } catch (Exception e) {
             throw new NotificationDatabaseAccessException("Error fetching notifications for user ID: " + userId, e);

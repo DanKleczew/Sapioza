@@ -28,7 +28,7 @@ public class NotificationQueryService {
     public List<NotificationDTO> getNotificationsForUser(Long userId) {
         List<Notification> entities = notificationDAO.findByUserId(userId);
         return entities.stream()
-                .map(mapper::mapToDTO)
+                .map(mapper::mapEntityToDTO)
                 .collect(Collectors.toList());
     }
 
