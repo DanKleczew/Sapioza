@@ -18,13 +18,6 @@ public enum GlobalRoutes {
     PAPER_CONTENT_REQUEST_REPLY_QUEUE("sjms2:M1.SAPIOZA:getPaperContent"),
     // Request/Reply queue for Paper Content. Message Body : PaperContentDTO
 
-    //Notification
-    USER_REQUEST_N2U("sjms2:M1.SAPIOZA:notificationToUserRequest"),
-    // From notification-service to user-service for user followers requests. Message Body: Long (UserID)
-    USER_RESPONSE_U2N("sjms2:M1.SAPIOZA:notificationToUserResponse"),
-    // From user-service to notification-service in response to followers requests. Message Body: Long (UserID)
-
-
     //User
     GET_USER_INFORMATION_U2N("sjms2:M1.SAPIOZA:getUserInformation"),
     // From user-service to get information about a user. Message Body: Long (UserID), Response: UserInfoDTO
