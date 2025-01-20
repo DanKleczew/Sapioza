@@ -34,7 +34,4 @@ public class NotificationHandler {
             Log.error("Error while processing notifications for author ID: " + paperMetaDataDTO, e);
         }
     }
-
-    // ds service j'appelle  dao pour parler à la bdd et je l'appelle une seule fois , crer les entité(ligne en table) avant  dans le service et j'envoie tout au dao dans une liste et le dao itere sur la liste pour tout écrire en table
-
 }

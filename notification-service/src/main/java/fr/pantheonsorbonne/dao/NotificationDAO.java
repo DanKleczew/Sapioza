@@ -16,9 +16,7 @@ public class NotificationDAO {
 
     @PersistenceContext
     EntityManager entityManager;
-
-    //Crée une nouvelle notification dans la base de données - notification Entité Notification à persister.
-
+    
     @Transactional
     public void create(Notification notification) {
         if (notification == null) {
@@ -30,8 +28,6 @@ public class NotificationDAO {
             throw new NotificationDatabaseAccessException("Error persisting notification.", e);
         }
     }
-
-    //Recherche les notifications pour un utilisateur donné. ID de l'utilisateur. Liste des notifications de l'utilisateur.
 
     public List<Notification> findByUserId(Long userId) {
         if (userId == null) {

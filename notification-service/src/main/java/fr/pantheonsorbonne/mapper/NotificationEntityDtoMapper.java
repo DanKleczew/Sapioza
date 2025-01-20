@@ -6,8 +6,6 @@ import fr.pantheonsorbonne.model.Notification;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.sql.Date;
-
 @ApplicationScoped
 public class NotificationEntityDtoMapper implements EntityDTOMapper<NotificationDTO, Notification> {
 
@@ -30,7 +28,7 @@ public class NotificationEntityDtoMapper implements EntityDTOMapper<Notification
         }
         return new Notification(dto.notifiedUserId(),
                 dto.paperId(),
-               dto.authorId(),
+                dto.authorId(),
                 dto.paperTitle(),
                 dto.dateNotification());
     }

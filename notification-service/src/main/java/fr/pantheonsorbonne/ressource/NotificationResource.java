@@ -36,39 +36,19 @@ public class NotificationResource {
             List<NotificationDTO> notifications = notificationQueryService.getNotificationsForUser(userId);
 
             if (notifications.isEmpty()) {
-                // Retourne 204 No Content si aucune notification n'est trouvée
                 return Response.status(Response.Status.NO_CONTENT).build();
             }
-
-            // Retourne 200 OK avec les notifications si elles existent
             return Response.ok(notifications).build();
-        } catch (IllegalArgumentException e) {
-            // Retourne 400 Bad Request pour un userId invalide
+
+        } catch (BadRequestException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .build();
         } catch (Exception e) {
-            // Retourne 500 Internal Server Error pour toute autre erreur
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("An error occurred while retrieving notifications.")
                     .build();
         }
     }
-
-
-    @GET
-    @Path("/test")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createTestNotification() {
-        try {
-            //notificationDAO.create();
-            return Response.ok("Test notification created successfully.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Failed to create test notification: " + e.getMessage())
-                    .build();
-        }
-    }
-
 
 }
 
