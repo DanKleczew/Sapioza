@@ -34,40 +34,40 @@ public class PdfGenerator {
                 String body = completePaperDTO.body();
 
                 // Titre de l'article
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18);
-                yStart = writeLine(contentStream, "Article Title: " + paper.title(), width, yStart, leading);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18);
+                yStart = writeLine(contentStream, paper.title(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 18);
 
                 // Auteur
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeLine(contentStream, "Author: " + user.firstName() + " " + user.lastName(), width, yStart, leading);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+                yStart = writeLine(contentStream, "Author: " + user.firstName() + " " + user.lastName(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Publication
-                yStart = writeLine(contentStream, "Published in: " + paper.publishedIn(), width, yStart, leading);
-                yStart = writeLine(contentStream, "Date: " + paper.publicationDate(), width, yStart, leading);
+                yStart = writeLine(contentStream, "Published in: " + paper.publishedIn(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeLine(contentStream, "Date: " + paper.publicationDate(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Résumé
                 yStart -= leading * 1.5;
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
-                yStart = writeLine(contentStream, "Abstract:", width, yStart, leading);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
+                yStart = writeLine(contentStream, "Abstract:", width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
 
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeParagraph(contentStream, paper.abstract_(), width, yStart, leading, document);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+                yStart = writeParagraph(contentStream, paper.abstract_(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Mots-clés
                 yStart -= leading * 1.5;
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
-                yStart = writeLine(contentStream, "Keywords:", width, yStart, leading);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
+                yStart = writeLine(contentStream, "Keywords:", width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
 
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeParagraph(contentStream, paper.keywords(), width, yStart, leading, document);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+                yStart = writeParagraph(contentStream, paper.keywords(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Corps de l'article
                 yStart -= leading * 1.5;
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
-                yStart = writeLine(contentStream, "Body:", width, yStart, leading);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
+                yStart = writeLine(contentStream, "Body:", width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
 
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeParagraph(contentStream, body, width, yStart, leading, document);
+                //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+                yStart = writeParagraph(contentStream, body, width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
             }
 
             // Sauvegarde en mémoire
@@ -86,16 +86,16 @@ public class PdfGenerator {
         }
     }
 
-    private float writeLine(PDPageContentStream contentStream, String text, float width, float y, float leading) throws IOException {
+    private float writeLine(PDPageContentStream contentStream, String text, float width, float y, float leading, Standard14Fonts.FontName fontName, int fontSize) throws IOException {
         contentStream.beginText();
         contentStream.newLineAtOffset(50, y); // Marge de 50
-        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+        contentStream.setFont(new PDType1Font(fontName), fontSize);
         contentStream.showText(text);
         contentStream.endText();
         return y - leading; // Retourner la nouvelle position de `y`
     }
 
-    private float writeParagraph(PDPageContentStream contentStream, String text, float width, float y, float leading, PDDocument document) throws IOException {
+    private float writeParagraph(PDPageContentStream contentStream, String text, float width, float y, float leading, PDDocument document, Standard14Fonts.FontName fontName, int fontSize) throws IOException {
         float startX = 50; // Position horizontale
         String[] words = text.split(" ");
         StringBuilder line = new StringBuilder();
@@ -105,7 +105,7 @@ public class PdfGenerator {
                 // Écrire la ligne actuelle
                 contentStream.beginText();
                 contentStream.newLineAtOffset(startX, y);
-                contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
+                contentStream.setFont(new PDType1Font(fontName), fontSize);
                 contentStream.showText(line.toString().trim());
                 contentStream.endText();
 
