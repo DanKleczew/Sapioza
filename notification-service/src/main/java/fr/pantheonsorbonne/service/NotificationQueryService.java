@@ -19,25 +19,13 @@ public class NotificationQueryService {
     @Inject
     NotificationEntityDtoMapper mapper;
 
-    /**
-     * Récupère les notifications pour un utilisateur donné.
-     *
-     * @param userId L'identifiant de l'utilisateur.
-     * @return Une liste de NotificationDTO.
-     */
     public List<NotificationDTO> getNotificationsForUser(Long userId) {
         List<Notification> entities = notificationDAO.findByUserId(userId);
         return entities.stream()
-                .map(mapper::mapToDTO)
+                .map(mapper::mapEntityToDTO)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Récupère toutes les notifications pour un utilisateur sous forme brute.
-     *
-     * @param userId L'identifiant de l'utilisateur.
-     * @return Une liste de NotificationEntity.
-     */
     public List<Notification> getNotificationsByUserId(Long userId) {
         return notificationDAO.findByUserId(userId);
     }

@@ -16,9 +16,7 @@ public class NotificationDAO {
 
     @PersistenceContext
     EntityManager entityManager;
-
-    //Crée une nouvelle notification dans la base de données - notification Entité Notification à persister.
-
+    
     @Transactional
     public void create(Notification notification) {
         if (notification == null) {
@@ -31,16 +29,15 @@ public class NotificationDAO {
         }
     }
 
-    //Recherche les notifications pour un utilisateur donné. ID de l'utilisateur. Liste des notifications de l'utilisateur.
-
     public List<Notification> findByUserId(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("User ID cannot be null.");
         }
         try {
             return entityManager.createQuery(
-                            "SELECT n FROM Notification n WHERE n.userId = :userId", Notification.class)
+                            "SELECT n FROM Notification n WHERE n.notifiedUserId = :userId ORDER BY n.notificationTime desc", Notification.class)
                     .setParameter("userId", userId)
+                    .setMaxResults(10)
                     .getResultList();
         } catch (Exception e) {
             throw new NotificationDatabaseAccessException("Error fetching notifications for user ID: " + userId, e);

@@ -9,7 +9,6 @@ import org.apache.camel.Processor;
 public class PersistenceProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
-        //message qui transite sur la route
         exchange.getMessage().getBody(PaperMetaDataDTO.class);
 
     }

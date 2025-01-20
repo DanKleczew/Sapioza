@@ -17,7 +17,6 @@ public class NotificationRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        // Gestion des exceptions dans toutes les routes
         onException(Exception.class)
                 .log("Erreur lors du traitement de la notification : ${exception.message}")
                 .handled(true);
@@ -35,15 +34,5 @@ public class NotificationRoute extends RouteBuilder {
                 .setExchangePattern(ExchangePattern.InOut)
                 .to(GlobalRoutes.GET_USER_FOLLOWERS.getRoute()+ "?requestTimeout=5000")
                 .end();
-
-
-        //méthode pour recup info dan et
-        //demande info raymon
-
-
-        //recupère objet dans le handler dont authorId et j'appelle ma 3e route pour avoir tableau avec followers
-
-        //appelle service pour tout écrire avec le dao dans bdd
-
     }
 }
