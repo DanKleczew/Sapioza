@@ -18,7 +18,7 @@ public class PdfGenerationService {
     @Inject
     PdfGenerator pdfGenerator;
 
-    public Byte[] generatePdf(SubmittedPaperDTO submittedPaperDTO) {
+    public byte[] generatePdf(SubmittedPaperDTO submittedPaperDTO) {
         UserInfoDTO userInfoDTO = this.userGateway.getUserInfos(submittedPaperDTO.metaData().authorId());
 
         CompletePaperDTO completePaperDTO = new CompletePaperDTO(submittedPaperDTO.metaData(),

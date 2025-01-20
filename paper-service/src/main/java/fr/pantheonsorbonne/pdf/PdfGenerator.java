@@ -16,7 +16,7 @@ import java.io.IOException;
 @ApplicationScoped
 public class PdfGenerator {
 
-    public Byte[] generatePdf(CompletePaperDTO completePaperDTO) {
+    public byte[] generatePdf(CompletePaperDTO completePaperDTO) {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);
@@ -73,14 +73,8 @@ public class PdfGenerator {
             // Sauvegarde en mémoire
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             document.save(outputStream);
-            byte[] pdf = outputStream.toByteArray();
+            return outputStream.toByteArray();
 
-            // Conversion de byte[] en Byte[]
-            Byte[] result = new Byte[pdf.length];
-            for (int i = 0; i < pdf.length; i++) {
-                result[i] = pdf[i]; // Boxing de byte en Byte
-            }
-            return result;
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la génération du PDF", e);
         }

@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.PaperDTOs.PaperDTO;
 import fr.pantheonsorbonne.dto.PaperDTOs.SubmittedPaperDTO;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;

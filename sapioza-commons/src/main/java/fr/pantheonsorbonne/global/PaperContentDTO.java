@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public record PaperContentDTO(
         String paperUuid,
-        Byte[] pdf
+        byte[] pdf
 ) implements Serializable {
     // Transaction DTO between the paper-service and the storage-service
 }

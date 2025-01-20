@@ -55,7 +55,7 @@ public class PaperCreationService {
             this.notificationGateway.newPaper(paperMetaDataDTO);
 
             // Generate PDF
-            Byte[] pdf = pdfGenerationService.generatePdf(submittedPaperDTO);
+            byte[] pdf = pdfGenerationService.generatePdf(submittedPaperDTO);
 
             // Send generated pdf to storage-service
             this.storageGateway.newPaper(new PaperContentDTO(paper.getUuid(), pdf));

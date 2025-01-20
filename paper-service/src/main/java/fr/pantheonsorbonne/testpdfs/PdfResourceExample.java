@@ -87,11 +87,8 @@ public class PdfResourceExample {
                         "address this, the model introduces a fuzzy variable for " +
                         "deterioration rates, acknowledging the uncertainty in their " +
                         "precise estimation.");
-        Byte[] pdf = this.pdfGenerator.generatePdf(completePaperDTO);
-        byte[] pdf2 = new byte[pdf.length];
-        for (int i = 0; i < pdf.length; i++) {
-            pdf2[i] = pdf[i]; // Auto-unboxing
-        }
-        return Response.ok(pdf2).header("Content-Disposition", "inline; filename=\"generated.pdf\"").build();
+        byte[] pdf = this.pdfGenerator.generatePdf(completePaperDTO);
+
+        return Response.ok(pdf).header("Content-Disposition", "inline; filename=\"generated.pdf\"").build();
     }
 }

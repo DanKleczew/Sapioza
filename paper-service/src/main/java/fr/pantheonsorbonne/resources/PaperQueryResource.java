@@ -103,8 +103,7 @@ public class PaperQueryResource implements QueryResourceInterface {
             return Response
                     .status(Response.Status.OK)
                     .entity(queriedPDF.pdf())
-                    .header("Content-Disposition", "inline; " +
-                            "filename=\"" + queriedPDF.title() + ".pdf\"")
+                    .header("Content-Disposition", "inline; " + "filename=\"" + queriedPDF.title() + ".pdf\"")
                     .build();
         } catch (PaperNotFoundException e){
             return Response

@@ -50,8 +50,7 @@ public class PaperQueryService {
         Paper paper = paperQueryDAO.getPaper(id);
         return new QueriedPDF(
                 paper.getTitle(),
-                this.storageGateway.getPDF(paper.getUuid()
-                )
+                this.storageGateway.getPDF(paper.getUuid())
         );
     }
 }
