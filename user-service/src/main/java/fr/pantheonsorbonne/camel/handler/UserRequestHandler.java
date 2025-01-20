@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.camel.handler;
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserFollowsDTO;
+import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.service.UserService;
@@ -59,14 +60,26 @@ public class UserRequestHandler {
         try {
             Long id = exchange.getMessage().getBody(Long.class);
             UserDTO userDTO = userService.getUser(id);
-            List<Long> follows = userService.getSubscribersId(id);
             UserFollowsDTO userFollowsDTO = null;
             if (userDTO != null) {
-                userFollowsDTO = new UserFollowsDTO(userDTO.id(), follows);
+                userFollowsDTO = new UserFollowsDTO(userDTO.id(), userService.getSubscribersId(id));
             }
             exchange.getMessage().setBody(userFollowsDTO, UserFollowsDTO.class);
         } catch (Exception e) {
             throw new RuntimeException("Error while getting user follows");
+        }
+    }
+
+    @Handler
+    public void getUuidByAuthentification(Exchange exchange) {
+        try {
+            UserIdentificationDTO userIdentificationDTO = exchange.getMessage().getBody(UserIdentificationDTO.class);
+            Log.error("matchUuidAndPassword : " + userIdentificationDTO);
+            Boolean matchUuidAndPassword = userService.identificationByUuidAndId(userIdentificationDTO.userUUID(), userIdentificationDTO.userId());
+            Log.error("matchUuidAndPassword : " + matchUuidAndPassword);
+            exchange.getMessage().setBody(matchUuidAndPassword, Boolean.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while getting user id by authentification");
         }
     }
 

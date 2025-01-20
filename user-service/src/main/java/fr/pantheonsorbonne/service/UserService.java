@@ -6,6 +6,7 @@ import fr.pantheonsorbonne.dao.UserDAO;
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserFollowsDTO;
@@ -37,7 +38,7 @@ public class UserService implements UserServiceInterface {
 
     @Transactional
     public UserDTO getUser(Long id) {
-        User user = userDAO.getUserById(id);
+        User user = userDAO.getUser(id);
         if (user == null) {
             System.out.println("User not found");
             Log.debug("User not found");
@@ -49,7 +50,7 @@ public class UserService implements UserServiceInterface {
     }
 
     public UserDTO getUser(String email) {
-        User user = userDAO.getUserByEmail(email);
+        User user = userDAO.getUser(email);
         if (user == null) {
             return null;
         }
@@ -58,8 +59,8 @@ public class UserService implements UserServiceInterface {
 
     @Transactional
     public void subscribTo(Long idUser1, Long idUser2) {
-        User user = userDAO.getUserById(idUser1);
-        User user2 = userDAO.getUserById(idUser2);
+        User user = userDAO.getUser(idUser1);
+        User user2 = userDAO.getUser(idUser2);
         if(this.isSubscribed(user, user2)){
             return;
         }
@@ -77,19 +78,19 @@ public class UserService implements UserServiceInterface {
 
     @Transactional
     public List<User> getSubscribers(Long id) {
-        return userDAO.getUserById(id).getUsers();
+        return userDAO.getUser(id).getUsers();
     }
 
     public List<User> getSubscribers(String email) {
-        return userDAO.getUserByEmail(email).getUsers();
+        return userDAO.getUser(email).getUsers();
     }
 
     public List<Long> getSubscribersId(Long id){
-        return userDAO.getUserById(id).getUsersIds();
+        return userDAO.getUser(id).getUsersIds();
     }
 
     public List<Long> getSubscribersId(String email){
-        return userDAO.getUserByEmail(email).getUsersIds();
+        return userDAO.getUser(email).getUsersIds();
     }
 
     @Transactional
@@ -101,7 +102,7 @@ public class UserService implements UserServiceInterface {
     }
 
     @Transactional
-    public Boolean deleteUser(Long id, String password) {
+    public Boolean deleteUser(Long id, String password) throws UserException {
         UserDTO userDTO = this.getUser(id);
         if (userDTO == null) {
             return false;
@@ -109,12 +110,12 @@ public class UserService implements UserServiceInterface {
         if (!userDTO.password().equals(password)) {
             return false;
         }
-        userDAO.deleteUserById(id);
+        userDAO.deleteUser(id);
         return true;
     }
 
     @Transactional
-    public Boolean deleteUser(String email, String password) {
+    public Boolean deleteUser(String email, String password) throws UserException {
         UserDTO userDTO = this.getUser(email);
         if (userDTO == null) {
             return false;
@@ -122,7 +123,7 @@ public class UserService implements UserServiceInterface {
         if (!userDTO.password().equals(password)) {
             return false;
         }
-        userDAO.deleteUserById(userDTO.id());
+        userDAO.deleteUser(userDTO.id());
         return true;
     }
 
@@ -180,7 +181,7 @@ public class UserService implements UserServiceInterface {
 
     public UserInfoDTO getUserInfo(Long id) {
         try {
-            User user = this.userDAO.getUserById(id);
+            User user = this.userDAO.getUser(id);
             if (user == null) {
                 throw new UserNotFoundException(id);
             }
@@ -219,7 +220,7 @@ public class UserService implements UserServiceInterface {
 
     public UserFollowsDTO getUserFollows(Long id) {
         try {
-            User user = this.userDAO.getUserById(id);
+            User user = this.userDAO.getUser(id);
             List<User> follows = user.getUsers();
             List<UserDTO> followsDTO = new ArrayList<>();
             for (User follow : follows) {
@@ -238,7 +239,7 @@ public class UserService implements UserServiceInterface {
 
     public UserInfoDTO getUserInformation(Long id){
         try {
-            User user = this.userDAO.getUserById(id);
+            User user = this.userDAO.getUser(id);
             if (user == null) {
                 throw new UserNotFoundException(id);
             }
@@ -263,8 +264,7 @@ public class UserService implements UserServiceInterface {
     }
 
     public UserDTO getUserByUuid(String uuid) throws UserNotFoundException {
-        User user = this.userDAO.getUserByUuid(uuid);
-        UserDTO userDTO = this.userMapper.mapEntityToDTO(user);
+        UserDTO userDTO = this.userDAO.getUserByUuid(uuid);
         if(userDTO == null) {
             throw new UserNotFoundException(uuid);
         }
@@ -275,10 +275,37 @@ public class UserService implements UserServiceInterface {
         return this.getUser(id).uuid();
     }
 
+    public Boolean identificationByUuidAndId(String uuid, Long id) throws UserNotFoundException {
+        Log.error("identificationByUuidAndId : " + uuid + " " + id);
+        UserDTO userDTO = this.getUserByUuid(uuid);
+        Log.error("identificationByUuidAndId : " + userDTO);
+        return userDTO.id().equals(id);
+    }
+
+    public String getUuid(String email, String password) throws ConnectionException {
+        UserDTO userDTO = this.connectionUser(email, password);
+        return userDTO.uuid();
+    }
 
 
+    public void initService() {
 
+        for (int i = 0; i < 20; i++) {
+            UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
+                    "name" + i,
+                    "firstName" + i,
+                    "email" + i,
+                    "password" + i
+            );
+            this.createUser(userRegistrationDTO);
+        }
 
+        for (int i = 2; i <= 20; i++) {
+            this.subscribTo((long) 1, (long) i);
+        }
 
-
+        for (int i = 2; i <= 10; i++) {
+            this.subscribTo((long) i, (long) 1);
+        }
+    }
 }

@@ -48,5 +48,12 @@ public class CamelRoute extends RouteBuilder {
                         .outputType(UserFollowsDTO.class)
                         .end();
 
+                from(GlobalRoutes.USER_STRONG_ID_REQUEST_REPLY_QUEUE.getRoute())
+                        .log("Received message on user strong id request reply queue + ${body}")
+                        .bean(userRequestHandler, "getUuidByAuthentification")
+                        .log("Sending response to user strong id request reply queue")
+                        .log("body :  ${body}")
+                        .outputType(Boolean.class)
+                        .end();
         }
 }

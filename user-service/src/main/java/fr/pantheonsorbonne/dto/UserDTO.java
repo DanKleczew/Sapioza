@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +16,8 @@ public record UserDTO(
                       String email,
                       String password,
                       List<Long> UsersIds,
-                      Date creationDate,
-                      Date deletionDate,
+                      LocalDate creationDate,
+                      LocalDate deletionDate,
                       Roles role,
                       String uuid
 ) {

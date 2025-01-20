@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.dao;
 
+import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.enums.Roles;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
@@ -10,12 +11,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
 
+@Transactional
 @ApplicationScoped
 public class UserDAO {
 
@@ -26,7 +29,7 @@ public class UserDAO {
     UserMapper userMapper;
 
 
-    public User getUserById(Long id) {
+    public User getUser(Long id) {
         User user = null;
         try {
             user = em.find(User.class, id);
@@ -59,19 +62,20 @@ public class UserDAO {
         }
     }
 
-    public void updateUserName(long id, String name) {
+    public void updateUserName(long id, String name) throws UserNotFoundException {
         try {
-            User user = this.getUserById(id);
+            User user = this.getUser(id);
             user.setName(name);
             this.updateUser(user);
         } catch (RuntimeException re) {
             Log.error("updateUserName failed", re);
+            throw new UserNotFoundException(id);
         }
     }
 
     public void updateUserFirstName(long id, String firstName) {
         try {
-            User user = this.getUserById(id);
+            User user = this.getUser(id);
             user.setFirstName(firstName);
             this.updateUser(user);
         } catch (RuntimeException re) {
@@ -80,12 +84,12 @@ public class UserDAO {
     }
 
     public List<User> addMultipleSubscribers(long id, List<User> users) throws UserException {
-        User user = this.getUserById(id);
+        User user = this.getUser(id);
         for (User u : users) {
             if(u.getId() == id) {
                 throw new UserException("User can't subscribe to himself");
             }
-            if(this.getUserById(u.getId()) == null) {
+            if(this.getUser(u.getId()) == null) {
                 throw new UserNotFoundException(u.getId());
             }
             user.addFollower(u);
@@ -95,12 +99,12 @@ public class UserDAO {
     }
 
     public List<User> addMultipleSubscribersById(long id, List<Long> followersId) throws UserException {
-        User user = this.getUserById(id);
+        User user = this.getUser(id);
         for (Long followerId : followersId) {
             if(Objects.equals(user.getId(), followerId)) {
                 throw new UserException("User can't subscribe to himself");
             }
-            User follower = this.getUserById(followerId);
+            User follower = this.getUser(followerId);
             if(follower == null) {
                 throw new UserNotFoundException(followerId);
             }
@@ -110,23 +114,42 @@ public class UserDAO {
         return user.getUsers();
     }
 
-    public void deleteUserById(Long id){
-        User user = em.find(User.class, id);
-        this.deleteUser(user);
+    public void deleteUser(Long id) throws UserException {
+        try {
+            User user = em.find(User.class, id);
+            this.deleteUser(user);
+        }
+        catch (RuntimeException re) {
+            throw new UserException("failed to delete user with id " + id);
+        }
     }
 
 
     public void deleteUser(User user){
-        user.setDeletionDate();
-        this.updateUser(user);
+        try {
+            user.setDeletionDate();
+            this.updateUser(user);
+        } catch (RuntimeException re) {
+            Log.error("deleteUser failed", re);
+            throw new RuntimeException("failed to delete user with id " + user.getId());
+        }
     }
 
     //will be deleted
-    public void deleteUserByMail(String email){
-        User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
-                .setParameter("email", email)
-                .getSingleResult();
+    public void deleteUser(String email){
+        User user = findUser(email);
         this.deleteUser(user);
+    }
+    public User findUser(String email) {
+        User user = null;
+        try {
+            user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+        } catch (RuntimeException re) {
+            throw new RuntimeException("failed to find user with email " + email);
+        }
+        return user;
     }
 
     public User connection(String email, String password) {
@@ -140,7 +163,7 @@ public class UserDAO {
     }
 
 
-    public User getUserByEmail(String email) {
+    public User getUser(String email) {
         User user = null;
         try {
             user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
@@ -153,7 +176,7 @@ public class UserDAO {
     }
 
     public List<User> getUsersListId(Long id){
-        User user = this.getUserById(id);
+        User user = this.getUser(id);
         for (User u : user.getUsers()) {
             System.out.println(u.getId());
         }
@@ -170,7 +193,7 @@ public class UserDAO {
                 .getResultList();
     }
 
-    public User getUserByUuid(String uuid) {
+    public UserDTO getUserByUuid(String uuid) {
         User user = null;
         try {
             user = em.createQuery("SELECT u FROM User u WHERE u.uuid = :uuid ", User.class)
@@ -179,12 +202,13 @@ public class UserDAO {
         } catch (RuntimeException re) {
             Log.error("getUserByUuid failed", re);
         }
-        return user;
+        UserDTO userDTO = userMapper.mapEntityToDTO(user);
+        return userDTO;
     }
 
     public void addDefaultValuesForUser(User user){
         if(user.getCreationDate() == null){
-            user.setCreationDate(new java.sql.Date(new Date().getTime()));
+            user.setCreationDate(LocalDate.now());
         }
         if(user.getRole() == null){
             user.setRole(Roles.USER);

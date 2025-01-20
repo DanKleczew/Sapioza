@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.resources;
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.service.UserService;
@@ -22,6 +23,14 @@ public class UserAPI {
         @Inject
         UserService userService;
 
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/initService")
+        public Response initService() {
+                userService.initService();
+                Log.debug("UserAPI.createMultipleTestAccount called");
+                return Response.ok().build();
+        }
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +62,7 @@ public class UserAPI {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("/delete/{id},{password}")
-        public Response deleteUser(@PathParam("id") long id, @PathParam("password") String password) {
+        public Response deleteUser(@PathParam("id") long id, @PathParam("password") String password) throws UserException {
                 if(userService.getUser(id) == null){
                         return Response.status(Response.Status.NOT_FOUND).build();
                 }
@@ -120,8 +129,13 @@ public class UserAPI {
                 return Response.ok(userDTO).build();
         }
 
-
-
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("/getUuid/{email}/{password}")
+        public Response getUuid(@PathParam("email") String email, @PathParam("password") String password) throws ConnectionException {
+                String uuid = userService.getUuid(email, password);
+                return Response.ok(uuid).build();
+        }
 
 
 

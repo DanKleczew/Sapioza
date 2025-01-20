@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +22,8 @@ public class User {
     private String firstName;
     private String email;
     private String password;
-    private Date creationDate = new java.sql.Date(new Date().getTime());
-    private Date deletionDate;
+    private LocalDate creationDate = LocalDate.now();
+    private LocalDate deletionDate;
 
 
     @Enumerated(EnumType.STRING)
@@ -133,14 +134,14 @@ public class User {
     }
 
     public void setDeletionDate() {
-        this.deletionDate = new Date();
+        this.deletionDate = LocalDate.now();
     }
 
-    public void setDeletionDate(Date deletionDate) {
+    public void setDeletionDate(LocalDate deletionDate) {
         this.deletionDate = deletionDate;
     }
 
-    public Date getDeletionDate() {
+    public LocalDate getDeletionDate() {
         return deletionDate;
     }
 
@@ -148,11 +149,11 @@ public class User {
         return this.Users.stream().map(User::getId).collect(Collectors.toList());
     }
 
-    public Date getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
