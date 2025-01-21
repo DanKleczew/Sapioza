@@ -1,10 +1,7 @@
 package fr.pantheonsorbonne.camel;
 
 public enum Routes {
-
-    NEW_FROM_PAPER("direct:newPaperToStorage"),
-    ALTER_COMMAND_FROM_PAPER("direct:deletePaperToStorage"),
-    SEND_PAPER_CONTENT("direct:getPaperContent");
+    PAPER_PERSIST_FAILURE("direct:persistFailedPaper");
 
     private final String route;
 

@@ -3,10 +3,12 @@ package fr.pantheonsorbonne.dao;
 import fr.pantheonsorbonne.dao.interfaces.QueryDAOInterface;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
+import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.model.Paper;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -71,10 +73,21 @@ public class PaperQueryDAO implements QueryDAOInterface {
             }
             query.select(root).where(predicates.toArray(new Predicate[]{}));
             return em.createQuery(query).getResultList();
-            //this.em.createQuery()
+
         } catch (RuntimeException re) {
             Log.error("Error while filtering papers", re);
             throw new PaperDatabaseAccessException();
+        }
+    }
+
+    @Override
+    public Paper getPaperByUuid(String uuid) throws PaperNotFoundException {
+        try {
+            return em.createQuery("SELECT p FROM Paper p WHERE p.uuid = :uuid", Paper.class)
+                    .setParameter("uuid", uuid)
+                    .getSingleResult();
+        } catch (NoResultException e){
+            throw new PaperNotFoundException(uuid);
         }
     }
 

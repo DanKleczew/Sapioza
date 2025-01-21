@@ -8,7 +8,6 @@ import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class StoredPaperService {
@@ -19,47 +18,37 @@ public class StoredPaperService {
     @Inject
     StoredPaperMapper storedPaperMapper;
 
-    @Transactional
     public void updateStoredPaper(PaperContentDTO dto) throws PaperNotFoundException {
-        // Find the existing paper by paperUuid
         StoredPaper existingPaper = storedPaperDAO.findStoredPaperByUuid(dto.paperUuid());
         if (existingPaper == null) {
             throw new PaperNotFoundException("StoredPaper with paperUuid " + dto.paperUuid() + " not found");
         }
 
-        // Update the paper's body with the new content
         existingPaper.setBody(dto.pdf());
-        // Save the updated paper
-        StoredPaper updatedPaper = storedPaperDAO.saveStoredPaper(existingPaper);
+        storedPaperDAO.saveStoredPaper(existingPaper);
     }
 
-    @Transactional
     public void deleteStoredPaper(String paperUuid) throws PaperNotFoundException {
-        // Find the paper by its paperUuid
         StoredPaper existingPaper = storedPaperDAO.findStoredPaperByUuid(paperUuid);
         if (existingPaper == null) {
             throw new PaperNotFoundException("StoredPaper with paperUuid " + paperUuid + " not found");
         }
-
-        // Delete the paper
         storedPaperDAO.deleteStoredPaper(existingPaper);
     }
 
-    public void savePaper(PaperContentDTO paperContentDTO) throws PaperDatabaseAccessException {
+    public void savePaper(PaperContentDTO paperContentDTO) {
         try {
-            StoredPaper storedPaper = new StoredPaper();
-            storedPaper.setPaperUuid(paperContentDTO.paperUuid());
-            storedPaper.setBody(paperContentDTO.pdf());
+            StoredPaper storedPaper = this.storedPaperMapper.mapDTOToEntity(paperContentDTO);
             storedPaperDAO.saveStoredPaper(storedPaper);
         } catch (Exception e) {
             throw new PaperDatabaseAccessException("Failed to save paper in database");
         }
     }
 
-    public byte[] getPaperContent(String paperUuid) throws PaperDatabaseAccessException {
+    public byte[] getPaperContent(String paperUuid) throws PaperNotFoundException{
         byte[] storedPaper = storedPaperDAO.findBodyByUuid(paperUuid);
         if (storedPaper == null) {
-            throw new PaperDatabaseAccessException("No paper found for uuid " + paperUuid);
+            throw new PaperNotFoundException("No paper found for uuid " + paperUuid);
         }
         return storedPaper;
     }

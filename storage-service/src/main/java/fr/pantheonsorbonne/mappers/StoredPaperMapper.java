@@ -7,7 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class StoredPaperMapper implements EntityDTOMapper<PaperContentDTO, StoredPaper> {
-
+    //No local DTO needed, using global PaperContentDTO which is already a mirror of local StoredPaper
 
     @Override
     public PaperContentDTO mapEntityToDTO(StoredPaper entity) {

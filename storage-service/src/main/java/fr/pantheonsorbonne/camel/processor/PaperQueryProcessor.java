@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.camel;
+package fr.pantheonsorbonne.camel.processor;
 
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.global.PaperContentDTO;
@@ -15,8 +15,16 @@ public class PaperQueryProcessor implements Processor {
     StoredPaperService storedPaperService;
 
     @Override
-    public void process(Exchange exchange) throws PaperNotFoundException {
+    public void process(Exchange exchange) {
         String paperUuid = exchange.getMessage().getBody(String.class);
-        exchange.getMessage().setBody(storedPaperService.getPaperContent(paperUuid));
+        try {
+            byte[] pdf = storedPaperService.getPaperContent(paperUuid);
+            exchange.getMessage().setHeader("paperFound", true);
+            exchange.getMessage().setBody(pdf);
+        } catch (PaperNotFoundException e) {
+            exchange.getMessage().setHeader("paperFound", false);
+            exchange.getMessage().setBody("Paper not found");
+        }
+
     }
 }

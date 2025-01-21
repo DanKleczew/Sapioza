@@ -1,9 +1,11 @@
 package fr.pantheonsorbonne.camel;
 
+import fr.pantheonsorbonne.camel.handler.DeleteHandler;
+import fr.pantheonsorbonne.camel.handler.SavingPaperHandler;
+import fr.pantheonsorbonne.camel.handler.UpdateHandler;
+import fr.pantheonsorbonne.camel.processor.PaperQueryProcessor;
 import fr.pantheonsorbonne.global.GlobalRoutes;
-import fr.pantheonsorbonne.service.StoredPaperService;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Stereotype;
 import jakarta.inject.Inject;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -11,52 +13,51 @@ import org.apache.camel.builder.RouteBuilder;
 public class CamelRoute extends RouteBuilder {
 
     @Inject
-    StoredPaperService storageService;
-
-    @Inject
-    StoredPaperProcessor paperProcessor;
+    SavingPaperHandler paperHandler;
 
     @Inject
     PaperQueryProcessor paperQueryProcessor;
 
     @Inject
-    UpdateProcessor updateProcessor;
+    UpdateHandler updateHandler;
 
     @Inject
-    DeleteProcessor deleteProcessor;
+    DeleteHandler deleteHandler;
 
     @Override
     public void configure() {
         // Route pour sauvegarder un papier
         from(GlobalRoutes.NEW_PAPER_P2S.getRoute())
                 .log("Received new paper: ${body}")
-                .process(paperProcessor);
+                .bean(paperHandler);
 
+        // Route pour gérer modification ou suppression d'un papier
         from(GlobalRoutes.ALTER_PAPER_P2S.getRoute())
                 .log("Received alter command: ${header.command}")
                 .choice()
                 .when(header("command").isEqualTo("update"))
                     .log("Processing update for paper")
-                    .process(updateProcessor)
+                    .bean(updateHandler)
                 .when(header("command").isEqualTo("delete"))
                     .log("Processing delete for paper")
-                    .process(deleteProcessor)
+                    .bean(deleteHandler)
                 .otherwise()
                     .log("Unknown command received: ${header.command}")
-                    .stop();
+                .endChoice()
+                .stop();
 
+        // Route pour répondre à une requête de papier
         from(GlobalRoutes.PAPER_CONTENT_REQUEST_REPLY_QUEUE.getRoute())
                 .log("Received paper query for ${body}")
-                .process(paperQueryProcessor);
+                .process(paperQueryProcessor)
+                .log("Sending paper content: ${body}")
+                .end();
 
-        // Route pour récupérer le contenu d'un papier
-        from(Routes.SEND_PAPER_CONTENT.getRoute())
-                .log("Fetching content for paper UUID: ${body}")
-                .bean(storageService, "getPaperContent")
-                .onException(Exception.class)
-                .handled(true)
-                .log("Error while fetching paper content: ${exception.message}")
-                .setBody(constant("Error fetching content"));
+        // Route pour gérer les erreurs de sauvegarde
+        from(Routes.PAPER_PERSIST_FAILURE.getRoute())
+                .to(GlobalRoutes.PERSIST_FAIL_S2P.getRoute());
     }
+
+
 }
 

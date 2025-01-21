@@ -58,4 +58,13 @@ public class PaperDeletionService {
         }
         paperDeletionDAO.deletePaper(paper);
     }
+
+    public void emergencyDelete(String uuid) {
+        try {
+            Paper paper = this.paperQueryDAO.getPaperByUuid(uuid);
+            this.paperDeletionDAO.deletePaper(paper);
+        } catch (PaperNotFoundException e) {
+            Log.warn(e.getMessage());
+        }
+    }
 }
