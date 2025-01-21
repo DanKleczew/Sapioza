@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.dao.interfaces.DeletionDAOInterface;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
 import io.quarkus.logging.Log;
@@ -11,7 +10,7 @@ import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 @Transactional
-public class PaperDeletionDAO implements DeletionDAOInterface {
+public class PaperDeletionDAO {
 
     @PersistenceContext
     private EntityManager em;

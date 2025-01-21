@@ -1,15 +1,10 @@
 package fr.pantheonsorbonne.dao;
 
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
-import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.exception.ReviewAlreadyExistsException;
 import fr.pantheonsorbonne.exception.ReviewNotFoundException;
-import fr.pantheonsorbonne.model.Paper;
 import fr.pantheonsorbonne.model.Review;
-import fr.pantheonsorbonne.service.PaperQueryService;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -23,9 +18,6 @@ public class ReviewDAO {
 
     @PersistenceContext
     private EntityManager em;
-
-    @Inject
-    PaperQueryDAO paperQueryDAO;
 
     public void addReview(Review review) throws ReviewAlreadyExistsException {
         try {

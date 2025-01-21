@@ -15,4 +15,8 @@ public interface QueryResourceInterface {
                                boolean AscDate,
                                boolean DescDate,
                                String DOI);
+
+    Response getPaperReviews(Long id);
+
+    Response getPaperPdf(Long id);
 }

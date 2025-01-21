@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 @Transactional
-public class PaperCreationDAO implements CreationDAOInterface {
+public class PaperCreationDAO {
 
     @PersistenceContext
     private EntityManager em;

@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.dao.interfaces.QueryDAOInterface;
 import fr.pantheonsorbonne.dto.FilterDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
@@ -21,7 +20,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Transactional
-public class PaperQueryDAO implements QueryDAOInterface {
+public class PaperQueryDAO   {
 
     @PersistenceContext
     private EntityManager em;
@@ -80,7 +79,6 @@ public class PaperQueryDAO implements QueryDAOInterface {
         }
     }
 
-    @Override
     public Paper getPaperByUuid(String uuid) throws PaperNotFoundException {
         try {
             return em.createQuery("SELECT p FROM Paper p WHERE p.uuid = :uuid", Paper.class)
