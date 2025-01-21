@@ -2,7 +2,6 @@ package fr.pantheonsorbonne.dao;
 
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,7 +19,6 @@ public class PaperDeletionDAO {
             Paper managedPaper = em.find(Paper.class, paper.getId());
             em.remove(managedPaper);
         } catch (RuntimeException re) {
-            Log.error(re.getMessage());
             throw new PaperDatabaseAccessException();
         }
     }

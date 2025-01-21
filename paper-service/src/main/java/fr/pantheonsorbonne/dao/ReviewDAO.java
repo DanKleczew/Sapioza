@@ -31,10 +31,10 @@ public class ReviewDAO {
         }
     }
 
-    public List<Review> getReviews(Long articleId)  {
-            return this.em.createQuery("SELECT r FROM Review r WHERE r.paper.id = :articleId", Review.class)
-                    .setParameter("articleId", articleId)
-                    .getResultList();
+    public List<Review> getReviews(Long articleId) {
+        return this.em.createQuery("SELECT r FROM Review r WHERE r.paper.id = :articleId", Review.class)
+                .setParameter("articleId", articleId)
+                .getResultList();
 
     }
 

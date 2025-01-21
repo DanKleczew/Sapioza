@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.dao;
 
-import fr.pantheonsorbonne.dao.interfaces.CreationDAOInterface;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.model.Paper;
 import jakarta.enterprise.context.ApplicationScoped;
