@@ -50,6 +50,7 @@ public class CamelRoute extends RouteBuilder {
                 .end();
 
         from(Routes.NEW_MAIL.getRoute())
+                .log("${body}")
                 .process(exchange -> {
                     exchange.getMessage().setHeader("from", smtpFrom);
                     exchange.getMessage().setHeader("contentType", "text/html; charset=UTF-8");

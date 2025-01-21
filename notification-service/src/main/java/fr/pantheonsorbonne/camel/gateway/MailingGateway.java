@@ -18,15 +18,16 @@ public class MailingGateway {
     CamelContext camelContext;
 
     public void sendMail(String email, PaperMetaDataDTO paperMetaDataDTO, UserInfoDTO userInfoDTO) {
-        Map<String, String> headers = Map.of("to", email, "subject", "Nouvel article publié : " + paperMetaDataDTO.title());
+        Map<String, Object> headers = Map.of("to", email, "subject", "Nouvel article publié : " + paperMetaDataDTO.title());
 
         try(ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-            producerTemplate.sendBodyAndHeader(
+            producerTemplate.setDefaultEndpointUri(Routes.NEW_MAIL.getRoute());
+            producerTemplate.sendBodyAndHeaders(
                     Routes.NEW_MAIL.getRoute(), //Endpoint
                     String.format(
                     "Bonjour,<br><br>" +
                             "Un nouvel article a été publié par <b>%s</b> : <i>%s</i>.<br>" +
-                            "Lien : <a href='%s'> Nouvel article </a><br><br>" +
+                            "Lien : <a href='http://localhost:8082/papers/pdf/%s'> Nouvel article </a><br><br>" +
                             "Cordialement,<br>L'équipe SAPIOZA.",
                     userInfoDTO.firstName() + " " + userInfoDTO.lastName(),
                     paperMetaDataDTO.title(),
