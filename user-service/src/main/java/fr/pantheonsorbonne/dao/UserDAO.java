@@ -28,38 +28,14 @@ public class UserDAO {
     @Inject
     UserMapper userMapper;
 
-
     public User getUser(Long id) {
         User user = null;
-        try {
-            user = em.find(User.class, id);
-        } catch (RuntimeException re) {
-            throw new RuntimeException(re.getMessage());
-        }
+        user = em.find(User.class, id);
         return user;
     }
 
-
-
-    public void createTestUser() {
-        User user = new User();
-        try {
-            user.setName("test");
-            user.setFirstName("test");
-            user.setEmail("test");
-            user.setPassword("test");
-            em.persist(user);
-        } catch (RuntimeException re) {
-            throw new RuntimeException(re.getMessage());
-        }
-    }
-
     public void updateUser(User user) {
-        try {
-            em.merge(user);
-        } catch (RuntimeException re) {
-            throw new RuntimeException(re.getMessage());
-        }
+        em.merge(user);
     }
 
     public void updateUserName(long id, String name) throws UserNotFoundException {
@@ -83,10 +59,10 @@ public class UserDAO {
         }
     }
 
-    public List<User> addMultipleSubscribers(long id, List<User> users) throws UserException {
+    public List<User> addMultipleSubscribers(Long id, List<User> users) throws UserException {
         User user = this.getUser(id);
         for (User u : users) {
-            if(u.getId() == id) {
+            if(u.getId().equals(id)) {
                 throw new UserException("User can't subscribe to himself");
             }
             if(this.getUser(u.getId()) == null) {
@@ -98,7 +74,7 @@ public class UserDAO {
         return user.getUsers();
     }
 
-    public List<User> addMultipleSubscribersById(long id, List<Long> followersId) throws UserException {
+    public List<User> addMultipleSubscribersById(Long id, List<Long> followersId) throws UserException {
         User user = this.getUser(id);
         for (Long followerId : followersId) {
             if(Objects.equals(user.getId(), followerId)) {
@@ -114,14 +90,12 @@ public class UserDAO {
         return user.getUsers();
     }
 
-    public void deleteUser(Long id) throws UserException {
-        try {
-            User user = em.find(User.class, id);
-            this.deleteUser(user);
+    public void deleteUser(Long id) throws UserNotFoundException {
+        User user = em.find(User.class, id);
+        if (user == null) {
+            throw new UserNotFoundException(id);
         }
-        catch (RuntimeException re) {
-            throw new RuntimeException(re.getMessage());
-        }
+        this.deleteUser(user);
     }
 
 

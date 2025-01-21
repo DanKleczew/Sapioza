@@ -5,30 +5,24 @@ import jakarta.transaction.Transactional;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
 @Entity
-@Table(name = "User", indexes = @Index(name = "index_email", columnList = "email"))
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String firstName;
     private String email;
     private String password;
     private LocalDate creationDate = LocalDate.now();
     private LocalDate deletionDate;
-
-
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
-
     @UuidGenerator
     private String uuid;
 
@@ -36,7 +30,7 @@ public class User {
     @JoinTable(name = "User_User",
             joinColumns = @JoinColumn(name = "User_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "Follower_id", referencedColumnName = "id"))
-    private List<User> Users;
+    private List<User> followers;
 
     public User() {
     }
@@ -110,23 +104,23 @@ public class User {
     }
 
     public List<User> getUsers() {
-        return Users;
+        return followers;
     }
 
     public void setUsers(List<User> Users) {
-        this.Users = Users;
+        this.followers = Users;
     }
 
     public void addFollower(User user) {
-        this.Users.add(user);
+        this.followers.add(user);
     }
 
     public void removeFollower(User user) {
-        this.Users.remove(user);
+        this.followers.remove(user);
     }
 
     public boolean isFollowing(User user) {
-        return this.Users.contains(user);
+        return this.followers.contains(user);
     }
 
     public void subscribeTo(User user) {
@@ -146,7 +140,7 @@ public class User {
     }
 
     public List<Long> getUsersIds() {
-        return this.Users.stream().map(User::getId).collect(Collectors.toList());
+        return this.followers.stream().map(User::getId).collect(Collectors.toList());
     }
 
     public LocalDate getCreationDate() {

@@ -4,8 +4,11 @@ package fr.pantheonsorbonne.service;
 import fr.pantheonsorbonne.camel.gateway.UserAccount;
 import fr.pantheonsorbonne.dao.UserDAO;
 import fr.pantheonsorbonne.dto.UserDTO;
+import fr.pantheonsorbonne.dto.UserDeletionDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.exception.User.UserAlreadyExistsException;
+import fr.pantheonsorbonne.exception.User.UserAuthenticationException;
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
@@ -18,6 +21,7 @@ import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +36,6 @@ public class UserService implements UserServiceInterface {
 
     @Inject
     UserMapper userMapper;
-
-     @Inject
-    UserAccount userAccount;
 
     @Transactional
     public UserDTO getUser(Long id) {
@@ -58,9 +59,9 @@ public class UserService implements UserServiceInterface {
     }
 
     @Transactional
-    public void subscribTo(Long idUser1, Long idUser2) {
-        User user = userDAO.getUser(idUser1);
-        User user2 = userDAO.getUser(idUser2);
+    public void subscribeTo(Long idAuthor, Long idSubscriber) {
+        User user = userDAO.getUser(idAuthor);
+        User user2 = userDAO.getUser(idSubscriber);
         if(this.isSubscribed(user, user2)){
             return;
         }
@@ -94,7 +95,10 @@ public class UserService implements UserServiceInterface {
     }
 
     @Transactional
-    public void createUser(UserRegistrationDTO userRegistrationDTO) {
+    public void createUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistsException {
+        if(this.getUser(userRegistrationDTO.email()) != null) {
+            throw new UserAlreadyExistsException(userRegistrationDTO.email());
+        }
         UserDTO userDTO = userMapper.mapRegistrationToUserDTO(userRegistrationDTO);
         User user = userMapper.mapDTOToEntity(userDTO);
         userDAO.addDefaultValuesForUser(user);
@@ -115,16 +119,15 @@ public class UserService implements UserServiceInterface {
     }
 
     @Transactional
-    public Boolean deleteUser(String email, String password) throws UserException {
-        UserDTO userDTO = this.getUser(email);
+    public void deleteUser(UserDeletionDTO userDeletionDTO) throws UserNotFoundException, UserAuthenticationException {
+        UserDTO userDTO = this.getUser(userDeletionDTO.id());
         if (userDTO == null) {
-            return false;
+            throw new UserNotFoundException(userDeletionDTO.id());
         }
-        if (!userDTO.password().equals(password)) {
-            return false;
+        if (!userDTO.password().equals(userDeletionDTO.password())) {
+            throw new UserAuthenticationException(userDeletionDTO.id());
         }
         userDAO.deleteUser(userDTO.id());
-        return true;
     }
 
     @Transactional

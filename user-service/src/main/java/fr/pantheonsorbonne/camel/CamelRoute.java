@@ -20,7 +20,6 @@ public class CamelRoute extends RouteBuilder {
         @Inject
         UserRequestHandler userRequestHandler;
 
-
         @Override
         public void configure(){
 

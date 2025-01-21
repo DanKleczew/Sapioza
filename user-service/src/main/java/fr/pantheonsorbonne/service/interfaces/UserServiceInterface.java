@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.service.interfaces;
 
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
+import fr.pantheonsorbonne.exception.User.UserAlreadyExistsException;
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.model.User;
 
@@ -14,12 +15,12 @@ public interface UserServiceInterface {
 
 
 
-    public void createUser(UserRegistrationDTO userRegistrationDTO);
+    public void createUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistsException;
 
     public Boolean deleteUser(Long id, String password) throws UserException;
     public Boolean deleteUser(String email, String password) throws UserException;
 
-    public void subscribTo(Long idUser1, Long idUser2);
+    public void subscribeTo(Long idUser1, Long idUser2);
     public Boolean isSubscribed(User user1, User user2);
 
     public List<Long> findUserFollowsID(Long id);

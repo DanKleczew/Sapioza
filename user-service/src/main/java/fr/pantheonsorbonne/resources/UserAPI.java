@@ -1,8 +1,11 @@
 package fr.pantheonsorbonne.resources;
 
 import fr.pantheonsorbonne.dto.UserDTO;
+import fr.pantheonsorbonne.dto.UserDeletionDTO;
 import fr.pantheonsorbonne.dto.UserRegistrationDTO;
 import fr.pantheonsorbonne.exception.Connection.ConnectionException;
+import fr.pantheonsorbonne.exception.User.UserAlreadyExistsException;
+import fr.pantheonsorbonne.exception.User.UserAuthenticationException;
 import fr.pantheonsorbonne.exception.User.UserException;
 import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import fr.pantheonsorbonne.model.User;
@@ -32,55 +35,62 @@ public class UserAPI {
                 return Response.ok().build();
         }
 
-        @GET
+        @POST
+        @Consumes(MediaType.APPLICATION_JSON)
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/createAccount/{name}/{firstName}/{email}/{password}")
-        public Response createAccount(
-                @PathParam("name") String name,
-                @PathParam("firstName") String firstName,
-                @PathParam("email") String email,
-                @PathParam("password") String password
-        ) {
-                if(userService.getUser(email) != null) {
-                        return Response.status(Response.Status.CONFLICT).build();
+        @Path("/createAccount")
+        public Response createAccount(UserRegistrationDTO userRegistrationDTO) {
+                try {
+                        userService.createUser(userRegistrationDTO);
+                        return Response
+                                .status(Response.Status.CREATED)
+                                .entity(userRegistrationDTO.email())
+                                .build();
+                } catch (UserAlreadyExistsException e) {
+                        return Response
+                                .status(Response.Status.CONFLICT)
+                                .entity(e.getMessage())
+                                .build();
                 }
-                userService.createUser(new UserRegistrationDTO(name, firstName, email, password));
-                UserDTO userDTO = userService.getUser(email);
-                Log.debug("UserAPI.createAccount called with name=" + name + " firstName=" + firstName + " email=" + email + " password=" + password);
-                return Response.ok(userDTO).build();
         }
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("/getInfo/{id}")
-        public Response getUserInfo(@PathParam("id") long id) {
+        public Response getUserInfo(@PathParam("id") Long id) {
                 UserDTO userDTO = userService.getUser(id);
-                Log.debug("UserAPI.getUserInfo called with id=" + id);
                 return Response.ok(userDTO).build();
         }
 
-        @GET
+        @DELETE
+        @Consumes(MediaType.APPLICATION_JSON)
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/delete/{id},{password}")
-        public Response deleteUser(@PathParam("id") long id, @PathParam("password") String password) throws UserException {
-                if(userService.getUser(id) == null){
-                        return Response.status(Response.Status.NOT_FOUND).build();
+        @Path("/delete")
+        public Response deleteUser(UserDeletionDTO userDeletionDTO) {
+                try {
+                        userService.deleteUser(userDeletionDTO);
+                        return Response
+                                .ok("User account " + userDeletionDTO.id() + " has been deleted")
+                                .build();
+                } catch (UserNotFoundException e) {
+                        return Response
+                                .status(Response.Status.NOT_FOUND)
+                                .build();
+                } catch (UserAuthenticationException e) {
+                        return Response
+                                .status(Response.Status.FORBIDDEN)
+                                .build();
                 }
-                UserDTO userDTO = userService.getUser(id);
-                userService.deleteUser(id, password);
-                Log.debug("UserAPI.deleteUser called with id=" + id);
-                return Response.ok(userDTO).build();
         }
 
-        @GET
+        @PATCH
         @Produces(MediaType.APPLICATION_JSON)
-        @Path("/subscribe/{id1}/{id2}")
+        @Path("/subscribe/{idAuthor}/{idSubscriber}")
         public Response subscribeTo(
-                @PathParam("id1") long id1,
-                @PathParam("id2") long id2
+                @PathParam("idAuthor") Long id1,
+                @PathParam("idSubscriber") Long id2
         ) {
-
-                userService.subscribTo(id1, id2);
+                userService.subscribeTo(id1, id2);
                 UserDTO userDTO = userService.getUser(id1);
                 Log.debug("UserAPI.createTestUser called");
                 return Response.ok(userDTO).build();
