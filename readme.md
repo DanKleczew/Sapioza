@@ -2,59 +2,63 @@
 
 ## Objectifs du système :
 
-> Ébauche des objectifs du système, à affiner
-
 *Nous nous proposons de réaliser une application ayant pour objectif la centralisation des articles scientifiques, tous domaines confondus.* 
 
-Cette application permet de poster des articles, de les soumettre pour relecture, de les consulter etc. 
-L'application a pour ambition de ressembler à un réseau social de partage de connaissances scientifiques; des systèmes d'abonnement (à un chercheur, à une revue...), de notification, de notes et commentaires des lecteurs et de pages d'articles populaires notamment sont mis en place dans ce but.
+Cette application permet de poster des articles et de les consulter. 
+Les pdfs sont générés par l'application en utilisant la bibliothèque Apache Pdfbox.
 
-L'application dispose d'un outil de recherche solide proposant plusieurs filtres de recherche (années de publication, titre, abstract, auteur, domaine...).
-Il est possible de configurer des notifications en cas de nouvelle parution dans un domaine précis (e.g Nouvel article en informatique incluant le mot clé "blind signature").
+L'application a pour ambition de ressembler à un réseau social de partage de connaissances 
+scientifiques; des systèmes d'abonnement, de notification, 
+de 'like' et de commentaires des lecteurs sont mis en place dans cet objectif.
 
-Les chercheurs peuvent choisir individuellement de placer ou non leurs articles derrière un paywall.
+Les usagers abonnés à un auteur reçoivent une notification lors de la parution d'un article
+écrit par celui-ci.
+Le système de notification est composé de deux parties, une interne à l'application, 
+et un envoi de mails automatique aux abonnés.
 
-Au dépôt d'un article, celui-ci est analysé pour s'assurer du sérieux de la publication (dans quelle revue a-t-il été publié...).
-Nous disposons également de notre propre certification : si l'article est soumis pour relecture, celui-ci est envoyé à nos chercheurs partenaires du domaine, qui après étude valident ou non l'article (avec potentiellement des allers-retours entre le chercheur et les relecteurs).
+La sécurité des données est prise en compte, pour réaliser des opérations sensibles 
+(suppression d'article par exemple), des processus sont mis en place pour éviter les 
+usurpations d'identités.
 
-### Acteurs et communication :
+Aussi, des mesures sont mises en place pour éviter des incohérence dans les données ;
+système de rollback inter-services en cas d'échec d'enregistrement par exemple
 
-La liste des acteurs est : 
-- Utilisateur (Chercheur ou Lecteur)
-- Chercheurs partenaires
-- Paper Service (CRUD Auteur & *U* Lecteur) => BDD = Meta-données (L'API est ici)
-- Storage Service => BDD = PDFs
-- Payment Service
-- Notification Service
+L'application dispose enfin d'un outil de recherche proposant plusieurs filtres de recherche 
+(année de publication, titre, abstract, auteur, domaine de recherche...).
+
+
+### Microservices et descriptions :
+
+- Paper Service : Création, modification, suppression, accès (unitaire et filtrage) aux articles 
+; systèmes sociaux (likes et commentaires) et génération des pdfs 
+- Storage Service : Stockage efficace des pdfs générés, modification et mise à disposition de ceux-
+ci
+- User Service : Gestion des utilisateurs de l'application : création de compte, connexion, abonnements,
+vérification d'identité, mise à disposition des informations des utilisateurs (interne et externe)
+- Notification Service : Système d'enregistrement et de mise à disposition des notifications liées à 
+la publication d'un article ; envoi de mails
 
 ### Use Cases :
 
 #### Utilisateur :
 
-- Poster un article
-- Soumettre un article pour relecture
+- Créer un article
+- Supprimer un article écrit par soi-même
+- Modifier //
+- Créer un compte, se connecter
 - Consulter un article
-- Rechercher un article
+- Consulter le profil d'un autre utilisateur
+- Rechercher un article (à partir de sa référence unique dans Sapioza)
+- Effectuer une recherche filtrée
 - S'abonner à un chercheur
-- S'abonner à une revue
-- Noter un article
+- Liker/Disliker un article
 - Commenter un article
-- Consulter les articles populaires
 - Consulter les articles de ses abonnements
-- Consulter les articles de ses notifications
+- Consulter ses notifications
 
-#### Chercheurs partenaires :
+## Diagramme de Séquence :
 
-- Valider un article
-- Refuser un article
-- Consulter les articles en attente de validation
+### Création d'un article :
+![Création d'un article](./publish.png)
 
-
-## Diagrammes de Séquence :
-
-> À réaliser après confirmation des objectifs  
-
-## Exigences et Remarques : 
-
-> See SOLR & CAMEL:PDF
 
