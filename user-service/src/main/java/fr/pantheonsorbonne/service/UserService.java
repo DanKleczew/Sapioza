@@ -290,22 +290,22 @@ public class UserService implements UserServiceInterface {
 
     public void initService() {
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 1; i <= 100; i++) {
             UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                    "name" + i,
-                    "firstName" + i,
-                    "email" + i,
-                    "password" + i
+                    "Dan" + i,
+                    "va" + i,
+                    "te@faire" + i,
+                    "foutre" + i
             );
             this.createUser(userRegistrationDTO);
         }
 
         for (int i = 2; i <= 20; i++) {
-            this.subscribTo((long) 1, (long) i);
+            this.subscribTo((long) 99, (long) i);
         }
 
         for (int i = 2; i <= 10; i++) {
-            this.subscribTo((long) i, (long) 1);
+            this.subscribTo((long) i, (long) 99);
         }
     }
 }

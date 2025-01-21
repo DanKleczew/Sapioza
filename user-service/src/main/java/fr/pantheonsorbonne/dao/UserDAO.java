@@ -34,7 +34,7 @@ public class UserDAO {
         try {
             user = em.find(User.class, id);
         } catch (RuntimeException re) {
-            Log.error("getUser failed", re);
+            throw new RuntimeException(re.getMessage());
         }
         return user;
     }
@@ -50,7 +50,7 @@ public class UserDAO {
             user.setPassword("test");
             em.persist(user);
         } catch (RuntimeException re) {
-            Log.error("createTestUser failed", re);
+            throw new RuntimeException(re.getMessage());
         }
     }
 
@@ -58,7 +58,7 @@ public class UserDAO {
         try {
             em.merge(user);
         } catch (RuntimeException re) {
-            Log.error("updateUser failed", re);
+            throw new RuntimeException(re.getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ public class UserDAO {
             user.setFirstName(firstName);
             this.updateUser(user);
         } catch (RuntimeException re) {
-            Log.error("updateUserFirstName failed", re);
+            throw new RuntimeException(re.getMessage());
         }
     }
 
@@ -120,7 +120,7 @@ public class UserDAO {
             this.deleteUser(user);
         }
         catch (RuntimeException re) {
-            throw new UserException("failed to delete user with id " + id);
+            throw new RuntimeException(re.getMessage());
         }
     }
 
@@ -131,7 +131,7 @@ public class UserDAO {
             this.updateUser(user);
         } catch (RuntimeException re) {
             Log.error("deleteUser failed", re);
-            throw new RuntimeException("failed to delete user with id " + user.getId());
+            throw new RuntimeException(re.getMessage());
         }
     }
 
@@ -147,17 +147,22 @@ public class UserDAO {
                     .setParameter("email", email)
                     .getSingleResult();
         } catch (RuntimeException re) {
-            throw new RuntimeException("failed to find user with email " + email);
+            throw new RuntimeException(re.getMessage());
         }
         return user;
     }
 
     public User connection(String email, String password) {
-        User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
-                .setParameter("email", email)
-                .getSingleResult();
-        if (user.getPassword().equals(password)) {
-            return user;
+        try {
+            User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+            if (user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        catch (RuntimeException re) {
+            throw new RuntimeException(re.getMessage());
         }
         return null;
     }
@@ -170,7 +175,7 @@ public class UserDAO {
                     .setParameter("email", email)
                     .getSingleResult();
         } catch (RuntimeException re) {
-            Log.error("getUserByEmail failed", re);
+            throw new RuntimeException(re.getMessage());
         }
         return user;
     }
