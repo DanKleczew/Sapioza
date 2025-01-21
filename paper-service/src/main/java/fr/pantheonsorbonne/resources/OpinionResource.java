@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.resources;
 import fr.pantheonsorbonne.dto.OpinionDTO;
 import fr.pantheonsorbonne.exception.OpinionNotFoundException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
+import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.resources.interfaces.OpinionResourceInterface;
 import fr.pantheonsorbonne.service.OpinionService;
 import jakarta.inject.Inject;
@@ -26,7 +27,13 @@ public class OpinionResource implements OpinionResourceInterface {
             return Response
                     .status(Response.Status.OK)
                     .build();
+        } catch (PaperNotFoundException e) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
         } catch (OpinionNotFoundException e) {
+            // In case of submit of "NO_OPINION"
             return Response
                     .status(Response.Status.NOT_FOUND)
                     .build();

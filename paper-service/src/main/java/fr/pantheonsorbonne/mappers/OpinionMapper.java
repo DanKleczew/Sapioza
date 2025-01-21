@@ -17,7 +17,7 @@ public class OpinionMapper implements EntityDTOMapper<OpinionDTO, Opinion> {
     public OpinionDTO mapEntityToDTO(Opinion entity) {
         return new OpinionDTO(
                 entity.getPaper().getId(),
-                entity.getOpinion() == Boolean.TRUE ? 1 : 2,
+                entity.getOpinion(),
                 entity.getUserId());
     }
 
@@ -26,17 +26,7 @@ public class OpinionMapper implements EntityDTOMapper<OpinionDTO, Opinion> {
         Opinion entity = new Opinion();
         entity.setPaper(this.paperQueryDAO.getPaper(dto.paperId()));
         entity.setUserId(dto.readerId());
-        switch (dto.opinion()){
-            case 0:
-                entity.setOpinion(null);
-                break;
-            case 1:
-                entity.setOpinion(true);
-                break;
-            default:
-                entity.setOpinion(false);
-                break;
-        }
+        entity.setOpinion(dto.opinion());
         return entity;
     }
 }

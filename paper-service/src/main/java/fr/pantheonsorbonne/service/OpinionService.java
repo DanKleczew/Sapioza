@@ -4,7 +4,9 @@ import fr.pantheonsorbonne.dao.OpinionDAO;
 import fr.pantheonsorbonne.dao.PaperQueryDAO;
 import fr.pantheonsorbonne.dto.OpinionDTO;
 import fr.pantheonsorbonne.dto.PaperOpinionsDTO;
+import fr.pantheonsorbonne.enums.OpinionList;
 import fr.pantheonsorbonne.exception.OpinionNotFoundException;
+import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.mappers.OpinionMapper;
 import fr.pantheonsorbonne.model.Opinion;
 import fr.pantheonsorbonne.model.Paper;
@@ -25,9 +27,13 @@ public class OpinionService {
     @Inject
     PaperQueryDAO paperQueryDAO;
 
-    public void changeOpinion(OpinionDTO opinionDto) throws OpinionNotFoundException {
+    public void changeOpinion(OpinionDTO opinionDto) throws OpinionNotFoundException, PaperNotFoundException {
+        if (this.paperQueryDAO.getPaper(opinionDto.paperId()) == null){
+            throw new PaperNotFoundException(opinionDto.paperId());
+        }
         Opinion op = this.opinionMapper.mapDTOToEntity(opinionDto);
-        if (op.getOpinion() == null) {
+
+        if (op.getOpinion() == OpinionList.NO_OPINION) {
             this.opinionDAO.removeOpinion(op);
         } else {
             this.opinionDAO.changeOpinion(op);
@@ -44,7 +50,7 @@ public class OpinionService {
         int likes = 0;
         int dislikes = 0;
         for (Opinion opinion : opinions) {
-            if (opinion.getOpinion() == Boolean.TRUE) {
+            if (opinion.getOpinion() == OpinionList.LIKE) {
                 likes++;
             } else {
                 dislikes++;

@@ -1,15 +1,17 @@
 package fr.pantheonsorbonne.exception;
 
+import fr.pantheonsorbonne.enums.Cause;
+
 public class PaperOwnershipDeniedException extends Exception {
 
-    private final int force;
+    private final Cause cause;
 
-    public PaperOwnershipDeniedException(int force) {
+    public PaperOwnershipDeniedException(Cause cause) {
         super("Paper ownership denied");
-        this.force = force;
+        this.cause = cause;
     }
 
-    public int getForce() {
-        return force;
+    public Cause getReason() {
+        return cause;
     }
 }

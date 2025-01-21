@@ -6,6 +6,7 @@ import fr.pantheonsorbonne.dao.PaperQueryDAO;
 import fr.pantheonsorbonne.dto.PaperDTOs.AlteredPaperDTO;
 import fr.pantheonsorbonne.dto.PaperDTOs.PaperDTO;
 import fr.pantheonsorbonne.dto.PaperDTOs.SubmittedPaperDTO;
+import fr.pantheonsorbonne.enums.Cause;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.exception.PaperOwnershipDeniedException;
 import fr.pantheonsorbonne.global.PaperContentDTO;
@@ -37,7 +38,7 @@ public class PaperAlterationService {
             throw new PaperNotFoundException(alteredPaperDTO.paperId());
         }
         if (paper.getAuthorId() != alteredPaperDTO.authorId()) {
-            throw new PaperOwnershipDeniedException(2);
+            throw new PaperOwnershipDeniedException(Cause.FORBIDDEN);
         }
         PaperDTO paperDTO = paperMapper.mapEntityToDTO(paper);
         SubmittedPaperDTO submittedPaperDTO = new SubmittedPaperDTO(paperDTO, alteredPaperDTO.body());

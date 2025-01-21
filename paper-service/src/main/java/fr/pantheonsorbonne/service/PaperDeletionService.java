@@ -4,6 +4,7 @@ import fr.pantheonsorbonne.camel.gateway.StorageGateway;
 import fr.pantheonsorbonne.camel.gateway.UserGateway;
 import fr.pantheonsorbonne.dao.PaperDeletionDAO;
 import fr.pantheonsorbonne.dao.PaperQueryDAO;
+import fr.pantheonsorbonne.enums.Cause;
 import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
@@ -36,11 +37,11 @@ public class PaperDeletionService {
             throw new PaperNotFoundException(id);
         }
         if (userIdentificationDto.userId() == null || userIdentificationDto.userUUID() == null) {
-            throw new PaperOwnershipDeniedException(1);
+            throw new PaperOwnershipDeniedException(Cause.UNAUTHORIZED);
         }
         boolean isUserAllowed = userGateway.isUserAllowed(userIdentificationDto);
         if (paper.getAuthorId() != userIdentificationDto.userId() || !isUserAllowed ) {
-            throw new PaperOwnershipDeniedException(2);
+            throw new PaperOwnershipDeniedException(Cause.FORBIDDEN);
         }
         paperDeletionDAO.deletePaper(paper);
         try {

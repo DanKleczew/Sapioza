@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.enums.Cause;
 import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
@@ -34,7 +35,7 @@ public class PaperDeletionResource implements DeletionResourceInterface {
                     .entity(e.getMessage())
                     .build();
         } catch (PaperOwnershipDeniedException e) {
-            if (e.getForce() == 1) {
+            if (e.getReason() == Cause.UNAUTHORIZED) {
                 return Response
                         .status(Response.Status.UNAUTHORIZED)
                         .entity(e.getMessage())

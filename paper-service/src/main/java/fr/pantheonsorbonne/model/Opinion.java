@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.model;
 
+import fr.pantheonsorbonne.enums.OpinionList;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,7 +10,7 @@ public class Opinion {
     private Long id;
 
     @Basic(optional = false)
-    private Boolean opinion;
+    private OpinionList opinion;
 
     @Basic(optional = false)
     private Long userId;
@@ -25,11 +26,11 @@ public class Opinion {
         return id;
     }
 
-    public void setOpinion(Boolean opinion) {
+    public void setOpinion(OpinionList opinion) {
         this.opinion = opinion;
     }
 
-    public Boolean getOpinion() {
+    public OpinionList getOpinion() {
         return opinion;
     }
 
