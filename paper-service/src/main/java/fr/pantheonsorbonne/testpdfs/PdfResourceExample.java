@@ -38,14 +38,7 @@ public class PdfResourceExample {
                         "percentages are classified as fuzzy variables since they are unpredictable and impacted by " +
                         "undefined conditions. The goal is to calculate the appropriate replenishment cycle and " +
                         "ordering quantity while reducing the optimal overall cost, including carbon pollution costs, " +
-                        "within a constrained planning horizon. The defuzzification technique uses the sign distance " +
-                        "approximation technique. Leveraging Machine Learning, the study utilizes a seasonal " +
-                        "demand forecasting methodology. A numerical illustration supports the mathematical " +
-                        "approach by demonstrating its capacity to estimate demand for deteriorating products. This " +
-                        "facilitates optimized inventory management aligned with forecasted demand. A " +
-                        "comparative examination emphasizes the positive aspects of AI learning-based forecasting " +
-                        "systems over determined demand circumstances. Sensitivity analysis provides insights " +
-                        "into the impact of various parameters on optimal solutions, contributing valuable managerial perspectives.",
+                        "within a constrained planning horizon.",
                         "https://doi.org/10.18280/jesa.570416",
                         36,
                         2,
@@ -68,25 +61,17 @@ public class PdfResourceExample {
                         "The strategic imperative of effective demand prediction " +
                         "emerges as a key solution, offering the potential to refine " +
                         "inventory management strategies, curtail superfluous costs, " +
-                        "and elevate overall customer service [3]. Leveraging machine " +
+                        "and elevate overall customer service. Leveraging machine " +
                         "learning (ML): with its advanced predictive capabilities, " +
                         "particularly through Decision Tree-based Algorithms, stands " +
                         "out as a transformative tool in achieving precise and accurate " +
-                        "seasonal demand forecasts [4]. This paper delves into the " +
+                        "seasonal demand forecasts. This paper delves into the " +
                         "convergence of seasonal demand dynamics, imperfect " +
                         "deteriorating products, and the contemporary imperative of " +
                         "considering carbon emissions in inventory systems. The " +
                         "intrinsic deterioration of physical products over time, be it " +
                         "during transit or storage, is a ubiquitous challenge across " +
-                        "various industries [5]. Items such as fruits, medicines, flowers, " +
-                        "foodstuffs, and vegetables are susceptible to decay during their " +
-                        "holding and in-transit periods. This study acknowledges the " +
-                        "deterministic approach traditionally applied to deterioration " +
-                        "rates in inventory models but contends that real-world " +
-                        "uncertainty demands a more sophisticated treatment [6]. To " +
-                        "address this, the model introduces a fuzzy variable for " +
-                        "deterioration rates, acknowledging the uncertainty in their " +
-                        "precise estimation.");
+                        "various industries.");
         byte[] pdf = this.pdfGenerator.generatePdf(completePaperDTO);
 
         return Response.ok(pdf).header("Content-Disposition", "inline; filename=\"generated.pdf\"").build();
