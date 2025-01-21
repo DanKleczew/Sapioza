@@ -35,39 +35,40 @@ public class PdfGenerator {
 
                 // Titre de l'article
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 18);
-                yStart = writeLine(contentStream, paper.title(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 18);
+                yStart = writeText(contentStream, paper.title(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 18);
 
                 // Auteur
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeLine(contentStream, "Author: " + user.firstName() + " " + user.lastName(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, "Author: " + user.firstName() + " " + user.lastName(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Publication
-                yStart = writeLine(contentStream, "Published in: " + paper.publishedIn(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA, 12);
-                yStart = writeLine(contentStream, "Date: " + paper.publicationDate(), width, yStart, leading, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, "Published in: " + paper.publishedIn(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, "Date: " + paper.publicationDate().toString(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Résumé
                 yStart -= leading * 1.5;
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
-                yStart = writeLine(contentStream, "Abstract:", width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
+                yStart = writeText(contentStream, "Abstract:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
 
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeParagraph(contentStream, paper.abstract_(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, paper.abstract_(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Mots-clés
                 yStart -= leading * 1.5;
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
-                yStart = writeLine(contentStream, "Keywords:", width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
+                yStart = writeText(contentStream, "Keywords:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
 
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeParagraph(contentStream, paper.keywords(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, paper.keywords(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Corps de l'article
                 yStart -= leading * 1.5;
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
-                yStart = writeLine(contentStream, "Body:", width, yStart, leading, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
+                yStart = writeText(contentStream, "Body:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
 
                 //contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                yStart = writeParagraph(contentStream, body, width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, body, width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                contentStream.close();
             }
 
             // Sauvegarde en mémoire
@@ -80,32 +81,28 @@ public class PdfGenerator {
         }
     }
 
-    private float writeLine(PDPageContentStream contentStream, String text, float width, float y, float leading, Standard14Fonts.FontName fontName, int fontSize) throws IOException {
-        contentStream.beginText();
-        contentStream.newLineAtOffset(50, y); // Marge de 50
-        contentStream.setFont(new PDType1Font(fontName), fontSize);
-        contentStream.showText(text);
-        contentStream.endText();
-        return y - leading; // Retourner la nouvelle position de `y`
-    }
-
-    private float writeParagraph(PDPageContentStream contentStream, String text, float width, float y, float leading, PDDocument document, Standard14Fonts.FontName fontName, int fontSize) throws IOException {
+    private float writeText(PDPageContentStream contentStream, String text, float width, float y, float leading, PDDocument document, Standard14Fonts.FontName fontName, int fontSize) throws IOException {
         float startX = 50; // Position horizontale
+        PDType1Font font = new PDType1Font(fontName);
+        contentStream.setFont(font, fontSize);
+
         String[] words = text.split(" ");
         StringBuilder line = new StringBuilder();
 
         for (String word : words) {
-            if ((line + " " + word).length() > (width / 7)) { // Largeur maximale par ligne
+            String testLine = line.length() == 0 ? word : line + " " + word;
+            float textWidth = font.getStringWidth(testLine) / 1000 * fontSize;
+
+            if (textWidth > width) {
                 // Écrire la ligne actuelle
                 contentStream.beginText();
                 contentStream.newLineAtOffset(startX, y);
-                contentStream.setFont(new PDType1Font(fontName), fontSize);
                 contentStream.showText(line.toString().trim());
                 contentStream.endText();
 
                 // Préparer une nouvelle ligne
-                line = new StringBuilder();
-                y -= leading; // Décalage pour la nouvelle ligne
+                line = new StringBuilder(word);
+                y -= leading;
 
                 // Vérifier si la page est pleine
                 if (y < 50) {
@@ -118,9 +115,13 @@ public class PdfGenerator {
 
                     // Réinitialise la position verticale
                     y = newPage.getMediaBox().getHeight() - 50;
+
+                    // Réinitialiser les propriétés de la police
+                    contentStream.setFont(font, fontSize);
                 }
+            } else {
+                line.append(line.length() == 0 ? word : " " + word);
             }
-            line.append(word).append(" ");
         }
 
         // Écrire la dernière ligne
@@ -132,16 +133,7 @@ public class PdfGenerator {
             y -= leading;
         }
 
-        contentStream.close();
-
         return y;
     }
-
-
-//    public Byte[] generatePdf(CompletePaperDTO completePaperDTO) {
-//        // Generate PDF
-//
-//        return new Byte[0];
-//    }
 
 }

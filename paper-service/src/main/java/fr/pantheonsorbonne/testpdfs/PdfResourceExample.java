@@ -29,7 +29,7 @@ public class PdfResourceExample {
                 new PaperDTO("Optimizing Inventory Management with Seasonal Demand Forecasting in a Fuzzy Environment",
                         12345678L, ResearchField.COMPUTER_SCIENCE,
                         "Journal Européen des Systèmes Automatisés",
-                        new Date(2024-8-27),
+                        new Date(System.currentTimeMillis()),
                         "supply model, shortages, forecasting demand, artificial intelligence, machine learning, deterioration, carbon pollution policy, finite planning horizon",
                         "This study explores an inventory management model in today's business landscape, where " +
                         "organizations increasingly rely on Machine Learning for demand-driven stock control. The " +
