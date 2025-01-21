@@ -30,5 +30,4 @@ public class NotificationQueryService {
         return notificationDAO.findByUserId(userId);
     }
 
-
 }

@@ -2,15 +2,13 @@ package fr.pantheonsorbonne.camel;
 
 import fr.pantheonsorbonne.camel.handler.NotificationHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
-import fr.pantheonsorbonne.service.NotificationCreationService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 
 @ApplicationScoped
-public class NotificationRoute extends RouteBuilder {
+public class CamelRoute extends RouteBuilder {
 
     @Inject
     NotificationHandler notificationHandler;

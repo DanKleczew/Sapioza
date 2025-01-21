@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.dao;
 import fr.pantheonsorbonne.model.Notification;
 import fr.pantheonsorbonne.exception.NotificationDatabaseAccessException;
 
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,7 +17,7 @@ public class NotificationDAO {
 
     @PersistenceContext
     EntityManager entityManager;
-    
+
     @Transactional
     public void create(Notification notification) {
         if (notification == null) {
@@ -29,6 +30,7 @@ public class NotificationDAO {
         }
     }
 
+    @Transactional
     public List<Notification> findByUserId(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("User ID cannot be null.");
@@ -46,10 +48,13 @@ public class NotificationDAO {
 
     @Transactional
     public void persistAll(List<Notification> notifications) {
-        entityManager.getTransaction().begin();
-        for (Notification notification : notifications) {
-            entityManager.persist(notification);
+        try {
+            for (Notification notification : notifications) {
+                entityManager.persist(notification);
+            }
+        } catch (RuntimeException e) {
+            Log.error("Failed to persist notifications.", e);
         }
-        entityManager.getTransaction().commit();
+
     }
 }
