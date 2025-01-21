@@ -9,9 +9,6 @@ import jakarta.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ApplicationScoped
 public class UserNotificationGateway {
 

@@ -29,9 +29,9 @@ public class Notification {
     @Basic(optional = false)
     private Date notificationTime;
 
-    public Notification(Long userId, Long paperId, String authorFirstName, String authorLastName, String paperTitle,
+    public Notification(Long notifiedUserId, Long paperId, String authorFirstName, String authorLastName, String paperTitle,
                         Date notificationTime) {
-        this.notifiedUserId = userId;
+        this.notifiedUserId = notifiedUserId;
         this.paperId = paperId;
         this.authorFirstName = authorFirstName;
         this.authorLastName = authorLastName;

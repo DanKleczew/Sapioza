@@ -3,11 +3,10 @@ package fr.pantheonsorbonne.service;
 import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
-import fr.pantheonsorbonne.mapper.NotificationEntityDtoMapper;
+import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.model.Notification;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.apache.camel.ProducerTemplate;
 import io.quarkus.logging.Log;
 
 import java.util.List;
@@ -19,13 +18,16 @@ public class NotificationCreationService {
     @Inject
     NotificationDAO notificationDAO;
 
-    public void persistNotifications(PaperMetaDataDTO paperMetaDataDTO, UserFollowersDTO userFollowersDTO) {
+    public void persistNotifications(PaperMetaDataDTO paperMetaDataDTO,
+                                     UserInfoDTO authorInfosDTO,
+                                     UserFollowersDTO userFollowersDTO) {
         try {
-            List<Notification> notifications = userFollowersDTO.followersId().stream()
-                    .map(followerId -> new Notification(
-                            followerId,
+            List<Notification> notifications = userFollowersDTO.followers().stream()
+                    .map(follower-> new Notification(
+                            follower.id(),
                             paperMetaDataDTO.PaperId(),
-                            paperMetaDataDTO.authorId(),
+                            authorInfosDTO.firstName(),
+                            authorInfosDTO.lastName(),
                             paperMetaDataDTO.title(),
                             paperMetaDataDTO.publicationDate()
                     ))

@@ -6,9 +6,25 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class CamelRoute extends RouteBuilder {
+
+    @ConfigProperty(name = "smtp.host")
+    String smtpHost;
+
+    @ConfigProperty(name = "smtp.port")
+    String smtpPort;
+
+    @ConfigProperty(name = "smtp.user")
+    String smtpUser;
+
+    @ConfigProperty(name = "smtp.password")
+    String smtpPassword;
+
+    @ConfigProperty(name = "smtp.from")
+    String smtpFrom;
 
     @Inject
     NotificationHandler notificationHandler;
@@ -32,5 +48,15 @@ public class CamelRoute extends RouteBuilder {
                 .setExchangePattern(ExchangePattern.InOut)
                 .to(GlobalRoutes.GET_USER_FOLLOWERS.getRoute()+ "?requestTimeout=5000")
                 .end();
+
+        from(Routes.NEW_MAIL.getRoute())
+                .process(exchange -> {
+                    exchange.getMessage().setHeader("from", smtpFrom);
+                    exchange.getMessage().setHeader("contentType", "text/html; charset=UTF-8");
+                })
+                .to("smtp://" + smtpHost + ":"
+                        + smtpPort + "?username="
+                        + smtpUser + "&password="
+                        + smtpPassword + "&mail.smtp.starttls.enable=true");
     }
 }

@@ -1,19 +1,17 @@
 package fr.pantheonsorbonne.camel.handler;
 
-import fr.pantheonsorbonne.camel.Routes;
 import fr.pantheonsorbonne.camel.gateway.UserNotificationGateway;
 import fr.pantheonsorbonne.global.PaperMetaDataDTO;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.service.NotificationCreationService;
-import io.quarkus.logging.Log;
+import fr.pantheonsorbonne.camel.gateway.MailingGateway;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Handler;
-import org.apache.camel.ProducerTemplate;
 
-import java.util.List;
 
 @ApplicationScoped
 public class NotificationHandler {
@@ -25,6 +23,9 @@ public class NotificationHandler {
     UserNotificationGateway userNotificationGateway;
 
     @Inject
+    MailingGateway mailingGateway;
+
+    @Inject
     CamelContext camelContext;
 
     @Handler
@@ -32,18 +33,11 @@ public class NotificationHandler {
         // Toutes les infos des followers de l'auteur du papier
         UserFollowersDTO userFollowersDTO = this.userNotificationGateway.getUserFollowers(paperMetaDataDTO.authorId());
         // Les informations de l'auteur du papier
-        UserInfoDTO userInfoDTO = this.userNotificationGateway.getUserInfo(paperMetaDataDTO.authorId());
+        UserInfoDTO authorInfoDTO = this.userNotificationGateway.getUserInfo(paperMetaDataDTO.authorId());
 
-
-        try (ProducerTemplate producerTemplate = camelContext.createProducerTemplate()) {
-            UserFollowersDTO userFollowersDTO = producerTemplate
-                    .requestBody(Routes.GET_USER_FOLLOWERS.getRoute(),
-                        paperMetaDataDTO.authorId(), UserFollowersDTO.class);
-
-            notificationCreationService.persistNotifications(paperMetaDataDTO, userFollowersDTO);
-
-        } catch (Exception e) {
-            Log.error("Error while processing notifications for author ID: " + paperMetaDataDTO, e);
+        for (UserInfoDTO user : userFollowersDTO.followers()){
+            this.mailingGateway.sendMail(user.email(), paperMetaDataDTO, authorInfoDTO);
         }
+        notificationCreationService.persistNotifications(paperMetaDataDTO, authorInfoDTO, userFollowersDTO);
     }
 }
