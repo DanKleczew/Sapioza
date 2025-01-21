@@ -137,7 +137,7 @@ public class PdfGenerator {
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
             try {
                 // Titre de l'article
-                yStart = writeText(contentStream, paper.title(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 18);
+                yStart = writeText(contentStream, paper.title(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD_OBLIQUE, 16);
                 yStart -= leading * 1.5;
 
                 // Auteur
@@ -149,17 +149,19 @@ public class PdfGenerator {
 
                 // Résumé
                 yStart -= leading * 1.5;
-                yStart = writeText(contentStream, "Abstract:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
+                yStart = writeText(contentStream, "Abstract", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 12);
+                yStart -= leading * 0.45;
                 yStart = writeText(contentStream, paper.abstract_(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Mots-clés
                 yStart -= leading * 1.5;
-                yStart = writeText(contentStream, "Keywords:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
-                yStart = writeText(contentStream, paper.keywords(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, "Keywords", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 12);
+                yStart -= leading * 0.45;
+                yStart = writeText(contentStream, paper.keywords(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_OBLIQUE, 12);
 
                 // Corps de l'article
                 yStart -= leading * 1.5;
-                yStart = writeText(contentStream, "Body:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD, 14);
+                //yStart = writeText(contentStream, "Body:", width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA_BOLD_OBLIQUE, 14);
                 yStart = writeText(contentStream, body, width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
             } finally {
                 contentStream.close();
@@ -193,7 +195,7 @@ public class PdfGenerator {
                 contentStream.endText();
 
                 line = new StringBuilder(word);
-                y -= leading;
+                y -= leading * 1.2;
 /*
                 // Si on dépasse la marge basse, ajoute une nouvelle page
                 if (y < 50) {
