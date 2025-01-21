@@ -61,7 +61,11 @@ public class OpinionService {
 
     public OpinionDTO getOpinion(Long paperId, Long userId) throws OpinionNotFoundException {
         Opinion op = new Opinion();
-        op.setPaper(this.paperQueryDAO.getPaper(paperId));
+        Paper paper = this.paperQueryDAO.getPaper(paperId);
+        if (paper == null) {
+            throw new OpinionNotFoundException(paperId);
+        }
+        op.setPaper(paper);
         op.setUserId(userId);
 
         return opinionMapper.mapEntityToDTO(this.opinionDAO.findOpinion(op));

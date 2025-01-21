@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 import java.io.IOException;
+import java.sql.Date;
 
 @ApplicationScoped
 public class PdfGenerator {
@@ -145,7 +146,7 @@ public class PdfGenerator {
 
                 // Publication
                 yStart = writeText(contentStream, "Published in: " + paper.publishedIn(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
-                yStart = writeText(contentStream, "Date: " + paper.publicationDate().toString(), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
+                yStart = writeText(contentStream, "Date: " + new Date(System.currentTimeMillis()), width, yStart, leading, document, Standard14Fonts.FontName.HELVETICA, 12);
 
                 // Résumé
                 yStart -= leading * 1.5;

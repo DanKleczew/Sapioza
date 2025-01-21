@@ -67,6 +67,8 @@ public class OpinionResource implements OpinionResourceInterface {
     }
 
     @Override
+    @GET
+    @Path("getAll/{paperId}")
     public Response getAllOpinions(Long paperId) {
         try {
             return Response

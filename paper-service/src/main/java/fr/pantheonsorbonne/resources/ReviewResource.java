@@ -49,7 +49,7 @@ public class ReviewResource implements ReviewResourceInterface {
     @POST
     @Override
     @Path("/remove/{paperId}/{reviewerId}")
-    public Response removeComment(@QueryParam("paperId") Long paperId , @QueryParam("reviewerId") Long reviewerId) {
+    public Response removeComment(@PathParam("paperId") Long paperId , @PathParam("reviewerId") Long reviewerId) {
         try {
             this.reviewService.removeReview(paperId, reviewerId);
             return Response
