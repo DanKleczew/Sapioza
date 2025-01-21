@@ -19,18 +19,6 @@ public class NotificationDAO {
     EntityManager entityManager;
 
     @Transactional
-    public void create(Notification notification) {
-        if (notification == null) {
-            throw new IllegalArgumentException("Notification cannot be null.");
-        }
-        try {
-            entityManager.persist(notification);
-        } catch (Exception e) {
-            throw new NotificationDatabaseAccessException("Error persisting notification.", e);
-        }
-    }
-
-    @Transactional
     public List<Notification> findByUserId(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("User ID cannot be null.");

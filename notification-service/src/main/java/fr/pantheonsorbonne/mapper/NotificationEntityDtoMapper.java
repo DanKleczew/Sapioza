@@ -14,9 +14,11 @@ public class NotificationEntityDtoMapper implements EntityDTOMapper<Notification
         if (entity == null) {
             return null;
         }
-        return new NotificationDTO(entity.getNotifiedUserId(),
+        return new NotificationDTO(
+                entity.getNotifiedUserId(),
                 entity.getPaperId(),
-                entity.getAuthorId(),
+                entity.getAuthorFirstName(),
+                entity.getAuthorLastName(),
                 entity.getPaperTitle(),
                 entity.getNotificationTime());
     }
@@ -26,9 +28,11 @@ public class NotificationEntityDtoMapper implements EntityDTOMapper<Notification
         if (dto == null) {
             return null;
         }
-        return new Notification(dto.notifiedUserId(),
+        return new Notification(
+                dto.notifiedUserId(),
                 dto.paperId(),
-                dto.authorId(),
+                dto.authorFirstName(),
+                dto.authorLastName(),
                 dto.paperTitle(),
                 dto.dateNotification());
     }

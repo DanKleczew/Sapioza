@@ -5,7 +5,8 @@ import java.sql.Date;
 public record NotificationDTO (
         Long notifiedUserId,
         Long paperId,
-        Long authorId,
+        String authorLastName,
+        String authorFirstName,
         String paperTitle,
         Date dateNotification )
 {}

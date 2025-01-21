@@ -25,9 +25,4 @@ public class NotificationQueryService {
                 .map(mapper::mapEntityToDTO)
                 .collect(Collectors.toList());
     }
-
-    public List<Notification> getNotificationsByUserId(Long userId) {
-        return notificationDAO.findByUserId(userId);
-    }
-
 }

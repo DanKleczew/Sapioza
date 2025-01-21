@@ -18,7 +18,10 @@ public class Notification {
     private Long paperId;
 
     @Basic(optional = false)
-    private Long authorId;
+    private String authorFirstName;
+
+    @Basic(optional = false)
+    private String authorLastName;
 
     @Basic(optional = false)
     private String paperTitle;
@@ -26,11 +29,12 @@ public class Notification {
     @Basic(optional = false)
     private Date notificationTime;
 
-    public Notification(Long userId, Long paperId, Long authorId, String paperTitle,
+    public Notification(Long userId, Long paperId, String authorFirstName, String authorLastName, String paperTitle,
                         Date notificationTime) {
         this.notifiedUserId = userId;
         this.paperId = paperId;
-        this.authorId = authorId;
+        this.authorFirstName = authorFirstName;
+        this.authorLastName = authorLastName;
         this.paperTitle = paperTitle;
         this.notificationTime = notificationTime;
     }
@@ -62,14 +66,18 @@ public class Notification {
         this.paperId = paperId;
     }
 
-    public Long getAuthorId() {
-        return authorId;
+    public String getAuthorFirstName() {
+        return authorFirstName;
     }
-
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
+    public void setAuthorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
     }
-
+    public String getAuthorLastName() {
+        return authorLastName;
+    }
+    public void setAuthorLastName(String authorLastName) {
+        this.authorLastName = authorLastName;
+    }
     public String getPaperTitle() {
         return paperTitle;
     }

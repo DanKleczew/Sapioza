@@ -19,12 +19,6 @@ public class NotificationCreationService {
     @Inject
     NotificationDAO notificationDAO;
 
-    @Inject
-    ProducerTemplate producerTemplate;
-
-    @Inject
-    NotificationEntityDtoMapper mapper;
-
     public void persistNotifications(PaperMetaDataDTO paperMetaDataDTO, UserFollowersDTO userFollowersDTO) {
         try {
             List<Notification> notifications = userFollowersDTO.followersId().stream()
@@ -39,7 +33,6 @@ public class NotificationCreationService {
             notificationDAO.persistAll(notifications);
         } catch (Exception e) {
             Log.error("Error persisting notifications for paper ID: " + paperMetaDataDTO.PaperId(), e);
-            throw e;
         }
     }
 }

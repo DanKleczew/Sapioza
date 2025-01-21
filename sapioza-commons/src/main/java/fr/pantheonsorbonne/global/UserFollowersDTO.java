@@ -5,7 +5,7 @@ import java.util.List;
 
 public record UserFollowersDTO(
         Long userId,
-        List<Long> followersId
+        List<UserInfoDTO> followers
 ) implements Serializable {
 
 }

@@ -19,11 +19,11 @@ public class CamelRoute extends RouteBuilder {
                 .log("Erreur lors du traitement de la notification : ${exception.message}")
                 .handled(true);
 
-        from(GlobalRoutes.NEW_PAPER_P2N.getRoute()) //bon
+        from(GlobalRoutes.NEW_PAPER_P2N.getRoute())
                 .log("Message reçu pour notification d'un nouvel article : ${body}")
                 .bean(notificationHandler);
 
-        from(Routes.GET_USER_INFO.getRoute()) //bon
+        from(Routes.GET_USER_INFO.getRoute())
                 .setExchangePattern(ExchangePattern.InOut)
                 .to(GlobalRoutes.USER_INFO_REQUEST_REPLY_QUEUE.getRoute()+ "?requestTimeout=5000")
                 .end();

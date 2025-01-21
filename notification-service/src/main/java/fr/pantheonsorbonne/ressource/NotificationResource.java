@@ -1,9 +1,6 @@
 package fr.pantheonsorbonne.ressource;
 
-import fr.pantheonsorbonne.camel.gateway.UserNotificationGateway;
-import fr.pantheonsorbonne.dao.NotificationDAO;
 import fr.pantheonsorbonne.dto.NotificationDTO;
-import fr.pantheonsorbonne.service.NotificationCreationService;
 import fr.pantheonsorbonne.service.NotificationQueryService;
 
 import jakarta.inject.Inject;
@@ -17,16 +14,7 @@ import java.util.List;
 public class NotificationResource {
 
     @Inject
-    NotificationCreationService notificationCreationService;
-
-    @Inject
     NotificationQueryService notificationQueryService;
-
-    @Inject
-    NotificationDAO notificationDAO;
-
-    @Inject
-    UserNotificationGateway userNotificationGateway;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
