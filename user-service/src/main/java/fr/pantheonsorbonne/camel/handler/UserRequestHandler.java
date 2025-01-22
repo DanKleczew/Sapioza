@@ -5,6 +5,8 @@ import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
+import fr.pantheonsorbonne.mappers.UserFollowersDTOMapper;
+import fr.pantheonsorbonne.mappers.UserInfoDTOMapper;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.service.UserService;
 import io.quarkus.logging.Log;
@@ -25,6 +27,12 @@ public class UserRequestHandler {
     @Inject
     UserService userService;
 
+    @Inject
+    UserInfoDTOMapper userInfoDTOMapper;
+
+    @Inject
+    UserFollowersDTOMapper userFollowersDTOMapper;
+
     @Handler
     public void getUserInformation(Exchange exchange) {
         try {
@@ -32,11 +40,11 @@ public class UserRequestHandler {
             UserDTO userDTO = userService.getUser(id);
             UserInfoDTO userInfoDTO = null;
             if(userDTO != null){
-                userInfoDTO = userMapper.mapUserDTOToUserInfoDTO(userDTO);
+                userInfoDTO = userInfoDTOMapper.mapEntityToDTO(userDTO);
             }
             exchange.getMessage().setBody(userInfoDTO, UserInfoDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Error while getting user information");
+            exchange.getMessage().setBody(null, UserInfoDTO.class);;
         }
     }
 
@@ -47,11 +55,13 @@ public class UserRequestHandler {
             UserDTO userDTO = userService.getUser(id);
             UserFollowersDTO userFollowersDTO = null;
             if (userDTO != null) {
-                userFollowersDTO = userMapper.mapUserToUserFollowersDTO(userDTO);
+                userFollowersDTO = userFollowersDTOMapper.mapEntityToDTO(userDTO);
+                Log.error("getUserFollowers : " + userFollowersDTO);
             }
             exchange.getMessage().setBody(userFollowersDTO, UserFollowersDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Error while getting user followers");
+            Log.error("Error while getting user followers"+ e);
+            exchange.getMessage().setBody(null, UserFollowersDTO.class);
         }
     }
 
@@ -66,7 +76,8 @@ public class UserRequestHandler {
             }
             exchange.getMessage().setBody(userFollowsDTO, UserFollowsDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Error while getting user follows");
+            Log.error("Error while getting user follows");
+            exchange.getMessage().setBody(null, UserFollowsDTO.class);
         }
     }
 
@@ -79,7 +90,8 @@ public class UserRequestHandler {
             Log.error("matchUuidAndPassword : " + matchUuidAndPassword);
             exchange.getMessage().setBody(matchUuidAndPassword, Boolean.class);
         } catch (Exception e) {
-            throw new RuntimeException("Error while getting user id by authentification");
+            exchange.getMessage().setBody(null, Boolean.class);
+            Log.error("Error while getting user id by authentification");
         }
     }
 

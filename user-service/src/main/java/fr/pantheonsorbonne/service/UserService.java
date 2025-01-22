@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.service;
 
 
-import fr.pantheonsorbonne.camel.gateway.UserAccount;
 import fr.pantheonsorbonne.dao.UserDAO;
 import fr.pantheonsorbonne.dto.UserDTO;
 import fr.pantheonsorbonne.dto.UserDeletionDTO;
@@ -14,12 +13,14 @@ import fr.pantheonsorbonne.exception.User.UserNotFoundException;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
 import fr.pantheonsorbonne.global.UserFollowsDTO;
 import fr.pantheonsorbonne.global.UserInfoDTO;
+import fr.pantheonsorbonne.mappers.UserInfoDTOMapper;
 import fr.pantheonsorbonne.mappers.UserMapper;
 import fr.pantheonsorbonne.model.User;
 import fr.pantheonsorbonne.service.interfaces.UserServiceInterface;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 
@@ -29,7 +30,8 @@ import java.util.stream.Collectors;
 
 
 @ApplicationScoped
-public class UserService implements UserServiceInterface {
+@Named("UserService")
+public class UserService {
 
     @Inject
     UserDAO userDAO;
@@ -37,16 +39,16 @@ public class UserService implements UserServiceInterface {
     @Inject
     UserMapper userMapper;
 
+    @Inject
+    UserInfoDTOMapper userInfoDTOMapper;
+
     @Transactional
-    public UserDTO getUser(Long id) {
+    public UserDTO getUser(Long id) throws UserNotFoundException {
         User user = userDAO.getUser(id);
         if (user == null) {
-            System.out.println("User not found");
-            Log.debug("User not found");
-            return null;
+            throw new UserNotFoundException(id);
         }
         userDAO.getUsersListId(id);
-        System.out.println(user.toString());
         return userMapper.mapEntityToDTO(user);
     }
 
@@ -66,7 +68,16 @@ public class UserService implements UserServiceInterface {
             return;
         }
         user.subscribeTo(user2);
-        userDAO.updateUser(user);
+        this.updateUser(user);
+    }
+
+    //Could be usefull later
+    public void updateUser(UserDTO userDTO){
+        this.userDAO.updateUser(userDTO);
+    }
+
+    public void updateUser(User user){
+        this.userDAO.updateUser(user);
     }
 
     public Boolean isSubscribed(User user1, User user2) {
@@ -86,6 +97,7 @@ public class UserService implements UserServiceInterface {
         return userDAO.getUser(email).getUsers();
     }
 
+    @Transactional
     public List<Long> getSubscribersId(Long id){
         return userDAO.getUser(id).getUsersIds();
     }
@@ -95,53 +107,42 @@ public class UserService implements UserServiceInterface {
     }
 
     @Transactional
-    public void createUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistsException {
-        if(this.getUser(userRegistrationDTO.email()) != null) {
-            throw new UserAlreadyExistsException(userRegistrationDTO.email());
+    public List<UserInfoDTO> getSubscribersDTO(Long id){
+        List<User> users = this.getSubscribers(id);
+        List<UserInfoDTO> userInfoDTOList = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = userMapper.mapEntityToDTO(user);
+            userInfoDTOList.add(userInfoDTOMapper.mapEntityToDTO(userDTO));
         }
-        UserDTO userDTO = userMapper.mapRegistrationToUserDTO(userRegistrationDTO);
-        User user = userMapper.mapDTOToEntity(userDTO);
-        userDAO.addDefaultValuesForUser(user);
-        userDAO.updateUser(user);
+        return userInfoDTOList;
     }
 
-    @Transactional
-    public Boolean deleteUser(Long id, String password) throws UserException {
-        UserDTO userDTO = this.getUser(id);
+
+    public void checkConnection(UserDTO userDTO, String password, Long id) throws UserNotFoundException, UserAuthenticationException {
         if (userDTO == null) {
-            return false;
+            throw new UserNotFoundException(id);
         }
         if (!userDTO.password().equals(password)) {
-            return false;
+            throw new UserAuthenticationException(userDTO.id());
         }
-        userDAO.deleteUser(id);
-        return true;
     }
 
     @Transactional
-    public void deleteUser(UserDeletionDTO userDeletionDTO) throws UserNotFoundException, UserAuthenticationException {
-        UserDTO userDTO = this.getUser(userDeletionDTO.id());
-        if (userDTO == null) {
-            throw new UserNotFoundException(userDeletionDTO.id());
-        }
-        if (!userDTO.password().equals(userDeletionDTO.password())) {
-            throw new UserAuthenticationException(userDeletionDTO.id());
-        }
-        userDAO.deleteUser(userDTO.id());
-    }
-
-    @Transactional
-    public void createTestUser() {
-        userDAO.createTestUser();
-    }
-
-    public UserDTO connectionUser(String email, String password) throws ConnectionException {
+    public UserDTO connectionUser(String email, String password) throws UserException {
         User user = userDAO.connection(email, password);
-        UserDTO userDTO = userMapper.mapEntityToDTO(user);
-        if (userDTO == null) {
-            throw new ConnectionException(email, new Throwable());
+        if(user == null){
+            throw new UserNotFoundException();
         }
+        UserDTO userDTO = userMapper.mapEntityToDTO(user);
         return userDTO;
+    }
+
+    public UserDTO connectionUser(Long id, String password) throws UserException {
+        User user = userDAO.getUser(id);
+        if(user == null){
+            throw new UserNotFoundException(id);
+        }
+        return this.connectionUser(user.getEmail(), password);
     }
 
     public List<Long> findUserFollowersID(Long id) {
@@ -181,7 +182,7 @@ public class UserService implements UserServiceInterface {
         //System.out.println(followersList);
         return followersList;
     }
-
+/*
     public UserInfoDTO getUserInfo(Long id) {
         try {
             User user = this.userDAO.getUser(id);
@@ -213,6 +214,8 @@ public class UserService implements UserServiceInterface {
         }
     }
 
+ */
+
     public List<Long> listOfUserDTOToListOfLong(List<UserDTO> userDTOList) {
         List<Long> userIdList = new ArrayList<>();
         for (UserDTO userDTO : userDTOList) {
@@ -221,6 +224,7 @@ public class UserService implements UserServiceInterface {
         return userIdList;
     }
 
+    /*
     public UserFollowsDTO getUserFollows(Long id) {
         try {
             User user = this.userDAO.getUser(id);
@@ -237,6 +241,8 @@ public class UserService implements UserServiceInterface {
             return null;
         }
     }
+
+     */
 
 
 
@@ -257,6 +263,7 @@ public class UserService implements UserServiceInterface {
         }
     }
 
+    /*
     public void responseUserInformation(Long id){
         try {
             UserInfoDTO userInfoDTO = this.getUserInformation(id);
@@ -266,6 +273,8 @@ public class UserService implements UserServiceInterface {
         }
     }
 
+     */
+
     public UserDTO getUserByUuid(String uuid) throws UserNotFoundException {
         UserDTO userDTO = this.userDAO.getUserByUuid(uuid);
         if(userDTO == null) {
@@ -274,7 +283,7 @@ public class UserService implements UserServiceInterface {
         return userDTO;
     }
 
-    public String getUserUuid(Long id) {
+    public String getUserUuid(Long id) throws UserNotFoundException {
         return this.getUser(id).uuid();
     }
 
@@ -285,30 +294,12 @@ public class UserService implements UserServiceInterface {
         return userDTO.id().equals(id);
     }
 
+    /*
     public String getUuid(String email, String password) throws ConnectionException {
         UserDTO userDTO = this.connectionUser(email, password);
         return userDTO.uuid();
     }
 
+     */
 
-    public void initService() {
-
-        for (int i = 1; i <= 100; i++) {
-            UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO(
-                    "Dan" + i,
-                    "va" + i,
-                    "te@faire" + i,
-                    "foutre" + i
-            );
-            this.createUser(userRegistrationDTO);
-        }
-
-        for (int i = 2; i <= 20; i++) {
-            this.subscribTo((long) 99, (long) i);
-        }
-
-        for (int i = 2; i <= 10; i++) {
-            this.subscribTo((long) i, (long) 99);
-        }
-    }
 }

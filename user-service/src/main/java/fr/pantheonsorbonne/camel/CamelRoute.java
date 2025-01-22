@@ -1,7 +1,6 @@
 package fr.pantheonsorbonne.camel;
 
 
-import fr.pantheonsorbonne.camel.gateway.UserAccount;
 import fr.pantheonsorbonne.camel.handler.UserRequestHandler;
 import fr.pantheonsorbonne.global.GlobalRoutes;
 import fr.pantheonsorbonne.global.UserFollowersDTO;
@@ -13,9 +12,6 @@ import org.apache.camel.builder.RouteBuilder;
 
 @ApplicationScoped
 public class CamelRoute extends RouteBuilder {
-
-        @Inject
-        UserAccount userAccount;
 
         @Inject
         UserRequestHandler userRequestHandler;
