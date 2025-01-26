@@ -10,6 +10,7 @@ import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
@@ -36,6 +37,11 @@ public class UserDAO {
 
     public void updateUser(User user) {
         em.merge(user);
+    }
+
+    public void updateUser(UserDTO userDTO){
+        User user = this.userMapper.mapDTOToEntity(userDTO);
+        this.updateUser(user);
     }
 
     public void updateUserName(long id, String name) throws UserNotFoundException {
@@ -126,7 +132,7 @@ public class UserDAO {
         return user;
     }
 
-    public User connection(String email, String password) {
+    public User connection(String email, String password) throws UserException {
         try {
             User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                     .setParameter("email", email)
@@ -134,11 +140,13 @@ public class UserDAO {
             if (user.getPassword().equals(password)) {
                 return user;
             }
+            throw new UserException("Wrong password");
+        } catch (NoResultException e) {
+            throw new UserNotFoundException(email);
         }
         catch (RuntimeException re) {
             throw new RuntimeException(re.getMessage());
         }
-        return null;
     }
 
 
@@ -149,7 +157,8 @@ public class UserDAO {
                     .setParameter("email", email)
                     .getSingleResult();
         } catch (RuntimeException re) {
-            throw new RuntimeException(re.getMessage());
+            Log.error("getUser failed", re);
+            return null;
         }
         return user;
     }
@@ -185,6 +194,7 @@ public class UserDAO {
         return userDTO;
     }
 
+    /*
     public void addDefaultValuesForUser(User user){
         if(user.getCreationDate() == null){
             user.setCreationDate(LocalDate.now());
@@ -193,6 +203,7 @@ public class UserDAO {
             user.setRole(Roles.USER);
         }
     }
+     */
     /*
     public List<User> findUserFollowersByMail(String email) {
         return  em.createQuery("SELECT uu FROM User u JOIN User_User uu JOIN uu.Users uuu WHERE  uuu.email = :email", User.class)
