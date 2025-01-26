@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.Response;
 
 
 @Path("/papers")
-public class PaperQueryResource implements QueryResourceInterface {
+public class PaperQueryResource {
     @Inject
     PaperQueryService paperQueryService;
 
@@ -47,22 +47,13 @@ public class PaperQueryResource implements QueryResourceInterface {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/filter")
-    public Response getFilteredPapers(@QueryParam("title") String title,
-                                      @QueryParam("author") Long authorId,
-                                      @QueryParam("abstract") String abstract_,
-                                      @QueryParam("keywords") String keywords,
-                                      @QueryParam("revue") String revue,
-                                      @QueryParam("field") String field,
-                                      @QueryParam("AscDate") boolean AscDate,
-                                      @QueryParam("DescDate") boolean DescDate,
-                                      @QueryParam("DOI") String DOI){
+    public Response getFilteredPapers(FilterDTO filterDTO){
         try {
             return Response
                     .status(Response.Status.OK)
-                    .entity(this.paperQueryService.getFilteredPapers(new FilterDTO(title,
-                            authorId, abstract_, keywords, revue, field == null ? null : ResearchField.valueOf(field),
-                            AscDate, DescDate, DOI)))
+                    .entity(this.paperQueryService.getFilteredPapers(filterDTO))
                     .build();
         } catch (Exception e) {
             return Response
