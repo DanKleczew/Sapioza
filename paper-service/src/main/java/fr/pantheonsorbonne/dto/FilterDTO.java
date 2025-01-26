@@ -10,6 +10,7 @@ public record FilterDTO(String title,
                         ResearchField field,
                         Boolean AscDate,
                         Boolean DescDate,
-                        String DOI) {
+                        String DOI,
+                        int limit) {
     // Filter for paper search
 }

@@ -71,7 +71,7 @@ public class PaperQueryDAO   {
                 predicates.add(cb.equal(root.get("publishedIn"), filter.revue()));
             }
             query.select(root).where(predicates.toArray(new Predicate[]{}));
-            return em.createQuery(query).getResultList();
+            return em.createQuery(query).setMaxResults(filter.limit() != 0 ? filter.limit() : 100).getResultList();
 
         } catch (RuntimeException re) {
             Log.error("Error while filtering papers", re);
