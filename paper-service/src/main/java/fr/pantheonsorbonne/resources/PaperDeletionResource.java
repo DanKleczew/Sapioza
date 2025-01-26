@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.resources;
 
+import fr.pantheonsorbonne.dto.PaperDTOs.DeletionPaperDTO;
 import fr.pantheonsorbonne.enums.Cause;
 import fr.pantheonsorbonne.global.UserIdentificationDTO;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
@@ -22,10 +23,10 @@ public class PaperDeletionResource implements DeletionResourceInterface {
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/delete/{articleId}")
-    public Response deletePaper(@PathParam("articleId") Long id, UserIdentificationDTO userIdentificationDTO) {
+    @Path("/delete")
+    public Response deletePaper(DeletionPaperDTO deletionPaperDTO) {
         try {
-            this.paperDeletionService.deletePaper(id, userIdentificationDTO);
+            this.paperDeletionService.deletePaper(deletionPaperDTO.articleId(), deletionPaperDTO.userIdentificationDTO());
             return Response
                     .status(Response.Status.NO_CONTENT)
                     .build();

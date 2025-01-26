@@ -46,7 +46,7 @@ public class ReviewResource implements ReviewResourceInterface {
         }
     }
 
-    @POST
+    @DELETE
     @Override
     @Path("/remove/{paperId}/{reviewerId}")
     public Response removeComment(@PathParam("paperId") Long paperId , @PathParam("reviewerId") Long reviewerId) {
