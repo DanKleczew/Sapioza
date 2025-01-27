@@ -43,7 +43,6 @@ public class CamelRoute extends RouteBuilder {
                     .bean(deleteHandler)
                 .otherwise()
                     .log("Unknown command received: ${header.command}")
-                .endChoice()
                 .stop();
 
         // Route pour répondre à une requête de papier
