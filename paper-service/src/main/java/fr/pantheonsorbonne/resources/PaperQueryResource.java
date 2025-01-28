@@ -6,7 +6,6 @@ import fr.pantheonsorbonne.enums.ResearchField;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
-import fr.pantheonsorbonne.resources.interfaces.QueryResourceInterface;
 import fr.pantheonsorbonne.service.PaperQueryService;
 import fr.pantheonsorbonne.service.ReviewService;
 import jakarta.inject.Inject;
@@ -47,10 +46,21 @@ public class PaperQueryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/filter")
-    public Response getFilteredPapers(FilterDTO filterDTO){
+    public Response getFilteredPapers(@QueryParam("title") String title,
+                                      @QueryParam("authorId") Long authorId,
+                                      @QueryParam("abstract_") String abstract_,
+                                      @QueryParam("keywords") String keywords,
+                                      @QueryParam("revue") String revue,
+                                      @QueryParam("researchField") String researchField,
+                                      @QueryParam("AscDate") Boolean AscDate,
+                                      @QueryParam("DescDate") Boolean DescDate,
+                                      @QueryParam("DOI") String DOI,
+                                      @QueryParam("limit") Integer limit) {
         try {
+            FilterDTO filterDTO = new FilterDTO(title, authorId, abstract_, keywords, revue,
+                    researchField != null ? ResearchField.valueOf(researchField) : null, AscDate, DescDate, DOI,
+                    limit != null ? limit : 0);
             return Response
                     .status(Response.Status.OK)
                     .entity(this.paperQueryService.getFilteredPapers(filterDTO))

@@ -28,7 +28,6 @@ public class CamelRoute extends RouteBuilder {
     public void configure() {
         // Route pour sauvegarder un papier
         from(GlobalRoutes.NEW_PAPER_P2S.getRoute())
-                .log("Received new paper: ${body}")
                 .bean(paperHandler);
 
         // Route pour gérer modification ou suppression d'un papier
@@ -49,7 +48,6 @@ public class CamelRoute extends RouteBuilder {
         from(GlobalRoutes.PAPER_CONTENT_REQUEST_REPLY_QUEUE.getRoute())
                 .log("Received paper query for ${body}")
                 .process(paperQueryProcessor)
-                .log("Sending paper content: ${body}")
                 .end();
 
         // Route pour gérer les erreurs de sauvegarde

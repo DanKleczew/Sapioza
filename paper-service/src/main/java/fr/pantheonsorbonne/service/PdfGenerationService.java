@@ -3,7 +3,6 @@ package fr.pantheonsorbonne.service;
 import fr.pantheonsorbonne.camel.gateway.UserGateway;
 import fr.pantheonsorbonne.dto.PaperDTOs.CompletePaperDTO;
 import fr.pantheonsorbonne.dto.PaperDTOs.SubmittedPaperDTO;
-import fr.pantheonsorbonne.exception.InternalCommunicationException;
 import fr.pantheonsorbonne.global.UserInfoDTO;
 import fr.pantheonsorbonne.pdf.PdfGenerator;
 import jakarta.enterprise.context.ApplicationScoped;

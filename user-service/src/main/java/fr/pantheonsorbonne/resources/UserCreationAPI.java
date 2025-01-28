@@ -17,15 +17,6 @@ public class UserCreationAPI {
     @Inject
     UserCreationService userCreationService;
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/initService")
-    public Response initService() throws UserAlreadyExistsException {
-        userCreationService.initService();
-        Log.debug("UserAPI.createMultipleTestAccount called");
-        return Response.ok().build();
-    }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

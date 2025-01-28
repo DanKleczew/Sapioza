@@ -12,7 +12,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-@Path("/User")
+@Path("/user")
 public class UserAPI {
 
         @Inject

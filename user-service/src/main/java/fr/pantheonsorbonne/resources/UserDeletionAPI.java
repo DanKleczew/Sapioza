@@ -18,9 +18,6 @@ import jakarta.ws.rs.core.Response;
 public class UserDeletionAPI {
 
     @Inject
-    UserService userService;
-
-    @Inject
     UserDeleteService userDeleteService;
 
     @DELETE

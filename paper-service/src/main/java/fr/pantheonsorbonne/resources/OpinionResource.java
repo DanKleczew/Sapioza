@@ -46,6 +46,7 @@ public class OpinionResource implements OpinionResourceInterface {
 
     @Override
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("getSingle/{paperId}/{userId}")
     public Response getOpinion(@PathParam("paperId") Long paperId,
                                @PathParam("userId") Long userId) {
@@ -68,8 +69,9 @@ public class OpinionResource implements OpinionResourceInterface {
 
     @Override
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("getAll/{paperId}")
-    public Response getAllOpinions(Long paperId) {
+    public Response getAllOpinions(@PathParam("paperId") Long paperId) {
         try {
             return Response
                     .status(Response.Status.OK)
