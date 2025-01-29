@@ -42,8 +42,8 @@ public class PaperQueryService {
         return new QueriedPaperInfosDTO(paperMapper.mapEntityToDTO(paper), userInfosDTO);
     }
 
-    public List<PaperDTO> getFilteredPapers(FilterDTO filter) {
-        return paperQueryDAO.getFilteredPapers(filter).stream().map(paperMapper::mapEntityToDTO).toList();
+    public List<Long> getFilteredPapers(FilterDTO filter) {
+        return paperQueryDAO.getFilteredPapers(filter).stream().map(Paper::getId).toList();
     }
 
     public QueriedPDF getPDF(Long id) throws PaperNotFoundException, InternalCommunicationException {
