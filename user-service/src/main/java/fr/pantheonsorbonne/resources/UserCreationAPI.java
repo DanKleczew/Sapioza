@@ -23,7 +23,6 @@ public class UserCreationAPI {
     @Path("/createAccount")
     public Response createAccount(UserRegistrationDTO userRegistrationDTO) {
         try {
-            Log.error(userRegistrationDTO);
             userCreationService.createUser(userRegistrationDTO);
             return Response
                     .status(Response.Status.CREATED)

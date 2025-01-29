@@ -156,8 +156,7 @@ public class UserDAO {
             user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
-        } catch (RuntimeException re) {
-            Log.error("getUser failed", re);
+        } catch (RuntimeException e) {
             return null;
         }
         return user;
