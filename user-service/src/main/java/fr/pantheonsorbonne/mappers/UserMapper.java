@@ -42,7 +42,6 @@ public class UserMapper implements EntityDTOMapper<UserDTO, User> {
                 entity.getFirstName(),
                 entity.getEmail(),
                 entity.getPassword(),
-                entity.getUsersIds(),
                 entity.getCreationDate(),
                 entity.getDeletionDate(),
                 entity.getRole(),

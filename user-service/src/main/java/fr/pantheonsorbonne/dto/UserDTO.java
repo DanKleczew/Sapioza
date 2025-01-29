@@ -15,7 +15,6 @@ public record UserDTO(
                       String firstName,
                       String email,
                       String password,
-                      List<Long> UsersIds,
                       LocalDate creationDate,
                       LocalDate deletionDate,
                       Roles role,
@@ -30,7 +29,6 @@ public record UserDTO(
                 ", firstName='" + firstName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", UsersIds=" + UsersIds.toString() +
                 ", creationDate=" + creationDate +
                 ", deletionDate=" + deletionDate +
                 ", role=" + role +
