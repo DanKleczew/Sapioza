@@ -20,8 +20,13 @@ public class UserCreationService{
     @Inject
     UserRegistrationDTOMapper userRegistrationDTOMapper;
 
-    public void createUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistsException {
-
+    public void createUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistsException, IllegalArgumentException {
+        if (userRegistrationDTO.email() == null || userRegistrationDTO.email().isEmpty() ||
+                userRegistrationDTO.firstName() == null || userRegistrationDTO.firstName().isEmpty() ||
+                userRegistrationDTO.name() == null || userRegistrationDTO.name().isEmpty() ||
+                userRegistrationDTO.password() == null || userRegistrationDTO.password().isEmpty()) {
+                throw new IllegalArgumentException("empty argument");
+        }
         if(this.userService.getUser(userRegistrationDTO.email()) != null) {
             throw new UserAlreadyExistsException(userRegistrationDTO.email());
         }
