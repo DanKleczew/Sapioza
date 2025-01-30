@@ -8,6 +8,7 @@ import fr.pantheonsorbonne.exception.PaperDatabaseAccessException;
 import fr.pantheonsorbonne.exception.PaperNotFoundException;
 import fr.pantheonsorbonne.service.PaperQueryService;
 import fr.pantheonsorbonne.service.ReviewService;
+import io.quarkus.logging.Log;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -61,6 +62,7 @@ public class PaperQueryResource {
             FilterDTO filterDTO = new FilterDTO(title, authorId, abstract_, keywords, revue,
                     researchField != null ? ResearchField.valueOf(researchField) : null, AscDate, DescDate, DOI,
                     limit != null ? limit : 0);
+            Log.info("Received filterDTO : " + filterDTO);
             return Response
                     .status(Response.Status.OK)
                     .entity(this.paperQueryService.getFilteredPapers(filterDTO))

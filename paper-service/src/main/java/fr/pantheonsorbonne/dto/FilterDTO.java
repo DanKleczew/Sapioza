@@ -13,4 +13,21 @@ public record FilterDTO(String title,
                         String DOI,
                         int limit) {
     // Filter for paper search
+
+
+    @Override
+    public String toString() {
+        return "FilterDTO{" +
+                "title='" + title + '\'' +
+                ", authorId=" + authorId +
+                ", abstract_='" + abstract_ + '\'' +
+                ", keywords='" + keywords + '\'' +
+                ", revue='" + revue + '\'' +
+                ", field=" + field +
+                ", AscDate=" + AscDate +
+                ", DescDate=" + DescDate +
+                ", DOI='" + DOI + '\'' +
+                ", limit=" + limit +
+                '}';
+    }
 }
