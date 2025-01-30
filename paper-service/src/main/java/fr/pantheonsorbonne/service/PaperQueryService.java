@@ -4,7 +4,7 @@ import fr.pantheonsorbonne.camel.gateway.StorageGateway;
 import fr.pantheonsorbonne.camel.gateway.UserGateway;
 import fr.pantheonsorbonne.dao.PaperQueryDAO;
 import fr.pantheonsorbonne.dto.*;
-import fr.pantheonsorbonne.dto.PaperDTOs.PaperDTO;
+import fr.pantheonsorbonne.dto.PaperDTOs.CompleteQueriedPaperInfosDTO;
 import fr.pantheonsorbonne.dto.PaperDTOs.QueriedPDF;
 import fr.pantheonsorbonne.dto.PaperDTOs.QueriedPaperInfosDTO;
 import fr.pantheonsorbonne.exception.InternalCommunicationException;
@@ -15,6 +15,7 @@ import fr.pantheonsorbonne.mappers.PaperMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -42,8 +43,22 @@ public class PaperQueryService {
         return new QueriedPaperInfosDTO(paperMapper.mapEntityToDTO(paper), userInfosDTO);
     }
 
-    public List<Long> getFilteredPapers(FilterDTO filter) {
-        return paperQueryDAO.getFilteredPapers(filter).stream().map(Paper::getId).toList();
+    public List<CompleteQueriedPaperInfosDTO> getFilteredPapers(FilterDTO filter) {
+        List<CompleteQueriedPaperInfosDTO> list = new ArrayList<>();
+        List<Paper> papers = paperQueryDAO.getFilteredPapers(filter);
+        for (Paper paper : papers){
+            list.add(
+                    new CompleteQueriedPaperInfosDTO(
+                            paper.getId(),
+                            new QueriedPaperInfosDTO(
+                                paperMapper.mapEntityToDTO(paper),
+                                userGateway.getUserInfos(paper.getAuthorId())
+                            )
+                    )
+            );
+        }
+        return list;
+        //paperQueryDAO.getFilteredPapers(filter).stream().map(paperMapper::mapPaperToPaperMetaDataDTO).toList();
     }
 
     public QueriedPDF getPDF(Long id) throws PaperNotFoundException, InternalCommunicationException {
