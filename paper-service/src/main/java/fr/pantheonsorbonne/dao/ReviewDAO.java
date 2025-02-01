@@ -62,4 +62,10 @@ public class ReviewDAO {
             return null;
         }
     }
+
+    public void removeReviews(Long id) {
+        this.em.createQuery("DELETE FROM Review r WHERE r.paper.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
 }

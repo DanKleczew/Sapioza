@@ -78,4 +78,10 @@ public class OpinionDAO {
             throw new PaperDatabaseAccessException();
         }
     }
+
+    public void removeOpinions(Long id) {
+        em.createQuery("delete from Opinion o where o.paper.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
 }
