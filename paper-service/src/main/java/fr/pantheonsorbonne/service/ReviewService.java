@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.service;
 
+import fr.pantheonsorbonne.dao.PaperQueryDAO;
 import fr.pantheonsorbonne.dao.ReviewDAO;
 import fr.pantheonsorbonne.dto.ReviewDTO;
 import fr.pantheonsorbonne.exception.*;
@@ -17,6 +18,9 @@ public class ReviewService {
     ReviewDAO reviewDAO;
 
     @Inject
+    PaperQueryDAO paperQueryDao;
+
+    @Inject
     ReviewMapper reviewMapper;
 
     public void addReview(ReviewDTO reviewDTO) throws ReviewAlreadyExistsException {
@@ -24,6 +28,9 @@ public class ReviewService {
     }
 
     public List<ReviewDTO> getAllReviews(Long articleId) throws PaperNotFoundException {
+        if (this.paperQueryDao.getPaper(articleId) == null) {
+            throw new PaperNotFoundException(articleId);
+        }
         return this.reviewDAO.getReviews(articleId)
                 .stream()
                 .map(reviewMapper::mapEntityToDTO)
