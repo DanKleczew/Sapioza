@@ -121,4 +121,26 @@ public class PaperQueryResource {
         }
 
     }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/title/{id}")
+    public Response getPaperTitle(@PathParam("id") Long id) {
+        try {
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(this.paperQueryService.getPaperTitle(id))
+                    .build();
+        } catch (PaperNotFoundException e) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (PaperDatabaseAccessException e) {
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage())
+                    .build();
+        }
+    }
 }

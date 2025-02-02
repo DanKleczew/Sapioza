@@ -68,4 +68,12 @@ public class PaperQueryService {
                 this.storageGateway.getPDF(paper.getUuid())
         );
     }
+
+    public String getPaperTitle(Long paperId) throws PaperNotFoundException{
+        Paper paper = this.paperQueryDAO.getPaper(paperId);
+        if (paper == null) {
+            throw new PaperNotFoundException(paperId);
+        }
+        return paper.getTitle();
+    }
 }
