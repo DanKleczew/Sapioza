@@ -14,7 +14,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/user/delete")
+//@Path("/user/delete")
+@Path("/user")
 public class UserDeletionAPI {
 
     @Inject
@@ -28,7 +29,8 @@ public class UserDeletionAPI {
         try {
             userDeleteService.deleteUser(userDeletionDTO);
             return Response
-                    .ok("User account " + userDeletionDTO.id() + " has been deleted")
+                    .status(Response.Status.NO_CONTENT)
+                    .entity("User account " + userDeletionDTO.id() + " has been deleted")
                     .build();
         } catch (UserNotFoundException e) {
             return Response

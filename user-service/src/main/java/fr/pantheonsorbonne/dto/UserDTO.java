@@ -16,7 +16,6 @@ public record UserDTO(
                       String email,
                       String password,
                       LocalDate creationDate,
-                      LocalDate deletionDate,
                       Roles role,
                       String uuid
 ) {
@@ -30,7 +29,6 @@ public record UserDTO(
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", creationDate=" + creationDate +
-                ", deletionDate=" + deletionDate +
                 ", role=" + role +
                 ", uuid='" + uuid + '\'' +
                 '}';

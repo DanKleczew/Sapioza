@@ -97,25 +97,38 @@ public class UserDAO {
     }
 
     public void deleteUser(Long id) throws UserNotFoundException {
+        // Step 5 : Find the user
         User user = em.find(User.class, id);
         if (user == null) {
+            // Step 5.5 : Stupid because it's already checked in the previous method
             throw new UserNotFoundException(id);
         }
+        // Step 6 : Call ANOTHER method to delete the user
         this.deleteUser(user);
     }
 
 
     public void deleteUser(User user){
         try {
-            user.setDeletionDate();
-            this.updateUser(user);
+            // Step 7 Ok, so we don't actually delete the user, we just set a deletion date
+            //user.setDeletionDate();
+            // Step 8 : Call the DAO method to UPDATE ??? the user
+            // this.updateUser(user);
+            // New steps : Remove the user from the followers table and then delete the user
+            this.em.createNativeQuery("DELETE FROM User_User WHERE User_id = :userId")
+                            .setParameter("userId", user.getId())
+                    .executeUpdate();
+            this.em.createNativeQuery("DELETE FROM User_User WHERE Follower_id = :userId")
+                    .setParameter("userId", user.getId())
+                    .executeUpdate();
+            this.em.remove(user);
         } catch (RuntimeException re) {
             Log.error("deleteUser failed", re);
             throw new RuntimeException(re.getMessage());
         }
     }
 
-    //will be deleted
+    //will be deleted WHEN WILL IT ??? THE PROJECT IS DUE 2 WEEKS AGO
     public void deleteUser(String email){
         User user = findUser(email);
         this.deleteUser(user);

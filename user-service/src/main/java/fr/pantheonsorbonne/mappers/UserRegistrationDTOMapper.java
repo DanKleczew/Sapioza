@@ -24,7 +24,6 @@ public class UserRegistrationDTOMapper implements EntityDTOMapper< UserRegistrat
                 dto.firstName(),
                 dto.email(),
                 dto.password(),
-                null,
                 LocalDate.now(),
                 Roles.USER,
                 null

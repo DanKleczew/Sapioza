@@ -20,7 +20,7 @@ public class User {
     private String email;
     private String password;
     private LocalDate creationDate = LocalDate.now();
-    private LocalDate deletionDate;
+    private LocalDate deletionDate = null;
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.USER;
     @UuidGenerator

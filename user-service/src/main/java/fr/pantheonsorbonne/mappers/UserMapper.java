@@ -43,7 +43,6 @@ public class UserMapper implements EntityDTOMapper<UserDTO, User> {
                 entity.getEmail(),
                 entity.getPassword(),
                 entity.getCreationDate(),
-                entity.getDeletionDate(),
                 entity.getRole(),
                 entity.getUuid()
         );
@@ -59,7 +58,6 @@ public class UserMapper implements EntityDTOMapper<UserDTO, User> {
         user.setPassword(dto.password());
         user.setUsers(null);
         user.setCreationDate(dto.creationDate());
-        user.setDeletionDate(dto.deletionDate());
         user.setRole(dto.role());
         user.setUuid(dto.uuid());
         return user;
